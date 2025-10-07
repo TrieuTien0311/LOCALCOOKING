@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "LOCALCOOKING_V3T"
 include(":app")
+include(":app")
  
