@@ -6,7 +6,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register">
+    android:background="#F5E6D3"
+    tools:context=".Register"
+    tools:ignore="DuplicateIds">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"

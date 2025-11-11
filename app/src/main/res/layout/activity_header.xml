@@ -1,45 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8E5D0"
     tools:context=".Header">
 
+    <!-- Header -->
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="111dp"
         android:background="#FFC59D"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="-2dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="30dp"
+            android:text="Trang chủ"
+            android:textColor="#6A3B1A"
+            android:textSize="36sp"
+            android:textStyle="bold" />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="172dp"
-        android:layout_height="58dp"
-        android:text="TextView"
-        android:textColor="#6A3B1A"
-        android:textSize="36dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- Container cho Fragment (Nội dung giữa) -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012" />
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="409dp"
+    <!-- Footer (Bottom Navigation) -->
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_marginBottom="1dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#FDFDFD"
+            android:backgroundTint="#FDFBFB"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_home" />
+
+        <ImageView
+            android:id="@+id/btnFav"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#FDFDFD"
+            android:backgroundTint="#FDFBFB"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_heart" />
+
+        <ImageView
+            android:id="@+id/btnHis"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#FDFDFD"
+            android:backgroundTint="#FDFBFB"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_history" />
+
+        <ImageView
+            android:id="@+id/btnNotice"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#C59292"
+            android:backgroundTint="#FDFDFD"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_notice" />
+
+        <ImageView
+            android:id="@+id/btnPerson"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#FDFDFD"
+            android:backgroundTint="#FDFBFB"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_person" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

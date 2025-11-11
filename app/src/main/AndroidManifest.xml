@@ -13,7 +13,8 @@
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
             android:name=".Register"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".Splash"
             android:exported="true"
