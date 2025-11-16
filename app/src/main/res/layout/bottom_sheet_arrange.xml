@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sắp xếp"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnDong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Đóng"
+            android:textColor="#6A3B1A"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Đường kẻ ngang -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Radio Group -->
+    <RadioGroup
+        android:id="@+id/radioGroupSapXep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/radioMacDinh"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Mặc định"
+            android:textSize="16sp"
+            android:paddingStart="8dp"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioGiaBatDauSomNhat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giờ bắt đầu sớm nhất"
+            android:textSize="16sp"
+            android:paddingStart="8dp" />
+
+        <RadioButton
+            android:id="@+id/radioGiaBatDauMuonNhat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giờ bắt đầu muộn nhất"
+            android:textSize="16sp"
+            android:paddingStart="8dp" />
+
+        <RadioButton
+            android:id="@+id/radioDanhGiaCaoNhat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Đánh giá cao nhất"
+            android:textSize="16sp"
+            android:paddingStart="8dp" />
+
+        <RadioButton
+            android:id="@+id/radioGiaGiamDan"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giá giảm dần"
+            android:textSize="16sp"
+            android:paddingStart="8dp" />
+
+        <RadioButton
+            android:id="@+id/radioGiaTangDan"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Giá tăng dần"
+            android:textSize="16sp"
+            android:paddingStart="8dp" />
+    </RadioGroup>
+</LinearLayout>

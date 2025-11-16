@@ -23,7 +23,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="25dp"
             android:contentDescription="Back"
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,9 +45,9 @@
         <!-- Logo -->
         <ImageView
             android:id="@+id/ivLogo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="80dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="60dp"
             android:contentDescription="Logo"
             android:src="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
