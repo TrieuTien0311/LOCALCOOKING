@@ -12,25 +12,35 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
 
-        <!-- Classes - Activity chạy đầu tiên -->
+        <!-- PaymentActivity là activity chạy chính -->
         <activity
             android:name=".Classes"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Register Activity -->
+        <!-- Classes (không còn là launcher) -->
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+
+        <!-- Register -->
         <activity
             android:name=".Register"
             android:exported="false" />
 
-        <!-- Header Activity - không còn là launcher -->
+        <!-- Header -->
         <activity
             android:name=".Header"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <!-- Splash -->
+        <activity
+            android:name=".Splash"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
@@ -38,6 +48,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
     </application>
 
 </manifest>
