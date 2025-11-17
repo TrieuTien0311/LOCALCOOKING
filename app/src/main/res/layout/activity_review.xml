@@ -4,387 +4,386 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Review"
-    android:background="@color/bg_orange">
+    android:layout_height="wrap_content"
+    android:background="#FFC59D"
+    tools:context=".Review">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="0dp"
-        android:layout_height="111dp"
-        android:background="@drawable/header"
-        android:elevation="20dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFC59D"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/txtDiaDiem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:text="Đánh giá"
+            android:textColor="#6A3B1A"
+            android:textSize="30sp"
 
-            <TextView
-                android:id="@+id/txtTitle"
-                android:layout_width="239dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="30dp"
-                android:text="Đánh giá"
-                android:textColor="#6A3B1A"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.08"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.56" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="Back"
-                android:src="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.03"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.74" />
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lớp học của bạn diễn ra như thế nào"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.23"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-                app:layout_constraintVertical_bias="0.050000012" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/txtThoiGian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginBottom="5dp"
+            android:text="Lớp học của bạn diễn ra như thế nào"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDiaDiem" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/button_orange"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="20dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="20dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/view1"
-                android:layout_width="394dp"
-                android:layout_height="127dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.428"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/view1"
+                    android:layout_width="394dp"
+                    android:layout_height="127dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.428"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/imgFood4"
-                            android:layout_width="100dp"
-                            android:layout_height="99dp"
-                            android:contentDescription="Food Image"
-                            android:scaleType="centerCrop"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.054"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:shapeAppearanceOverlay="@style/RoundedImage"
-                            app:srcCompat="@drawable/hue" />
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white">
 
-                        <TextView
-                            android:id="@+id/textView9"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="5dp"
-                            android:text="Địa điểm: 23 Lê Duẩn - Đà Nẵng"
-                            android:textColor="#877C7C"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toEndOf="@+id/imgFood4"
-                            app:layout_constraintTop_toBottomOf="@+id/textView14"
-                            app:layout_constraintVertical_bias="0.128" />
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/imgFood4"
+                                android:layout_width="100dp"
+                                android:layout_height="99dp"
+                                android:contentDescription="Food Image"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.054"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:shapeAppearanceOverlay="@style/RoundedImage"
+                                app:srcCompat="@drawable/hue" />
 
-                        <TextView
-                            android:id="@+id/textView14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="14:00 - 17:00, 02/10/2025"
-                            android:textColor="#877C7C"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.113"
-                            app:layout_constraintStart_toEndOf="@+id/imageView7"
-                            app:layout_constraintTop_toBottomOf="@+id/textView18"
-                            app:layout_constraintVertical_bias="0.0" />
+                            <TextView
+                                android:id="@+id/textView9"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="5dp"
+                                android:text="Địa điểm: 23 Lê Duẩn - Đà Nẵng"
+                                android:textColor="#707070"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.0"
+                                app:layout_constraintStart_toEndOf="@+id/imgFood4"
+                                app:layout_constraintTop_toBottomOf="@+id/textView14"
+                                app:layout_constraintVertical_bias="0.128" />
 
-                        <TextView
-                            android:id="@+id/textView18"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
-                            android:text="Ẩm thực địa  phương Huế"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.07"
-                            app:layout_constraintStart_toEndOf="@+id/imgFood4"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            <TextView
+                                android:id="@+id/textView14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="14:00 - 17:00, 02/10/2025"
+                                android:textColor="#707070"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.113"
+                                app:layout_constraintStart_toEndOf="@+id/imageView7"
+                                app:layout_constraintTop_toBottomOf="@+id/textView18"
+                                app:layout_constraintVertical_bias="0.0" />
 
-                        <ImageView
-                            android:id="@+id/imageView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="5dp"
-                            app:layout_constraintStart_toEndOf="@+id/imgFood4"
-                            app:layout_constraintTop_toBottomOf="@+id/textView18"
-                            app:srcCompat="@drawable/ic_history" />
+                            <TextView
+                                android:id="@+id/textView18"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:text="Ẩm thực địa  phương Huế"
+                                android:textColor="#020202"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.07"
+                                app:layout_constraintStart_toEndOf="@+id/imgFood4"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                            <ImageView
+                                android:id="@+id/imageView7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginTop="5dp"
+                                app:layout_constraintStart_toEndOf="@+id/imgFood4"
+                                app:layout_constraintTop_toBottomOf="@+id/textView18"
+                                app:srcCompat="@drawable/ic_history"
+                                app:tint="#707070" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/view2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="5dp"
-                app:cardBackgroundColor="#00FFFFFF"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view1">
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/view2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    app:cardBackgroundColor="@color/bg_orange"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view1">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/textView21"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Mức độ hài lòng của bạn về lớp học"
-                            android:textColor="#000000"
-                            android:textSize="18sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:elevation="0dp">
 
-                        <ImageView
-                            android:id="@+id/imageView10"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="104dp"
-                            android:layout_marginTop="15dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textView21"
-                            app:srcCompat="@drawable/ic_star" />
+                            <TextView
+                                android:id="@+id/textView21"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Mức độ hài lòng của bạn về lớp học"
+                                android:textColor="#000000"
+                                android:textSize="18sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        <ImageView
-                            android:id="@+id/imageView13"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="15dp"
-                            app:layout_constraintStart_toEndOf="@+id/imageView10"
-                            app:layout_constraintTop_toBottomOf="@+id/textView21"
-                            app:srcCompat="@drawable/ic_star" />
+                            <ImageView
+                                android:id="@+id/imageView10"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginStart="104dp"
+                                android:layout_marginTop="15dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                                app:srcCompat="@drawable/ic_star" />
 
-                        <ImageView
-                            android:id="@+id/imageView16"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="15dp"
-                            app:layout_constraintStart_toEndOf="@+id/imageView13"
-                            app:layout_constraintTop_toBottomOf="@+id/textView21"
-                            app:srcCompat="@drawable/ic_star" />
+                            <ImageView
+                                android:id="@+id/imageView13"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="15dp"
+                                app:layout_constraintStart_toEndOf="@+id/imageView10"
+                                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                                app:srcCompat="@drawable/ic_star" />
 
-                        <ImageView
-                            android:id="@+id/imageView17"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="15dp"
-                            app:layout_constraintStart_toEndOf="@+id/imageView16"
-                            app:layout_constraintTop_toBottomOf="@+id/textView21"
-                            app:srcCompat="@drawable/ic_star" />
+                            <ImageView
+                                android:id="@+id/imageView16"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="15dp"
+                                app:layout_constraintStart_toEndOf="@+id/imageView13"
+                                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                                app:srcCompat="@drawable/ic_star" />
 
-                        <ImageView
-                            android:id="@+id/imageView18"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="15dp"
-                            android:layout_marginEnd="90dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toEndOf="@+id/imageView17"
-                            app:layout_constraintTop_toBottomOf="@+id/textView21"
-                            app:srcCompat="@drawable/ic_star" />
+                            <ImageView
+                                android:id="@+id/imageView17"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="15dp"
+                                app:layout_constraintStart_toEndOf="@+id/imageView16"
+                                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                                app:srcCompat="@drawable/ic_star" />
 
-                        <TextView
-                            android:id="@+id/textView27"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:text="Tuyệt vời!"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.47"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/imageView16" />
+                            <ImageView
+                                android:id="@+id/imageView18"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginEnd="90dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.0"
+                                app:layout_constraintStart_toEndOf="@+id/imageView17"
+                                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                                app:srcCompat="@drawable/ic_star" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            <TextView
+                                android:id="@+id/textView27"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Tuyệt vời!"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.47"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/imageView16" />
 
-                </LinearLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/view3"
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView30">
+                </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/view3"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView30">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/textView33"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="10dp"
-                            android:text="Không gian lớp thoải mái, đầy đủ dụng cụ và nguyên liệu nên mình rất yên tâm. Giáo viên hướng dẫn chi tiết, luôn hỗ trợ khi gặp khó khăn nên mình học được nhiều kỹ năng mới. Thành quả là món ăn vừa ngon vừa đẹp mắt và được thưởng thức ngay tại lớp."
-                            android:textColorLink="#9C27B0"
-                            android:textSize="18sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.173" />
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            <TextView
+                                android:id="@+id/textView33"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:justificationMode="inter_word"
+                                android:text="Không gian lớp thoải mái, đầy đủ dụng cụ và nguyên liệu nên mình rất yên tâm. Giáo viên hướng dẫn chi tiết, luôn hỗ trợ khi gặp khó khăn nên mình học được nhiều kỹ năng mới. Thành quả là món ăn vừa ngon vừa đẹp mắt và được thưởng thức ngay tại lớp."
+                                android:textAlignment="gravity"
+                                android:textColor="#000000"
+                                android:textColorLink="#9C27B0"
+                                android:textSize="18sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                            />
 
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="10dp"
-                android:text="Nhận xét chi tiết"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView19"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:id="@+id/imageView19"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/view3"
-                app:layout_constraintEnd_toStartOf="@+id/textView30"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2"
-                app:layout_constraintVertical_bias="1.0"
-                app:srcCompat="@drawable/ic_write_review" />
+                <TextView
+                    android:id="@+id/textView30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Nhận xét chi tiết"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imageView19"
+                    app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-            <ImageView
-                android:id="@+id/imageView20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/cardView4"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view3"
-                app:srcCompat="@drawable/ic_camera_filled" />
+                <ImageView
+                    android:id="@+id/imageView19"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="14dp"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toTopOf="@+id/view3"
+                    app:layout_constraintEnd_toStartOf="@+id/textView30"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view2"
+                    app:layout_constraintVertical_bias="0.79"
+                    app:srcCompat="@drawable/ic_write_review" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView4"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/border_dashed"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintBottom_toTopOf="@+id/imgFood5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView20">
+                <ImageView
+                    android:id="@+id/imageView20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view3"
+                    app:srcCompat="@drawable/ic_camera_filled" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Thêm một số hình ảnh"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imageView20"
+                    app:layout_constraintTop_toBottomOf="@+id/view3" />
 
                 <LinearLayout
+                    android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/border_dashed"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -392,20 +391,20 @@
 
                         <ImageView
                             android:id="@+id/imageView24"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_camera" />
+                            app:srcCompat="@drawable/ic_camera"
+                            app:tint="#464646" />
 
                         <TextView
                             android:id="@+id/textView34"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:text="Thêm ảnh hoặc video"
+                            android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.497"
@@ -427,75 +426,78 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgFood5"
-                android:layout_width="190dp"
-                android:layout_height="99dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="18dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="Food Image"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toStartOf="@+id/imgFood6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView4"
-                app:shapeAppearanceOverlay="@style/RoundedImage"
-                app:srcCompat="@drawable/hue" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgFood5"
+                    android:layout_width="190dp"
+                    android:layout_height="99dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="Food Image"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toStartOf="@+id/imgFood6"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                    app:shapeAppearanceOverlay="@style/RoundedImage"
+                    app:srcCompat="@drawable/hue" />
 
-            <ImageView
-                android:id="@+id/imageView25"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/imageView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="@+id/imgFood5"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@+id/imgFood5"
+                    app:layout_constraintTop_toTopOf="@+id/imgFood5"
+                    app:srcCompat="@drawable/ic_close_circle" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgFood6"
+                    android:layout_width="190dp"
+                    android:layout_height="99dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="5dp"
+                    android:contentDescription="Food Image"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgFood5"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                    app:shapeAppearanceOverlay="@style/RoundedImage"
+                    app:srcCompat="@drawable/hue" />
+
+                <ImageView
+                    android:id="@+id/imageView26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="@+id/imgFood6"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@+id/imgFood6"
+                    app:layout_constraintTop_toTopOf="@+id/imgFood6"
+                    app:srcCompat="@drawable/ic_close_circle" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/imgFood5"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/imgFood5"
-                app:layout_constraintTop_toTopOf="@+id/imgFood5"
-                app:srcCompat="@drawable/ic_close_circle" />
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="0dp"
+                android:backgroundTint="#B43F40"
+                android:text="Gửi đánh giá"
+                android:textColorLink="#F44336"
+                app:cornerRadius="15dp" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgFood6"
-                android:layout_width="190dp"
-                android:layout_height="99dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="5dp"
-                android:contentDescription="Food Image"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imgFood5"
-                app:layout_constraintTop_toBottomOf="@+id/cardView4"
-                app:shapeAppearanceOverlay="@style/RoundedImage"
-                app:srcCompat="@drawable/hue" />
-
-            <ImageView
-                android:id="@+id/imageView26"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/imgFood6"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/imgFood6"
-                app:layout_constraintTop_toTopOf="@+id/imgFood6"
-                app:srcCompat="@drawable/ic_close_circle" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:backgroundTint="#B43F40"
-        android:text="Gửi đánh giá"
-        android:textColorLink="#F44336"
-        app:cornerRadius="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="828dp" />
+        </LinearLayout>
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

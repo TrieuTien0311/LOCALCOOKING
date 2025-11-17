@@ -1,12 +1,29 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <stroke
-        android:width="3dp"
-        android:color="@color/black"
-        android:dashWidth="12dp"
-        android:dashGap="8dp" />
+    <!-- 1. LỚP NGOÀI: Viền đứt nét (dashed border) -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="2.5dp"
+                android:color="#999999"
+                android:dashWidth="12dp"
+                android:dashGap="8dp" />
+            <corners android:radius="16dp" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
 
-    <corners android:radius="16dp" />
-    <solid android:color="#00FFFFFF" /> <!-- trong suốt -->
-</shape>
+    <!-- 2. LỚP TRONG: Nền trắng nằm sát viền (thu nhỏ đúng 2dp mỗi cạnh) -->
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="16dp" />  <!-- nhỏ hơn 2dp so với viền ngoài -->
+        </shape>
+    </item>
+
+</layer-list>

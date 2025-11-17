@@ -13,7 +13,7 @@
         android:theme="@style/Theme.LOCALCOOKING_V3T">
 
         <activity
-            android:name=".Classes"
+            android:name=".Review"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,6 +45,9 @@
         <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Classes"
             android:exported="false" />
 
     </application>
