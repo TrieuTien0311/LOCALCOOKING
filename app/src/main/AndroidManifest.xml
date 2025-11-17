@@ -12,7 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
 
-        <!-- PaymentActivity là activity chạy chính -->
         <activity
             android:name=".Classes"
             android:exported="true">
@@ -22,7 +21,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Classes (không còn là launcher) -->
         <activity
             android:name=".PaymentActivity"
             android:exported="false" />
