@@ -15,10 +15,7 @@
             android:name=".Vouchers"
             android:exported="false" />
         <activity
-            android:name=".VoucherActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Classes"
+            android:name=".Review"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +40,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".Classes"
+            android:exported="false" />
+
     </application>
 
 </manifest>
