@@ -12,4 +12,18 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">12dp</item> <!-- bán kính bo góc -->
     </style>
+    <style name="CustomTimeRangeSlider" parent="Widget.MaterialComponents.Slider">
+        <item name="trackColorActive">#8B4513</item>
+        <item name="trackColorInactive">#D3D3D3</item>
+        <item name="thumbColor">#F5F0E8</item>
+        <item name="thumbStrokeColor">#8B4513</item>
+        <item name="thumbStrokeWidth">3dp</item>
+        <item name="thumbRadius">12dp</item>
+        <item name="haloColor">@android:color/transparent</item>
+        <item name="trackHeight">6dp</item>
+
+        <!-- 2 DÒNG QUAN TRỌNG ĐỂ TẮT CHẤM CHẤM -->
+        <item name="tickVisible">false</item>        <!-- tắt hoàn toàn tick -->
+        <item name="tickColor">@android:color/transparent</item> <!-- phòng trường hợp vẫn hiện mờ -->
+    </style>
 </resources>

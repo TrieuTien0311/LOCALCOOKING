@@ -12,10 +12,13 @@ public class Class {
     private int hinhAnh;
     private boolean coUuDai;
     private String thoiGianKetThuc;
+    private int suat;
+    private boolean isFavorite; // Thêm thuộc tính này
 
+    // Constructor
     public Class(String tenLop, String moTa, String thoiGian, String ngay,
-                  String diaDiem, String gia, float danhGia, int soDanhGia,
-                  int hinhAnh, boolean coUuDai, String thoiGianKetThuc) {
+                 String diaDiem, String gia, float danhGia, int soDanhGia,
+                 int hinhAnh, boolean coUuDai, String thoiGianKetThuc, int suat) {
         this.tenLop = tenLop;
         this.moTa = moTa;
         this.thoiGian = thoiGian;
@@ -27,6 +30,8 @@ public class Class {
         this.hinhAnh = hinhAnh;
         this.coUuDai = coUuDai;
         this.thoiGianKetThuc = thoiGianKetThuc;
+        this.suat = suat;
+        this.isFavorite = false; // Mặc định chưa yêu thích
     }
 
     // Getters
@@ -41,10 +46,23 @@ public class Class {
     public int getHinhAnh() { return hinhAnh; }
     public boolean isCoUuDai() { return coUuDai; }
     public String getThoiGianKetThuc() { return thoiGianKetThuc; }
+    public int getSuat() { return suat; }
+    public boolean isFavorite() { return isFavorite; }
 
-    // Phương thức để lấy giá dưới dạng số (để sắp xếp)
+    // Setters
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    // Phương thức để lấy giá dưới dạng số (dùng cho sắp xếp)
     public double getGiaSo() {
-        String giaStr = gia.replaceAll("[^0-9]", "");
-        return Double.parseDouble(giaStr);
+        try {
+            // Loại bỏ dấu phẩy, chữ "đ" và "₫" rồi parse thành số
+            String giaString = gia.replace(".", "").replace(",", "")
+                    .replace("đ", "").replace("₫", "").trim();
+            return Double.parseDouble(giaString);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

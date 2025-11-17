@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Màu khi radio được chọn -->
+    <item android:color="#8B4513" android:state_checked="true" />
+    <!-- Màu khi nhấn (pressed) -->
+    <item android:color="#A25757" android:state_pressed="true" />
+    <!-- Màu mặc định -->
+    <item android:color="#6A3B1A" />
+</selector>

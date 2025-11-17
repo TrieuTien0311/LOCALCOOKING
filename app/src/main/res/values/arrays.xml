@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="default_time_range">
+        <item>0</item>   <!-- 06:00 -->
+        <item>14</item>  <!-- 22:00 (6 + 32/2 = 22) -->
+    </array>
+</resources>

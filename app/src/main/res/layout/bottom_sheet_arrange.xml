@@ -2,98 +2,156 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
     android:orientation="vertical"
-    android:background="@android:color/white"
-    android:padding="16dp">
+    android:padding="0dp">
 
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:elevation="2dp"
         android:gravity="center_vertical"
-        android:paddingBottom="16dp">
+        android:orientation="horizontal"
+        android:paddingLeft="25dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="12dp">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Sắp xếp"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/btnDong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginLeft="250dp"
             android:text="Đóng"
-            android:textColor="#6A3B1A"
-            android:textSize="14sp"
+            android:textColor="#8B4513"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <!-- Đường kẻ ngang -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EEEEEE"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="2dp"
+        android:layout_marginBottom="8dp"
+        android:background="#E0E0E0" />
 
     <!-- Radio Group -->
     <RadioGroup
         android:id="@+id/radioGroupSapXep"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
 
         <RadioButton
             android:id="@+id/radioMacDinh"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+
+            android:checked="true"
+            android:layoutDirection="rtl"
+            android:paddingStart="25dp"
             android:text="Mặc định"
-            android:textSize="16sp"
-            android:paddingStart="8dp"
-            android:checked="true" />
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
 
         <RadioButton
             android:id="@+id/radioGiaBatDauSomNhat"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:paddingStart="8dp"
             android:text="Giờ bắt đầu sớm nhất"
-            android:textSize="16sp"
-            android:paddingStart="8dp" />
+            android:textColor="#000000"
+            android:layoutDirection="rtl"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
 
         <RadioButton
             android:id="@+id/radioGiaBatDauMuonNhat"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:paddingStart="8dp"
             android:text="Giờ bắt đầu muộn nhất"
-            android:textSize="16sp"
-            android:paddingStart="8dp" />
+            android:textColor="#000000"
+            android:layoutDirection="rtl"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
 
         <RadioButton
             android:id="@+id/radioDanhGiaCaoNhat"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:paddingStart="8dp"
             android:text="Đánh giá cao nhất"
-            android:textSize="16sp"
-            android:paddingStart="8dp" />
+            android:textColor="#000000"
+            android:layoutDirection="rtl"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
 
         <RadioButton
             android:id="@+id/radioGiaGiamDan"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:paddingStart="8dp"
             android:text="Giá giảm dần"
-            android:textSize="16sp"
-            android:paddingStart="8dp" />
+            android:textColor="#000000"
+            android:layoutDirection="rtl"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
 
         <RadioButton
             android:id="@+id/radioGiaTangDan"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:paddingStart="8dp"
             android:text="Giá tăng dần"
-            android:textSize="16sp"
-            android:paddingStart="8dp" />
+            android:textColor="#000000"
+            android:layoutDirection="rtl"
+            android:textSize="16sp" />
     </RadioGroup>
 </LinearLayout>

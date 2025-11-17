@@ -85,9 +85,16 @@ public class ClassesFragment extends Fragment {
 
         btnSapXep.setOnClickListener(v -> showSapXepBottomSheet());
 
-        btnThoiGian.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Lọc theo thời gian", Toast.LENGTH_SHORT).show());
-
+        btnThoiGian.setOnClickListener(v -> {
+            TimeBottomSheet sheet = new TimeBottomSheet();
+            sheet.setOnFilterAppliedListener((sh, sm, eh, em, sortType) -> {
+                locTheoThoiGian(sh, sm, eh, em);
+                sapXepDanhSach(sortType == 1 ? ArrangeBottomSheet.GIO_BAT_DAU_SOM_NHAT :
+                        sortType == 2 ? ArrangeBottomSheet.GIO_BAT_DAU_MUON_NHAT :
+                                ArrangeBottomSheet.MAC_DINH);
+            });
+            sheet.show(getChildFragmentManager(), "TimeFilter");
+        });
         btnGiaCa.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Lọc theo giá cả", Toast.LENGTH_SHORT).show());
 
@@ -102,12 +109,13 @@ public class ClassesFragment extends Fragment {
                 "14:00 - 17:00",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
-                "715.000đ",
+                "715.000₫",
                 4.9f,
                 211,
                 R.drawable.hue,
                 true,
-                "23:30:00"
+                "23:30:00",
+                8
         ));
 
         danhSachGoc.add(new Class(
@@ -116,12 +124,13 @@ public class ClassesFragment extends Fragment {
                 "14:00 - 18:30",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
-                "700.000đ",
+                "700.000₫",
                 5.0f,
                 128,
                 R.drawable.hue,
                 true,
-                "23:30:00"
+                "23:30:00",
+                19
         ));
 
         danhSachGoc.add(new Class(
@@ -130,12 +139,13 @@ public class ClassesFragment extends Fragment {
                 "08:00 - 10:45",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
-                "800.000đ",
+                "800.000₫",
                 4.8f,
                 109,
                 R.drawable.hue,
                 false,
-                ""
+                "",
+                11
         ));
 
         danhSachGoc.add(new Class(
@@ -144,12 +154,13 @@ public class ClassesFragment extends Fragment {
                 "08:00 - 10:45",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
-                "800.000đ",
+                "800.000₫",
                 4.8f,
                 109,
                 R.drawable.hue,
                 false,
-                ""
+                "",
+                11
         ));
 
         // Copy sang danh sách hiển thị
@@ -164,7 +175,32 @@ public class ClassesFragment extends Fragment {
         });
         bottomSheet.show(getChildFragmentManager(), "ArrangeBottomSheet");
     }
+    private void locTheoThoiGian(int startHour, int startMinute, int endHour, int endMinute) {
+        int startMinutes = startHour * 60 + startMinute;
+        int endMinutes = endHour * 60 + endMinute;
 
+        ArrayList<Class> filtered = new ArrayList<>();
+        for (Class lop : danhSachGoc) {
+            String thoiGian = lop.getThoiGian(); // ví dụ: "14:00 - 17:00"
+            try {
+                String startStr = thoiGian.split("-")[0].trim(); // "14:00 "
+                String[] parts = startStr.split(":");
+                int hour = Integer.parseInt(parts[0]);
+                int minute = Integer.parseInt(parts[1]);
+                int classStartMinutes = hour * 60 + minute;
+
+                if (classStartMinutes >= startMinutes && classStartMinutes <= endMinutes) {
+                    filtered.add(lop);
+                }
+            } catch (Exception e) {
+                // Nếu lỗi format thì vẫn thêm để tránh mất dữ liệu
+                filtered.add(lop);
+            }
+        }
+
+        danhSachLopHoc = filtered;
+        adapter.updateData(danhSachLopHoc);
+    }
     private void sapXepDanhSach(int loaiSapXep) {
         switch (loaiSapXep) {
             case ArrangeBottomSheet.MAC_DINH:

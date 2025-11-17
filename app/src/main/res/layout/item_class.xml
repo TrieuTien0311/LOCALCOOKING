@@ -74,12 +74,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp">
 
                     <!-- CardView bọc ảnh để bo tròn -->
                     <androidx.cardview.widget.CardView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="95dp"
+                        android:layout_height="95dp"
                         app:cardCornerRadius="15dp"
                         app:cardElevation="0dp">
 
@@ -196,7 +198,7 @@
                             </LinearLayout>
 
                             <TextView
-                                android:id="@+id/textView"
+                                android:id="@+id/txtSuat"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Còn 8 suất"
@@ -212,30 +214,30 @@
                             android:layout_marginLeft="60dp"
                             android:layout_marginTop="15dp"
                             android:background="@drawable/button_red"
+                            android:letterSpacing="0.001"
                             android:minHeight="0dp"
                             android:paddingLeft="0dp"
                             android:paddingTop="0dp"
                             android:paddingRight="0dp"
                             android:paddingBottom="0dp"
                             android:text="Đặt lịch"
+                            android:textAllCaps="false"
                             android:textColor="#FDFDFD"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             app:backgroundTint="@null" />
 
-
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Icon yêu thích -->
+                <!-- Icon yêu thích - BỎ TINT ĐỂ CODE JAVA XỬ LÝ -->
                 <ImageView
                     android:id="@+id/imgFavorite"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_heart"
-                    app:tint="#7F7F7F" />
+                    android:src="@drawable/ic_heart" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

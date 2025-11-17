@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    android:padding="0dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="25dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thời gian"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnDong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="240dp"
+            android:text="Đóng"
+            android:textColor="#8B4513"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Đường kẻ ngang -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="0dp"
+        android:background="#E0E0E0" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp">
+
+        <!-- Hiển thị thời gian đã chọn -->
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/timeRangeSlider"
+            style="@style/CustomTimeRangeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:stepSize="1"
+            android:valueFrom="0"
+            android:valueTo="28"
+            app:values="@array/default_time_range" />
+
+        <!-- Nút Áp dụng -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- Ô "Từ" -->
+            <TextView
+                android:id="@+id/tvStart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Từ 08:00"
+                android:textAlignment="center"
+                android:textColor="#7A7777"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Gạch ngang ở giữa - dài đúng 30dp -->
+            <View
+                android:layout_width="30dp"
+                android:layout_height="2dp"
+                android:background="#D6D6D6" />   <!-- bạn có thể đổi màu thành #E0E0E0 nếu muốn nhạt -->
+
+            <!-- Ô "Đến" -->
+            <TextView
+                android:id="@+id/tvEnd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Đến 13:30"
+                android:textAlignment="center"
+                android:textColor="#7A7777"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view7"
+        android:layout_width="match_parent"
+        android:layout_height="13dp"
+        android:layout_marginBottom="0dp"
+        android:background="#EEEEEE" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupSapXep"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
+
+        <RadioButton
+            android:id="@+id/radioMacDinh"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+
+            android:checked="true"
+            android:layoutDirection="rtl"
+            android:paddingStart="25dp"
+            android:text="Mặc định"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
+
+        <RadioButton
+            android:id="@+id/radioGiaBatDauSomNhat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:layoutDirection="rtl"
+            android:paddingStart="8dp"
+            android:text="Giờ bắt đầu sớm nhất"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="#CDCDCD" />
+
+        <RadioButton
+            android:id="@+id/radioGiaBatDauMuonNhat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:buttonTint="@color/radio_color_selector"
+            android:layoutDirection="rtl"
+            android:paddingStart="8dp"
+            android:text="Giờ bắt đầu muộn nhất"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+    <View
+        android:id="@+id/view10"
+        android:layout_width="match_parent"
+        android:layout_height="13dp"
+        android:layout_marginBottom="0dp"
+        android:background="#EEEEEE" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="25dp"
+        android:paddingTop="15dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="15dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApDung"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/button_red"
+            android:letterSpacing="0.001"
+            android:minHeight="0dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="0dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="0dp"
+            android:text="Áp dụng"
+            android:textAllCaps="false"
+            android:textColor="#FDFDFD"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnXoaLoc"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/button_orange"
+            android:letterSpacing="0.001"
+            android:minHeight="0dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="0dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="0dp"
+            android:text="Xoá lọc"
+            android:textAllCaps="false"
+            android:textColor="#6A3B1A"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+
+    </LinearLayout>
+
+    <!-- Radio Group -->
+</LinearLayout>

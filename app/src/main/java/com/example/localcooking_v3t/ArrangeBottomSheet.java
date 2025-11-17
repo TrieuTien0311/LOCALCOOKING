@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class ArrangeBottomSheet extends BottomSheetDialogFragment {
@@ -45,6 +47,23 @@ public class ArrangeBottomSheet extends BottomSheetDialogFragment {
         if (getArguments() != null) {
             currentSelection = getArguments().getInt("current_selection", MAC_DINH);
         }
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        // Tạo BottomSheetDialog với background trong suốt để hiển thị bo tròn góc
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
+            View bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                bottomSheet.setBackgroundResource(android.R.color.transparent);
+            }
+        });
+
+        return dialog;
     }
 
     @Nullable

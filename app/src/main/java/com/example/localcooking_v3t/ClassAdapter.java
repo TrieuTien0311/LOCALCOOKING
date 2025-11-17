@@ -58,6 +58,10 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
         holder.txtDanhGia.setText(lopHoc.getDanhGia() + " ⭐");
         holder.txtSoDanhGia.setText("(" + lopHoc.getSoDanhGia() + " đánh giá)");
         holder.imgMonAn.setImageResource(lopHoc.getHinhAnh());
+        holder.txtSuat.setText("Còn "+ lopHoc.getSuat()+" suất");
+
+        // Cập nhật icon yêu thích dựa trên trạng thái
+        updateFavoriteIcon(holder.imgFavorite, lopHoc.isFavorite());
 
         // Điều chỉnh marginTop của cardView dựa vào có ưu đãi hay không
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
@@ -84,7 +88,15 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
             if (listener != null) listener.onChiTietClick(lopHoc);
         });
 
+        // Xử lý click icon yêu thích với toggle
         holder.imgFavorite.setOnClickListener(v -> {
+            // Toggle trạng thái yêu thích
+            lopHoc.setFavorite(!lopHoc.isFavorite());
+
+            // Cập nhật icon ngay lập tức
+            updateFavoriteIcon(holder.imgFavorite, lopHoc.isFavorite());
+
+            // Thông báo cho listener
             if (listener != null) listener.onFavoriteClick(lopHoc);
         });
     }
@@ -92,6 +104,17 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
     @Override
     public int getItemCount() {
         return danhSachLopHoc.size();
+    }
+
+    // Phương thức helper để cập nhật icon yêu thích
+    private void updateFavoriteIcon(ImageView imgFavorite, boolean isFavorite) {
+        if (isFavorite) {
+            imgFavorite.setImageResource(R.drawable.ic_heartredfilled);
+            imgFavorite.setColorFilter(null); // Xóa tint để hiện màu đỏ gốc
+        } else {
+            imgFavorite.setImageResource(R.drawable.ic_heart);
+            imgFavorite.setColorFilter(0x7F7F7F7F); // Màu xám
+        }
     }
 
     // Chuyển đổi dp sang pixel
@@ -105,7 +128,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
         LinearLayout layoutBanner;
         ImageView imgMonAn, imgFavorite;
         TextView txtTenLop, txtMoTa, txtThoiGian, txtNgay, txtDiaDiem;
-        TextView txtGia, txtDanhGia, txtSoDanhGia, txtChiTiet, txtKetThuc;
+        TextView txtGia, txtDanhGia, txtSoDanhGia, txtChiTiet, txtKetThuc,txtSuat;
         Button btnDatLich;
 
         public LopHocViewHolder(@NonNull View itemView) {
@@ -125,6 +148,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
             txtChiTiet = itemView.findViewById(R.id.txtChiTiet);
             txtKetThuc = itemView.findViewById(R.id.txtKetThuc);
             btnDatLich = itemView.findViewById(R.id.btnDatLich);
+            txtSuat=itemView.findViewById(R.id.txtSuat);
         }
     }
 }
