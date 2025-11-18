@@ -8,76 +8,64 @@
     android:layout_height="match_parent"
     tools:context=".PaymentActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="0dp"
-        android:layout_height="111dp"
-        android:background="@drawable/header"
-        android:elevation="20dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFC59D"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/txtDiaDiem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:text="Thanh toán"
+            android:textColor="#6A3B1A"
+            android:textSize="30sp"
 
-            <TextView
-                android:id="@+id/txtTitle"
-                android:layout_width="239dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="30dp"
-                android:text="Thanh toán"
-                android:textColor="#6A3B1A"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.08"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.56" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="Back"
-                android:src="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.03"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.74" />
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Xác nhận đơn &amp; chọn phương thức"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.23"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-                app:layout_constraintVertical_bias="0.050000012" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+        <TextView
+            android:id="@+id/txtThoiGian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginBottom="5dp"
+            android:text="Xác nhận đơn và chọn phương thức"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDiaDiem" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
         android:background="@color/bg_orange"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/bottomFrameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,20 +123,21 @@
                                     android:id="@+id/textView3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginStart="13dp"
+                                    android:layout_marginTop="8dp"
                                     android:text="Ẩm thực địa phương Huế"
+                                    android:textColor="#040404"
                                     android:textSize="20sp"
                                     android:textStyle="bold"
                                     app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintHorizontal_bias="0.782"
-                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.083"
+                                    app:layout_constraintStart_toEndOf="@+id/imgFood"
                                     app:layout_constraintTop_toTopOf="parent" />
 
                                 <TextView
                                     android:id="@+id/textView4"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
                                     android:text="750.000₫"
                                     android:textColor="#A54F4F"
                                     android:textSize="20sp"
@@ -471,6 +460,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
+                        <RadioGroup
+                            android:id="@+id/rdGroupPayment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView20">
+
+                            <RadioButton
+                                android:id="@+id/rdMomo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:buttonTint="@color/radio_color_selector"
+                                android:checked="true"
+                                android:padding="0dp" />
+
+                            <RadioButton
+                                android:id="@+id/rdThe"
+                                android:layout_width="wrap_content"
+                                android:buttonTint="@color/radio_color_selector"
+                                android:layout_height="wrap_content" />
+                        </RadioGroup>
+
                         <TextView
                             android:id="@+id/textView16"
                             android:layout_width="wrap_content"
@@ -489,6 +502,7 @@
                             android:id="@+id/imageView11"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
                             app:layout_constraintEnd_toEndOf="@+id/textView16"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="@+id/textView16"
@@ -511,20 +525,19 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="15dp"
                             android:text="Momo"
                             android:textColor="#9A000000"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.17"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.26999998" />
+                            app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
                         <TextView
                             android:id="@+id/textView19"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="28dp"
                             android:text="Thẻ"
                             android:textColor="#9A000000"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -535,9 +548,10 @@
                             app:layout_constraintVertical_bias="0.78" />
 
                         <ImageView
-                            android:id="@+id/imageView14"
+                            android:id="@+id/txtTrangThai1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.03"
@@ -547,9 +561,10 @@
                             app:srcCompat="@drawable/status" />
 
                         <ImageView
-                            android:id="@+id/imageView15"
+                            android:id="@+id/txtTrangThai2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
                             android:visibility="invisible"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -564,6 +579,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="1dp"
+                            android:layout_marginTop="3dp"
                             android:text="Xem tất cả"
                             android:textColor="#BA5632"
                             android:textStyle="bold"
@@ -574,27 +590,6 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintVertical_bias="0.089999974" />
 
-                        <RadioButton
-                            android:id="@+id/radioButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="1.0"
-                            app:layout_constraintStart_toEndOf="@+id/imageView14"
-                            app:layout_constraintTop_toTopOf="@+id/textView20"
-                            app:layout_constraintVertical_bias="0.24000001" />
-
-                        <RadioButton
-                            android:id="@+id/radioButton2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/radioButton"
-                            app:layout_constraintHorizontal_bias="1.0"
-                            app:layout_constraintStart_toEndOf="@+id/imageView15"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.85" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -789,11 +784,12 @@
                 android:id="@+id/txtTotalLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="68dp"
+                android:layout_marginStart="88dp"
                 android:text="Tổng cộng"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
@@ -802,6 +798,7 @@
                 android:id="@+id/txtTotalAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:text="715.000₫"
                 android:textColor="#BA5632"
                 android:textSize="18sp"
@@ -821,15 +818,16 @@
                 android:textColor="#999999"
                 android:textSize="11sp"
                 app:layout_constraintEnd_toEndOf="@+id/txtTotalAmount"
-                app:layout_constraintStart_toStartOf="@+id/txtTotalAmount"
                 app:layout_constraintTop_toBottomOf="@+id/txtTotalAmount" />
 
             <Button
                 android:id="@+id/btnConfirmPayment"
-                android:layout_width="148dp"
+                android:layout_width="125dp"
                 android:layout_height="42dp"
                 android:backgroundTint="#BA5632"
+                android:letterSpacing="0.001"
                 android:text="Thanh toán"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
