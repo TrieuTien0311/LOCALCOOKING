@@ -52,7 +52,7 @@ public class Header extends AppCompatActivity {
 
         btnNotice.setOnClickListener(v -> {
             selectButton(btnNotice, "Thông báo", R.drawable.ic_noticefilled, R.drawable.ic_notice);
-            loadFragment(new HomeFragment());
+            loadFragment(new NoticeFragment());
         });
 
         btnPerson.setOnClickListener(v -> {

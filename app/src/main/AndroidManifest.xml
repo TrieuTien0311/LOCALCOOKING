@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".Vouchers"
             android:exported="false" />
         <activity
-            android:name=".PaymentActivity"
+            android:name=".Header"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +33,7 @@
             android:name=".Register"
             android:exported="false" /> <!-- Header -->
         <activity
-            android:name=".Header"
+            android:name=".Classes"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Splash -->
         <activity
@@ -40,11 +43,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
-        <activity
-            android:name=".Classes"
-            android:exported="false" />
-
     </application>
 
 </manifest>

@@ -97,10 +97,10 @@ public class ArrangeBottomSheet extends BottomSheetDialogFragment {
         int radioId;
         switch (loaiSapXep) {
             case GIO_BAT_DAU_SOM_NHAT:
-                radioId = R.id.radioGiaBatDauSomNhat;
+                radioId = R.id.rdGiaGiamDan;
                 break;
             case GIO_BAT_DAU_MUON_NHAT:
-                radioId = R.id.radioGiaBatDauMuonNhat;
+                radioId = R.id.rdGiaTangDan;
                 break;
             case DANH_GIA_CAO_NHAT:
                 radioId = R.id.radioDanhGiaCaoNhat;
@@ -112,16 +112,16 @@ public class ArrangeBottomSheet extends BottomSheetDialogFragment {
                 radioId = R.id.radioGiaTangDan;
                 break;
             default:
-                radioId = R.id.radioMacDinh;
+                radioId = R.id.rdMacDinh;
                 break;
         }
         radioGroup.check(radioId);
     }
 
     private int getLoaiSapXepFromRadioId(int radioId) {
-        if (radioId == R.id.radioGiaBatDauSomNhat) {
+        if (radioId == R.id.rdGiaGiamDan) {
             return GIO_BAT_DAU_SOM_NHAT;
-        } else if (radioId == R.id.radioGiaBatDauMuonNhat) {
+        } else if (radioId == R.id.rdGiaTangDan) {
             return GIO_BAT_DAU_MUON_NHAT;
         } else if (radioId == R.id.radioDanhGiaCaoNhat) {
             return DANH_GIA_CAO_NHAT;

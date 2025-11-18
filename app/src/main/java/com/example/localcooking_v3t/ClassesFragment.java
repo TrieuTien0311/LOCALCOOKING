@@ -26,6 +26,8 @@ public class ClassesFragment extends Fragment {
     private List<Class> danhSachLopHoc;
     private List<Class> danhSachGoc; // Lưu danh sách gốc
     private int currentSortType = ArrangeBottomSheet.MAC_DINH;
+    private int currentMinCost = 500000;
+    private int currentMaxCost = 3000000;
 
     public ClassesFragment() {
         // Required empty public constructor
@@ -95,8 +97,22 @@ public class ClassesFragment extends Fragment {
             });
             sheet.show(getChildFragmentManager(), "TimeFilter");
         });
-        btnGiaCa.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Lọc theo giá cả", Toast.LENGTH_SHORT).show());
+        btnGiaCa.setOnClickListener(v -> {
+            CostBottomSheet sheet = new CostBottomSheet();
+            sheet.setOnFilterAppliedListener((minCost, maxCost, sortType) -> {
+                currentMinCost = minCost;
+                currentMaxCost = maxCost;
+
+                // Lọc theo giá
+                locTheoGia(minCost, maxCost);
+
+                // Sắp xếp theo loại
+                sapXepDanhSach(sortType == 1 ? ArrangeBottomSheet.GIA_GIAM_DAN :
+                        sortType == 2 ? ArrangeBottomSheet.GIA_TANG_DAN :
+                                ArrangeBottomSheet.MAC_DINH);
+            });
+            sheet.show(getChildFragmentManager(), "CostFilter");
+        });
 
         return view;
     }
@@ -154,7 +170,7 @@ public class ClassesFragment extends Fragment {
                 "08:00 - 10:45",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
-                "800.000₫",
+                "1.000.000₫",
                 4.8f,
                 109,
                 R.drawable.hue,
@@ -253,6 +269,25 @@ public class ClassesFragment extends Fragment {
                 break;
         }
 
+        adapter.updateData(danhSachLopHoc);
+    }
+    private void locTheoGia(int minCost, int maxCost) {
+        ArrayList<Class> filtered = new ArrayList<>();
+        for (Class lop : danhSachGoc) {
+            try {
+                // Lấy giá số từ chuỗi giá (ví dụ: "715.000₫" -> 715000)
+                double giaSo = lop.getGiaSo();
+
+                if (giaSo >= minCost && giaSo <= maxCost) {
+                    filtered.add(lop);
+                }
+            } catch (Exception e) {
+                // Nếu lỗi format thì vẫn thêm để tránh mất dữ liệu
+                filtered.add(lop);
+            }
+        }
+
+        danhSachLopHoc = filtered;
         adapter.updateData(danhSachLopHoc);
     }
 }
