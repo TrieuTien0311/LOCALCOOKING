@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thời gian"
+            android:text="Giá cả"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -51,7 +51,6 @@
         android:paddingLeft="18dp"
         android:paddingRight="18dp">
 
-        <!-- Hiển thị thời gian đã chọn -->
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/timeRangeSlider"
             style="@style/CustomTimeRangeSlider"
@@ -59,10 +58,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:stepSize="1"
-            android:valueFrom="0"
-            android:valueTo="28"
-            app:values="@array/default_time_range" />
+            android:stepSize="100000"
+            android:valueFrom="500000"
+            android:valueTo="3000000"
+            app:values="@array/default_cost_range" />
 
         <!-- Nút Áp dụng -->
 
@@ -85,9 +84,9 @@
                 android:background="@drawable/button_bg"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Từ 08:00"
+                android:text="500.000 ₫"
                 android:textAlignment="center"
-                android:textColor="#7A7777"
+                android:textColor="#020202"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -107,9 +106,9 @@
                 android:background="@drawable/button_bg"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Đến 13:30"
+                android:text="3.000.000 ₫"
                 android:textAlignment="center"
-                android:textColor="#7A7777"
+                android:textColor="#020202"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -158,7 +157,7 @@
             android:buttonTint="@color/radio_color_selector"
             android:layoutDirection="rtl"
             android:paddingStart="8dp"
-            android:text="Giờ bắt đầu sớm nhất"
+            android:text="Giá giảm dần"
             android:textColor="#000000"
             android:textSize="16sp" />
 
@@ -176,7 +175,7 @@
             android:buttonTint="@color/radio_color_selector"
             android:layoutDirection="rtl"
             android:paddingStart="8dp"
-            android:text="Giờ bắt đầu muộn nhất"
+            android:text="Giá tăng dần"
             android:textColor="#000000"
             android:textSize="16sp" />
 

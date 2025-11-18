@@ -15,7 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#F5E6D3"
-        tools:context=".Register">
+        tools:context=".Register"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="240dp">
 
         <!-- Back Button -->
         <ImageView

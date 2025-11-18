@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="default_time_range">
-        <item>0</item>   <!-- 06:00 -->
-        <item>14</item>  <!-- 22:00 (6 + 32/2 = 22) -->
+        <item>0</item>
+        <item>14</item>
+    </array>
+    <array name="default_cost_range">
+        <item>500000</item>   <!-- Giá trị bắt đầu: 500,000 -->
+        <item>3000000</item>  <!-- Giá trị kết thúc: 3,000,000 -->
     </array>
 </resources>

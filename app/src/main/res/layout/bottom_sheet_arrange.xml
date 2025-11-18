@@ -52,7 +52,7 @@
         android:paddingRight="25dp">
 
         <RadioButton
-            android:id="@+id/radioMacDinh"
+            android:id="@+id/rdMacDinh"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:buttonTint="@color/radio_color_selector"
@@ -72,7 +72,7 @@
             android:background="#CDCDCD" />
 
         <RadioButton
-            android:id="@+id/radioGiaBatDauSomNhat"
+            android:id="@+id/rdGiaGiamDan"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:buttonTint="@color/radio_color_selector"
@@ -90,7 +90,7 @@
             android:background="#CDCDCD" />
 
         <RadioButton
-            android:id="@+id/radioGiaBatDauMuonNhat"
+            android:id="@+id/rdGiaTangDan"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:buttonTint="@color/radio_color_selector"
