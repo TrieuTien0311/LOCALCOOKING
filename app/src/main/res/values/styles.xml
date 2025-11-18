@@ -26,4 +26,9 @@
         <item name="tickVisible">false</item>        <!-- tắt hoàn toàn tick -->
         <item name="tickColor">@android:color/transparent</item> <!-- phòng trường hợp vẫn hiện mờ -->
     </style>
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0.001</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>
