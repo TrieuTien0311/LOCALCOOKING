@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".Vouchers"
             android:exported="false" />
         <activity
-            android:name=".PaymentActivity"
+            android:name=".Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,11 +43,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
         <activity
             android:name=".Classes"
             android:exported="false" />
-
     </application>
 
 </manifest>
