@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Vòng tròn nền màu be nhạt hơn -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#D4C4B0"/>
+            <size
+                android:width="80dp"
+                android:height="80dp"/>
+        </shape>
+    </item>
+
+    <!-- Icon discount ở giữa - to hơn -->
+    <item
+        android:width="48dp"
+        android:height="48dp"
+        android:gravity="center">
+
+        <vector
+            android:width="28dp"
+            android:height="28dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+
+            <!-- Receipt/Bill shape - stroke only (trong suốt) -->
+            <path
+                android:fillColor="@android:color/transparent"
+                android:strokeColor="#6A3B1A"
+                android:strokeWidth="1.5"
+                android:pathData="M18,2H6C5.45,2 5,2.45 5,3V22L7.5,20.5L9.5,22L12,20.5L14.5,22L16.5,20.5L19,22V3C19,2.45 18.55,2 18,2Z"/>
+
+            <!-- Discount percentage symbol - cùng màu với tag -->
+            <path
+                android:fillColor="#6A3B1A"
+                android:pathData="M9.5,8.5C9.5,7.67 10.17,7 11,7C11.83,7 12.5,7.67 12.5,8.5C12.5,9.33 11.83,10 11,10C10.17,10 9.5,9.33 9.5,8.5Z"/>
+
+            <path
+                android:fillColor="#6A3B1A"
+                android:pathData="M11.5,15.5C11.5,14.67 12.17,14 13,14C13.83,14 14.5,14.67 14.5,15.5C14.5,16.33 13.83,17 13,17C12.17,17 11.5,16.33 11.5,15.5Z"/>
+
+            <!-- Diagonal line -->
+            <path
+                android:strokeWidth="1.5"
+                android:strokeColor="#6A3B1A"
+                android:pathData="M15,9L9,15"/>
+
+        </vector>
+
+    </item>
+
+</layer-list>

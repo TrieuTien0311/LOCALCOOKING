@@ -3,14 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#DBCAB7"
     tools:context=".NoticeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#9B3E3E"
-        android:text="@string/hello_blank_fragment"
-        android:textColor="#310808" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewNotices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>
