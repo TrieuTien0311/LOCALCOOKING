@@ -11,41 +11,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
-
+        <activity
+            android:name=".Vouchers"
+            android:exported="false" />
         <activity
             android:name=".PaymentActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Review"
             android:exported="false" />
-
-        <!-- Register -->
         <activity
             android:name=".Register"
-            android:exported="false" />
-
-        <!-- Header -->
+            android:exported="false" /> <!-- Header -->
         <activity
             android:name=".Header"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-
-        <!-- Splash -->
+            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Splash -->
         <activity
             android:name=".Splash"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-
-        <!-- MainActivity -->
+            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".Classes"
             android:exported="false" />

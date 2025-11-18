@@ -60,7 +60,7 @@ public class TimeBottomSheet extends BottomSheetDialogFragment {
         tvStart = view.findViewById(R.id.tvStart);
         tvEnd = view.findViewById(R.id.tvEnd);
         btnDong = view.findViewById(R.id.btnDong);
-        btnApDung = view.findViewById(R.id.btnApDung);
+        btnApDung = view.findViewById(R.id.btnApDung2);
         btnXoaLoc = view.findViewById(R.id.btnXoaLoc);
         radioGroup = view.findViewById(R.id.radioGroupSapXep);
 

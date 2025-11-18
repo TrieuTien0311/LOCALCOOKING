@@ -198,7 +198,7 @@
         android:paddingBottom="15dp">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnApDung"
+            android:id="@+id/btnApDung2"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
