@@ -201,10 +201,12 @@
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="5dp"
                     android:backgroundTint="#B73F41"
+                    android:letterSpacing="0.001"
                     android:text="Tạo tài khoản"
-                    android:textSize="18sp" />
+                    android:textAllCaps="false"
+                    android:textSize="16sp" />
 
                 <!-- Divider -->
                 <LinearLayout
