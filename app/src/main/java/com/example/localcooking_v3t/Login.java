@@ -52,22 +52,6 @@ public class Login extends AppCompatActivity {
         btnGG = findViewById(R.id.btnGG);
         btnFB = findViewById(R.id.btnFB);
 
-        // Xử lý sự kiện nút Back (icon)
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        // Xử lý sự kiện nút Back (text)
-        tvBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         // Xử lý sự kiện Quên mật khẩu - CHUYỂN ĐÊN TRANG FORGOT PASSWORD
         tvForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,38 +67,6 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Register.class);
                 startActivity(intent);
-            }
-        });
-
-        // Xử lý sự kiện nút Đăng nhập
-        btnDangNhap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = idEmail.getText().toString().trim();
-                String password = idMatKhau.getText().toString().trim();
-
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Xử lý đăng nhập ở đây
-                    Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // Xử lý đăng nhập bằng Google
-        btnGG.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Login.this, "Đăng nhập bằng Google", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Xử lý đăng nhập bằng Facebook
-        btnFB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Login.this, "Đăng nhập bằng Facebook", Toast.LENGTH_SHORT).show();
             }
         });
     }
