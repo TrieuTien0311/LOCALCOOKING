@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
             android:layout_marginBottom="5dp"
-            android:text="Xác nhận đơn và chọn phương thức"
+            android:text="Xác nhận đơn &amp; chọn phương thức"
             android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
