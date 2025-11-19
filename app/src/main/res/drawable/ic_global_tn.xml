@@ -1,0 +1,61 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Đường tròn ngoài -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M12,2
+                          A10,10 0 1,1 11.99,2" />
+
+    <!-- Đường dọc giữa -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M12,2 L12,22" />
+
+    <!-- Đường dọc ngoài trái -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M8,3
+                          A14,14 0 0,0 8,21" />
+
+    <!-- Đường dọc ngoài phải -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M16,3
+                          A14,14 0 0,1 16,21" />
+
+    <!-- Đường ngang trên -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M2,12 L22,12" />
+
+    <!-- Đường ngang gần trên -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M3.5,7
+                          L20.5,7" />
+
+    <!-- Đường ngang gần dưới -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#212529"
+        android:strokeWidth="2"
+        android:pathData="M3.5,17
+                          L20.5,17" />
+
+</vector>

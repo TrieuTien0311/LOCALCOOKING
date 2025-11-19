@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
+            android:name=".profile"
+            android:exported="false" />
+        <activity
             android:name=".PaymentActivity"
             android:exported="false" />
         <activity

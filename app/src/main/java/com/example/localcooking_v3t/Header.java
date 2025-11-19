@@ -57,7 +57,7 @@ public class Header extends AppCompatActivity {
 
         btnPerson.setOnClickListener(v -> {
             selectButton(btnPerson, "Trang cá nhân", R.drawable.ic_personfilled, R.drawable.ic_person);
-            loadFragment(new HomeFragment());
+            loadFragment(new ProfileFragment());
         });
 
         // Mặc định chọn Trang chủ
