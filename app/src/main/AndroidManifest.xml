@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
+            android:name=".ChangePasswordOtp"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePassword"
+            android:exported="false" />
+        <activity
             android:name=".Login"
             android:exported="false" />
         <activity
