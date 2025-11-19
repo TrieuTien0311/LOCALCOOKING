@@ -257,7 +257,7 @@
                         android:background="@drawable/bg_filter_gray"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="6dp">
+                        android:padding="8dp">
 
                         <TextView
                             android:id="@+id/txtTatCa"
