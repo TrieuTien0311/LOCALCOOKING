@@ -72,14 +72,13 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.075" />
+                app:layout_constraintVertical_bias="0.050000012" />
 
             <TextView
                 android:id="@+id/textView36"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="5dp"
                 android:text="giảm"
                 android:textColor="#B3292D32"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,7 +89,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
-                android:layout_marginTop="5dp"
                 android:text="-15.000₫"
                 android:textColor="#A54F4F"
                 android:textStyle="bold"
@@ -102,7 +100,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="#B73F41"
                 android:text="Áp dụng"
@@ -246,9 +243,11 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/fragmentContainer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"></LinearLayout>
+                        android:orientation="vertical"
+                        />
 
 
                 </LinearLayout>

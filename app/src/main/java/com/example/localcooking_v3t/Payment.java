@@ -12,7 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class PaymentActivity extends AppCompatActivity {
+public class Payment extends AppCompatActivity {
 
     private RadioGroup rdGroupPayment;
     private RadioButton rdMomo, rdThe;
