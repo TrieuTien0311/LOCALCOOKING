@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtDiaDiem"
+            android:id="@+id/txtThanhToan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
@@ -43,7 +43,7 @@
             app:srcCompat="@drawable/ic_back" />
 
         <TextView
-            android:id="@+id/txtThoiGian"
+            android:id="@+id/txtMoTa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
