@@ -12,13 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
-            android:name=".profile"
+            android:name=".Bill"
             android:exported="false" />
         <activity
-            android:name=".PaymentActivity"
+            android:name=".Payment"
             android:exported="false" />
         <activity
-            android:name=".Vouchers"
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePassword"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePasswordOtp"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".OtpVerification"
             android:exported="false" />
         <activity
             android:name=".Header"
@@ -36,13 +48,12 @@
             android:name=".Register"
             android:exported="false" /> <!-- Header -->
         <activity
-            android:name=".Classes"
+            android:name=".Vouchers"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Splash -->
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".Splash"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- MainActivity -->
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />

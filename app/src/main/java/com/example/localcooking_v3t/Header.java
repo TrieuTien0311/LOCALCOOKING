@@ -1,6 +1,8 @@
 package com.example.localcooking_v3t;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +39,7 @@ public class Header extends AppCompatActivity {
         // Set listener cho các button
         btnHome.setOnClickListener(v -> {
             selectButton(btnHome, "Trang chủ", R.drawable.ic_homefilled, R.drawable.ic_home);
+
             loadFragment(new HomeFragment());
         });
 
@@ -66,26 +69,40 @@ public class Header extends AppCompatActivity {
     }
 
     private void loadFragment(Fragment fragment) {
+
+        // Ẩn hoặc hiện Header
+        FrameLayout headerLayout = findViewById(R.id.frameLayout);
+
+        if (fragment instanceof HomeFragment) {
+            headerLayout.setVisibility(View.GONE);   // Ẩn header
+        } else {
+            headerLayout.setVisibility(View.VISIBLE); // Hiện header
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commit();
     }
 
+
     private void selectButton(ImageView selectedButton, String title, int filledIcon, int normalIcon) {
-        // Reset tất cả các button về trạng thái ban đầu
+
         resetAllButtons();
 
-        // Đặt nút được chọn
-        selectedButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFC59D));
+        selectedButton.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(0xFFFFC59D)
+        );
         selectedButton.setImageResource(filledIcon);
 
-        // Cập nhật title
-        txtTitle.setText(title);
+        // Chỉ set title nếu KHÔNG phải Home
+        if (!title.equals("Trang chủ")) {
+            txtTitle.setText(title);
+        }
 
-        // Lưu button hiện tại
         currentSelectedButton = selectedButton;
     }
+
 
     private void resetAllButtons() {
         resetButton(btnHome, R.drawable.ic_home);
