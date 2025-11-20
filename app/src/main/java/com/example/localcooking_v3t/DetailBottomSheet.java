@@ -133,7 +133,9 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    return new DetailDescriptionFragment();
+                    DetailDescriptionFragment descFragment = new DetailDescriptionFragment();
+                    descFragment.setLopHoc(lopHoc);
+                    return descFragment;
                 case 1:
                     return new DetailEvaluateFragment();
                 case 2:
