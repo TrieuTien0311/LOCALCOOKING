@@ -53,34 +53,33 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         holder.txtDiaDiem.setText(order.getDiaDiem());
         holder.txtGia.setText(order.getGia());
         holder.txtThoiGianHuy.setText("Đã hủy lúc: " + order.getThoiGianHuy());
-        holder.txtTrangThai.setText(order.getTrangThai());
 
         switch (order.getTrangThai()) {
             case "Đặt trước":
                 holder.btnHuy.setVisibility(View.VISIBLE);
                 holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia.setVisibility(View.GONE);
+                holder.txtDanhGia2.setVisibility(View.GONE);
                 holder.txtThoiGianHuy.setVisibility(View.GONE);
                 break;
 
             case "Đã hoàn thành":
                 holder.btnHuy.setVisibility(View.GONE);
                 holder.txtDatLai.setVisibility(View.VISIBLE);
-                holder.txtDanhGia.setVisibility(View.VISIBLE);
+                holder.txtDanhGia2.setVisibility(View.VISIBLE);
                 holder.txtThoiGianHuy.setVisibility(View.GONE);
                 break;
 
             case "Đã hủy":
                 holder.btnHuy.setVisibility(View.GONE);
                 holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia.setVisibility(View.GONE);
+                holder.txtDanhGia2.setVisibility(View.GONE);
                 holder.txtThoiGianHuy.setVisibility(View.VISIBLE);
                 break;
 
             default:
                 holder.btnHuy.setVisibility(View.GONE);
                 holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia.setVisibility(View.GONE);
+                holder.txtDanhGia2.setVisibility(View.GONE);
                 holder.txtThoiGianHuy.setVisibility(View.GONE);
                 break;
         }
@@ -93,7 +92,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             if (listener != null) listener.onDatLaiClick(order);
         });
 
-        holder.txtDanhGia.setOnClickListener(v -> {
+        holder.txtDanhGia2.setOnClickListener(v -> {
             if (listener != null) listener.onDanhGiaClick(order);
         });
     }
@@ -105,7 +104,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     static class OrderHistoryViewHolder extends RecyclerView.ViewHolder {
         ImageView imgOrder;
-        TextView txtTieuDe, txtSoLuong, txtLich, txtDiaDiem, txtGia, txtThoiGianHuy, txtTrangThai, txtDatLai, txtDanhGia;
+        TextView txtTieuDe, txtSoLuong, txtLich, txtDiaDiem, txtGia, txtThoiGianHuy, txtDatLai, txtDanhGia2;
         Button btnHuy;
 
         public OrderHistoryViewHolder(@NonNull View itemView) {
@@ -119,7 +118,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             txtThoiGianHuy = itemView.findViewById(R.id.txtThoiGianHuy);
             btnHuy = itemView.findViewById(R.id.btnHuyDat);
             txtDatLai = itemView.findViewById(R.id.txtDatLai);
-            txtDanhGia = itemView.findViewById(R.id.txtDanhGia);
+            txtDanhGia2 = itemView.findViewById(R.id.txtDanhGia2);
         }
     }
 }

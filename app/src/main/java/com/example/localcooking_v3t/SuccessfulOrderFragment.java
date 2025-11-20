@@ -31,12 +31,10 @@ public class SuccessfulOrderFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_detail_voucher, container, false);
-        LinearLayout containerLayout = view.findViewById(R.id.fragmentContainer);
+        View view = inflater.inflate(R.layout.fragment_successful_order, container, false);
 
-        recyclerView = new RecyclerView(requireContext());
+        recyclerView = view.findViewById(R.id.recyclerViewNotices);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        containerLayout.addView(recyclerView);
 
         taoDuLieuMau();
 

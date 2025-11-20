@@ -136,7 +136,7 @@
                 android:textColor="#BA5632"
                 android:textSize="12sp"
                 android:textStyle="italic"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -156,7 +156,8 @@
                     android:text="Đặt lại"
                     android:textColor="#D84B42"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/txtDanhGia2"
@@ -169,7 +170,8 @@
                     android:text="Xem đánh giá"
                     android:textColor="#D84B42"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

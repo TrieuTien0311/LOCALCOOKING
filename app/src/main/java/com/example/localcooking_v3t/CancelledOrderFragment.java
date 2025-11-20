@@ -31,34 +31,20 @@ public class CancelledOrderFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_detail_voucher, container, false);
-        LinearLayout containerLayout = view.findViewById(R.id.fragmentContainer);
+        View view = inflater.inflate(R.layout.fragment_cancelled_order, container, false);
 
-        recyclerView = new RecyclerView(requireContext());
+        recyclerView = view.findViewById(R.id.recyclerViewNotices);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        containerLayout.addView(recyclerView);
 
         taoDuLieuMau();
 
         adapter = new OrderHistoryAdapter(danhSachLichSuDatLich);
         recyclerView.setAdapter(adapter);
 
-        // Chỉ hiển thị thông tin, không cần xử lý nút
         adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
-            @Override
-            public void onHuyDatClick(OrderHistory lichSuDatLich) {
-                // Không có nút hủy
-            }
-
-            @Override
-            public void onDatLaiClick(OrderHistory lichSuDatLich) {
-                // Không có nút đặt lại
-            }
-
-            @Override
-            public void onDanhGiaClick(OrderHistory lichSuDatLich) {
-                // Không có nút đánh giá
-            }
+            @Override public void onHuyDatClick(OrderHistory lichSuDatLich) {}
+            @Override public void onDatLaiClick(OrderHistory lichSuDatLich) {}
+            @Override public void onDanhGiaClick(OrderHistory lichSuDatLich) {}
         });
 
         return view;
@@ -74,8 +60,8 @@ public class CancelledOrderFragment extends Fragment {
                 "08:00 - 11:00, 12/11/2024",
                 "84 Phố Hàng Mã, Hà Nội",
                 "830.000₫",
-                "Đã hủy",
-                "10:52 - T3, 11/11/2024"
+                "10:52 - T3, 11/11/2024",
+                "Đã hủy"
         ));
     }
 }
