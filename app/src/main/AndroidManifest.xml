@@ -18,7 +18,7 @@
             android:name=".Payment"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".Header"
             android:exported="false" />
         <activity
             android:name=".ChangePassword"
@@ -33,7 +33,7 @@
             android:name=".OtpVerification"
             android:exported="false" />
         <activity
-            android:name=".Header"
+            android:name=".Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

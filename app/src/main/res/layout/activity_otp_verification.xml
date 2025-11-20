@@ -271,7 +271,7 @@
                 android:backgroundTint="#B73F41"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="Gửi liên kết"
+                android:text="Xác nhận"
                 android:textAllCaps="false"
                 android:textSize="18sp" />
 
