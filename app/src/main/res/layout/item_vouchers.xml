@@ -59,12 +59,22 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/txtNguoi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Từ 1 người"
+                android:textColor="#B2292D32"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/txtHSD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="HSD: 10/10/2025"
                 android:textColor="#B2292D32"
                 android:textSize="12sp" />
+
         </LinearLayout>
 
         <RadioButton
