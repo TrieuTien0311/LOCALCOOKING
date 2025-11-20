@@ -78,11 +78,11 @@ public class OrderHistoryFragment extends Fragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    return new SuccessfulOrderFragment(); // Tab "Đặt trước"
+                    return new PreOrderFragment(); // Tab "Đặt trước"
                 case 1:
                     return new SuccessfulOrderFragment(); // Tab "Đã hoàn thành"
                 case 2:
-                    return new SuccessfulOrderFragment(); // Tab "Đã huỷ"
+                    return new CancelledOrderFragment(); // Tab "Đã huỷ"
                 default:
                     return new SuccessfulOrderFragment();
             }
