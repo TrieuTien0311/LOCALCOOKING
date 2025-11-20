@@ -17,6 +17,11 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
 
     private List<Voucher> danhSachUuDai;
     private OnItemClickListener listener;
+    private boolean hienRadioButton = true;  // mặc định: có nút chọn
+
+    public void setHienRadioButton(boolean hien) {
+        this.hienRadioButton = hien;
+    }
 
     public interface OnItemClickListener {
         void onDuocChonClick(Voucher uuDai);
@@ -64,6 +69,22 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
 
             if (listener != null) listener.onDuocChonClick(uuDai);
         });
+
+        // ⚡ Điều khiển hiển thị radio
+        if (!hienRadioButton) {
+            holder.rdbChon.setVisibility(View.GONE);
+        } else {
+            holder.rdbChon.setVisibility(View.VISIBLE);
+            holder.rdbChon.setChecked(uuDai.isDuocChon());
+            holder.rdbChon.setOnClickListener(v -> {
+                for (Voucher vc : danhSachUuDai) vc.setDuocChon(false);
+
+                uuDai.setDuocChon(true);
+                notifyDataSetChanged();
+
+                if (listener != null) listener.onDuocChonClick(uuDai);
+            });
+        }
     }
 
     @Override
