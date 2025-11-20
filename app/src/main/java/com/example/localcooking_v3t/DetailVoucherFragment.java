@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,9 +41,15 @@ public class DetailVoucherFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_vouchers, container, false);
+        View view = inflater.inflate(R.layout.fragment_detail_voucher, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerViewUuDai);
+        LinearLayout containerLayout = view.findViewById(R.id.fragmentContainer);
+
+        RecyclerView recyclerView = new RecyclerView(requireContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        containerLayout.addView(recyclerView);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Tạo dữ liệu mẫu

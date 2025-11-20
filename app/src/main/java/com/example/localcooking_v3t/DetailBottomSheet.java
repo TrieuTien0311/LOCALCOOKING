@@ -139,7 +139,7 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
                 case 2:
                     return new DetailPolicyFragment();
                 case 3:
-                    return new DetailDescriptionFragment();
+                    return new DetailVoucherFragment();
                 default:
                     return new DetailDescriptionFragment();
             }

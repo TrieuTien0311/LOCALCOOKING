@@ -50,7 +50,7 @@ public class Header extends AppCompatActivity {
 
         btnHis.setOnClickListener(v -> {
             selectButton(btnHis, "Lịch sử đặt lịch", R.drawable.ic_historyfilled, R.drawable.ic_history);
-            loadFragment(new HomeFragment());
+            loadFragment(new OrderHistoryFragment());
         });
 
         btnNotice.setOnClickListener(v -> {
