@@ -119,7 +119,9 @@ public class ClassesFragment extends Fragment {
 
     private void taoDuLieuMau() {
         danhSachGoc = new ArrayList<>();
-        danhSachGoc.add(new Class(
+
+        // ========== LỚP HỌC ẨM THỰC HUẾ ==========
+        Class lopHue = new Class(
                 "Ẩm thực địa phương Huế",
                 "Khám phá tinh hoa ẩm thực cung đình với hương vị đặc trưng vị Huế",
                 "14:00 - 17:00",
@@ -132,11 +134,66 @@ public class ClassesFragment extends Fragment {
                 true,
                 "23:30:00",
                 8
+        );
+
+        // Thêm món khai vị cho lớp Huế
+        lopHue.addFoodToCategory(0, new Food(
+                "Nem lụi Huế",
+                "Món nem thơm ngon đặc trưng xứ Huế với hương vị đậm đà từ thịt heo băm nhuyễn, nướng trên than hồng, ăn kèm bánh tráng và rau sống.",
+                "Thịt heo vai, bột năng, tỏi băm, hành tím, mè rang, bánh tráng, rau sống, dưa leo.",
+                R.drawable.banhbeo
         ));
 
-        danhSachGoc.add(new Class(
+        lopHue.addFoodToCategory(0, new Food(
+                "Bánh bột lọc trần",
+                "Bánh trong suốt với nhân tôm thịt thơm ngon, ăn kèm nước mắm chua ngọt đặc trưng.",
+                "Bột năng, bột gạo, tôm tươi, thịt ba chỉ, hành khô, nước mắm, đường.",
+                R.drawable.banhbeo
+        ));
+
+        // Thêm món chính cho lớp Huế
+        lopHue.addFoodToCategory(1, new Food(
+                "Bánh bèo chén",
+                "Món bánh nhỏ xinh đặc trưng xứ Huế, với lớp bánh mềm mịn, tôm khô thơm và mỡ hành béo ngậy, ăn kèm nước mắm chua ngọt đậm đà.",
+                "Bột gạo, bột năng, tôm khô giã nhuyễn, hành phi, tóp mỡ, mắm nêm hoặc nước mắm pha.",
+                R.drawable.banhbeo
+        ));
+
+        lopHue.addFoodToCategory(1, new Food(
+                "Bún bò Huế",
+                "Món bún đặc sản với nước dùng đậm đà từ xương hầm, thơm mùi sả, ớt, mắm ruốc, ăn kèm chả, giò heo và rau thơm.",
+                "Bún to, xương ống, xương heo, thịt bò, chả cua, giò heo, sả, mắm ruốc, ớt, hành, ngò.",
+                R.drawable.hue
+        ));
+
+        lopHue.addFoodToCategory(1, new Food(
+                "Cơm hến",
+                "Món cơm đặc sản Huế với hến xào thơm, ăn kèm rau sống, đậu phộng rang, mè và nước mắm chua ngọt.",
+                "Cơm nguội, hến, tỏi phi, ớt, rau muống, rau thơm, đậu phộng rang, mè rang, mắm nêm.",
+                R.drawable.banhbeo
+        ));
+
+        // Thêm món tráng miệng cho lớp Huế
+        lopHue.addFoodToCategory(2, new Food(
+                "Chè sen long nhãn",
+                "Món chè thanh mát với hạt sen bùi béo, long nhãn ngọt thanh, nước đường trong vắt.",
+                "Hạt sen tươi, long nhãn, đường phèn, nước cốt dừa, đá bào.",
+                R.drawable.banhbeo
+        ));
+
+        lopHue.addFoodToCategory(2, new Food(
+                "Chè Huế",
+                "Món chè truyền thống với nhiều lớp nguyên liệu đa dạng, ngọt thanh, mát lạnh.",
+                "Đậu xanh, đậu đỏ, hạt sen, thạch, trân châu, nước cốt dừa, đường phèn.",
+                R.drawable.banhbeo
+        ));
+
+        danhSachGoc.add(lopHue);
+
+        // ========== LỚP HỌC ẨM THỰC HÀ NỘI ==========
+        Class lopHanoi = new Class(
                 "Ẩm thực địa phương Hà Nội",
-                "Món ăn đậm đà, tinh tế, đậm nét văn hóa Thăng An",
+                "Món ăn đậm đà, tinh tế, đậm nét văn hóa Thăng Long",
                 "14:00 - 18:30",
                 "02/10/2025",
                 "23 Lê Duẩn - Đà Nẵng",
@@ -147,42 +204,72 @@ public class ClassesFragment extends Fragment {
                 true,
                 "23:30:00",
                 19
+        );
+
+        // Thêm món khai vị cho lớp Hà Nội
+        lopHanoi.addFoodToCategory(0, new Food(
+                "Chả cá Lã Vọng",
+                "Món chả cá trứ danh Hà Nội với cá lăng tẩm gia vị, chiên thơm, ăn kèm bún, thì là và đậu phộng rang.",
+                "Cá lăng, nghệ tươi, mắm tôm, dầu ăn, bún, thì là, hành lá, đậu phộng rang.",
+                R.drawable.banhbeo
         ));
 
-        danhSachGoc.add(new Class(
-                "Ẩm thực địa phương Đà Nẵng",
-                "Món ăn đậm đà, mộc mạc, hòa quyện hương vị của biển",
-                "08:00 - 10:45",
-                "02/10/2025",
-                "23 Lê Duẩn - Đà Nẵng",
-                "800.000₫",
-                4.8f,
-                109,
-                R.drawable.hue,
-                false,
-                "",
-                11
+        lopHanoi.addFoodToCategory(0, new Food(
+                "Nem rán Hà Nội",
+                "Nem giòn rụm với nhân thịt, miến, mộc nhĩ thơm ngon, ăn kèm rau sống và nước mắm pha.",
+                "Thịt heo băm, miến, mộc nhĩ, cà rót, bánh đa nem, rau sống, bún, nước mắm.",
+                R.drawable.banhbeo
         ));
 
-        danhSachGoc.add(new Class(
-                "Ẩm thực địa phương Phú Yên",
-                "Món ăn đậm đà, mộc mạc, hòa quyện hương vị của biển",
-                "08:00 - 10:45",
-                "02/10/2025",
-                "23 Lê Duẩn - Đà Nẵng",
-                "1.000.000₫",
-                4.8f,
-                109,
-                R.drawable.hue,
-                false,
-                "",
-                11
+        lopHanoi.addFoodToCategory(0, new Food(
+                "Phở cuốn",
+                "Món ăn nhẹ với bánh phở cuộn thịt bò, rau thơm, ăn kèm nước chấm đậm đà.",
+                "Bánh phở tươi, thịt bò xào, rau sống, đồ chua, nước mắm pha chua ngọt.",
+                R.drawable.banhbeo
         ));
+
+        // Thêm món chính cho lớp Hà Nội
+        lopHanoi.addFoodToCategory(1, new Food(
+                "Phở Hà Nội",
+                "Món phở truyền thống với nước dùng trong veo từ xương hầm, bánh phở dai mềm, thịt bò mềm ngọt.",
+                "Bánh phở, xương bò, thịt bò, hành tây, gừng, hồi, quế, thảo quả, hành lá, ngò, chanh, ớt.",
+                R.drawable.hue
+        ));
+
+        lopHanoi.addFoodToCategory(1, new Food(
+                "Bún chả Hà Nội",
+                "Món ăn đặc sản với chả nướng thơm, bún trắng, ăn kèm nước mắm chua ngọt và rau sống.",
+                "Thịt heo ba chỉ, thịt nạc vai, bún, nước mắm, đường, tỏi, ớt, rau sống, dưa leo.",
+                R.drawable.banhbeo
+        ));
+
+        lopHanoi.addFoodToCategory(1, new Food(
+                "Bún ốc Hà Nội",
+                "Món bún với nước dùng chua cay từ cà chua, ốc luộc thơm ngon, ăn kèm rau thơm.",
+                "Bún, ốc nhồi, cà chua, dấm bỗng, me, mắm tôm, đậu hũ chiên, rau thơm.",
+                R.drawable.banhbeo
+        ));
+
+        // Thêm món tráng miệng cho lớp Hà Nội
+        lopHanoi.addFoodToCategory(2, new Food(
+                "Chè bưởi",
+                "Món chè thanh mát với múi bưởi giòn, nước đường thanh mát, tô điểm bởi nước cốt dừa béo ngậy.",
+                "Bưởi, đường phèn, nước cốt dừa, nước lá dứa, đá bào.",
+                R.drawable.banhbeo
+        ));
+
+        lopHanoi.addFoodToCategory(2, new Food(
+                "Sữa chua nếp cẩm",
+                "Món tráng miệng độc đáo với sữa chua chua ngọt, nếp cẩm dẻo thơm và nước cốt dừa béo.",
+                "Sữa chua, nếp cẩm, đường, nước cốt dừa, bột sắn dây.",
+                R.drawable.banhbeo
+        ));
+
+        danhSachGoc.add(lopHanoi);
 
         // Copy sang danh sách hiển thị
         danhSachLopHoc = new ArrayList<>(danhSachGoc);
     }
-
     private void showSapXepBottomSheet() {
         ArrangeBottomSheet bottomSheet = ArrangeBottomSheet.newInstance(currentSortType);
         bottomSheet.setOnSapXepListener(loaiSapXep -> {

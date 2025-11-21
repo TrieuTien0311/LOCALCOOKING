@@ -12,23 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
-            android:name=".booking"
-            android:exported="false" />
-        <!-- Bill là màn hình khởi chạy -->
-        <activity
             android:name=".Bill"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".Payment"
             android:exported="false" />
         <activity
-            android:name=".Classes"
+            android:name=".Header"
             android:exported="false" />
         <activity
             android:name=".ChangePassword"
@@ -41,16 +31,22 @@
             android:exported="false" />
         <activity
             android:name=".OtpVerification"
-            android:exported="false" /> <!-- Header không còn là launcher nữa -->
-        <activity
-            android:name=".Header"
             android:exported="false" />
+        <activity
+            android:name=".Classes"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Review"
             android:exported="false" />
         <activity
             android:name=".Register"
-            android:exported="false" />
+            android:exported="false" /> <!-- Header -->
         <activity
             android:name=".Vouchers"
             android:exported="false"

@@ -1,5 +1,8 @@
 package com.example.localcooking_v3t;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Class {
     private String tenLop;
     private String moTa;
@@ -13,9 +16,9 @@ public class Class {
     private boolean coUuDai;
     private String thoiGianKetThuc;
     private int suat;
-    private boolean isFavorite; // Thêm thuộc tính này
+    private boolean isFavorite;
+    private List<Category> lichTrinhLopHoc; // Thêm lịch trình
 
-    // Constructor
     public Class(String tenLop, String moTa, String thoiGian, String ngay,
                  String diaDiem, String gia, float danhGia, int soDanhGia,
                  int hinhAnh, boolean coUuDai, String thoiGianKetThuc, int suat) {
@@ -31,7 +34,21 @@ public class Class {
         this.coUuDai = coUuDai;
         this.thoiGianKetThuc = thoiGianKetThuc;
         this.suat = suat;
-        this.isFavorite = false; // Mặc định chưa yêu thích
+        this.isFavorite = false;
+        this.lichTrinhLopHoc = new ArrayList<>();
+
+        // Khởi tạo lịch trình mặc định
+        initDefaultSchedule();
+    }
+
+    // Khởi tạo lịch trình mặc định (3 danh mục)
+    private void initDefaultSchedule() {
+        lichTrinhLopHoc.add(new Category("Món khai vị", "14:00 - 15:00",
+                R.drawable.ic_appetizer_tt, new ArrayList<>()));
+        lichTrinhLopHoc.add(new Category("Món chính", "15:00 - 16:30",
+                R.drawable.ic_main_dish_tt, new ArrayList<>()));
+        lichTrinhLopHoc.add(new Category("Món tráng miệng", "16:30 - 17:00",
+                R.drawable.ic_dessert_tt, new ArrayList<>()));
     }
 
     // Getters
@@ -48,16 +65,23 @@ public class Class {
     public String getThoiGianKetThuc() { return thoiGianKetThuc; }
     public int getSuat() { return suat; }
     public boolean isFavorite() { return isFavorite; }
+    public List<Category> getLichTrinhLopHoc() { return lichTrinhLopHoc; }
 
     // Setters
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+    public void setFavorite(boolean favorite) { isFavorite = favorite; }
+    public void setLichTrinhLopHoc(List<Category> lichTrinhLopHoc) {
+        this.lichTrinhLopHoc = lichTrinhLopHoc;
     }
 
-    // Phương thức để lấy giá dưới dạng số (dùng cho sắp xếp)
+    // Phương thức thêm món vào danh mục
+    public void addFoodToCategory(int categoryIndex, Food food) {
+        if (categoryIndex >= 0 && categoryIndex < lichTrinhLopHoc.size()) {
+            lichTrinhLopHoc.get(categoryIndex).getDanhSachMon().add(food);
+        }
+    }
+
     public double getGiaSo() {
         try {
-            // Loại bỏ dấu phẩy, chữ "đ" và "₫" rồi parse thành số
             String giaString = gia.replace(".", "").replace(",", "")
                     .replace("đ", "").replace("₫", "").trim();
             return Double.parseDouble(giaString);

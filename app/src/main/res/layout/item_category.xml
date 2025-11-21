@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/bg_red_dish"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:paddingLeft="3dp"
+    android:paddingTop="6dp"
+    android:paddingRight="3dp"
+    android:paddingBottom="6dp">
+
+    <!-- Đặt các View của bạn vào đây -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="3dp"
+        android:paddingTop="6dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="6dp">
+
+        <ImageView
+            android:id="@+id/imgDish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            app:srcCompat="@drawable/ic_main_dish_tt" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtDish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Món chính"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_clock_tt"
+                android:drawablePadding="3dp"
+                android:text="16:20 - 17:00"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                app:drawableTint="#FFFFFF" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view15"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:background="#E0E0E0" />
+
+        <ImageView
+            android:id="@+id/btnDown"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_down_tt" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvFoods"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</LinearLayout>
