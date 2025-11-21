@@ -57,12 +57,28 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MonthV
         // Add day views to grid
         for (CalendarDay day : calendarMonth.getDays()) {
             View dayView = createDayView(holder.itemView.getContext(), day);
+
+            // --- [FIX QUAN TRỌNG] ---
+            // Thiết lập LayoutParams bằng code để chia đều 7 cột
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0; // Quan trọng: Đặt width = 0 để weight hoạt động
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            // weight = 1f giúp các cột chia đều nhau
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+
+            // Thiết lập margin nếu cần (để sát nhau thì để 0)
+            params.setMargins(0, 0, 0, 0);
+
+            dayView.setLayoutParams(params);
+            // ------------------------
+
             holder.gridCalendar.addView(dayView);
         }
     }
 
     private View createDayView(android.content.Context context, CalendarDay day) {
         LayoutInflater inflater = LayoutInflater.from(context);
+        // Lưu ý: Đảm bảo file xml của bạn tên là item_calendar_day
         View dayView = inflater.inflate(R.layout.item_calendar_day, null);
 
         FrameLayout frameDay = dayView.findViewById(R.id.frameDay);
@@ -81,6 +97,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MonthV
 
             if (isSelected) {
                 // Selected day style
+                // Đảm bảo bạn đã có file drawable/selected_day_bg.xml (hình tròn cam)
                 tvDay.setBackgroundResource(R.drawable.selected_day_bg);
                 tvDay.setTextColor(Color.WHITE);
             } else if (day.isSunday()) {

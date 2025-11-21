@@ -1,17 +1,24 @@
 package com.example.localcooking_v3t;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color; // [MỚI] Import Color
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window; // [MỚI] Import Window
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.WindowCompat; // [MỚI]
+import androidx.core.view.WindowInsetsControllerCompat; // [MỚI]
 import androidx.fragment.app.Fragment;
 
 public class HomeFragment extends Fragment {
@@ -20,6 +27,25 @@ public class HomeFragment extends Fragment {
     private TextView tvAppName, tvHello, tvCurrentLocation, tvDestination, tvDate;
     private TextView tvViewAll;
     private Button btnSearch;
+
+    private ActivityResultLauncher<Intent> calendarLauncher;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        calendarLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        String selectedDate = result.getData().getStringExtra("selected_date");
+                        if (tvDate != null) {
+                            tvDate.setText(selectedDate);
+                        }
+                    }
+                }
+        );
+    }
 
     @Nullable
     @Override
@@ -52,9 +78,24 @@ public class HomeFragment extends Fragment {
 
         tvDate.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), CalendarActivity.class);
-            startActivityForResult(intent, CalendarActivity.REQUEST_CODE_CALENDAR);
+            calendarLauncher.launch(intent);
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Window window = requireActivity().getWindow();
+
+        window.setStatusBarColor(Color.parseColor("#FFC59D"));
+
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(window, window.getDecorView());
+        if (windowInsetsController != null) {
+            windowInsetsController.setAppearanceLightStatusBars(true);
+        }
     }
 }
