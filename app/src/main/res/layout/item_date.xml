@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dateItem"
+    android:layout_width="wrap_content"
+    android:layout_height="70dp"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingTop="14dp"
+    android:paddingRight="12dp">
+
+    <TextView
+        android:id="@+id/txtDayTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Hôm nay"
+        android:textColor="#BCBABA"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:text="02/10"
+        android:textColor="#BCBABA"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <!-- Đẩy gạch xuống đáy -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_weight="1" />
+
+    <View
+        android:id="@+id/gachChan"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/brown_dark" />
+
+</LinearLayout>

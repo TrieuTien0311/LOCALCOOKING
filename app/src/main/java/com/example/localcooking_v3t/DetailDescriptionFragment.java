@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 
 public class DetailDescriptionFragment extends Fragment {
 
-    private ImageView btnDown;
+    private ImageView btnDownTeacher;
     private LinearLayout txtAn;
     private boolean isExpanded = false;
     private RecyclerView rcvCategories;
@@ -39,20 +39,20 @@ public class DetailDescriptionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_detail_description, container, false);
 
         // Khởi tạo các view
-        btnDown = view.findViewById(R.id.btnDown);
+        btnDownTeacher = view.findViewById(R.id.btnDownTeacher);
         txtAn = view.findViewById(R.id.txtAn);
         rcvCategories = view.findViewById(R.id.rcvCategories);
 
         // Xử lý sự kiện click expand/collapse thông tin giáo viên
-        btnDown.setOnClickListener(new View.OnClickListener() {
+        btnDownTeacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isExpanded) {
-                    btnDown.animate().rotation(0).setDuration(300).start();
+                    btnDownTeacher.animate().rotation(0).setDuration(300).start();
                     txtAn.setVisibility(View.GONE);
                     isExpanded = false;
                 } else {
-                    btnDown.animate().rotation(180).setDuration(300).start();
+                    btnDownTeacher.animate().rotation(180).setDuration(300).start();
                     txtAn.setVisibility(View.VISIBLE);
                     isExpanded = true;
                 }

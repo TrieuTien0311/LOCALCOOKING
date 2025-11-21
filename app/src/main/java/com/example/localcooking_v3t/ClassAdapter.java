@@ -66,16 +66,31 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
         // Điều chỉnh marginTop của cardView dựa vào có ưu đãi hay không
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
 
-        if (lopHoc.isCoUuDai()) {
-            // Có ưu đãi: hiển thị banner và set marginTop = -15dp
-            holder.layoutBanner.setVisibility(View.VISIBLE);
-            holder.txtKetThuc.setText("Kết thúc sau " + lopHoc.getThoiGianKetThuc());
-            params.topMargin = dpToPx(holder.itemView, -15);
-        } else {
-            // Không có ưu đãi: ẩn banner và set marginTop = 0dp
+        if (lopHoc.isDaDienRa()==false)
+        {
+            holder.txtDaDienRa.setVisibility(View.GONE);
+            holder.OverlayDim.setVisibility(View.GONE);
+            if (lopHoc.isCoUuDai())
+            {
+                // Có ưu đãi: hiển thị banner và set marginTop = -15dp
+                holder.layoutBanner.setVisibility(View.VISIBLE);
+                holder.txtKetThuc.setText("Kết thúc sau " + lopHoc.getThoiGianKetThuc());
+                params.topMargin = dpToPx(holder.itemView, -15);
+            }
+            else {
+                // Không có ưu đãi: ẩn banner và set marginTop = 0dp
+                holder.layoutBanner.setVisibility(View.GONE);
+                params.topMargin = 0;
+            }
+        }
+        else
+        {
             holder.layoutBanner.setVisibility(View.GONE);
             params.topMargin = 0;
+            holder.txtDaDienRa.setVisibility(View.VISIBLE);
+            holder.OverlayDim.setVisibility(View.VISIBLE);
         }
+
 
         holder.cardView.setLayoutParams(params);
 
@@ -111,7 +126,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
         if (isFavorite) {
             imgFavorite.setImageResource(R.drawable.ic_heartredfilled);
             imgFavorite.setColorFilter(null); // Xóa tint để hiện màu đỏ gốc
-        } else {
+        } else
+        {
             imgFavorite.setImageResource(R.drawable.ic_heart);
             imgFavorite.setColorFilter(0x7F7F7F7F); // Màu xám
         }
@@ -125,9 +141,10 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
 
     static class LopHocViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
+        View OverlayDim;
         LinearLayout layoutBanner;
         ImageView imgMonAn, imgFavorite;
-        TextView txtTenLop, txtMoTa, txtThoiGian, txtNgay, txtDiaDiem;
+        TextView txtTenLop, txtMoTa, txtThoiGian, txtNgay, txtDiaDiem,txtDaDienRa;
         TextView txtGia, txtDanhGia, txtSoDanhGia, txtChiTiet, txtKetThuc,txtSuat;
         Button btnDatLich;
 
@@ -149,6 +166,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.LopHocViewHo
             txtKetThuc = itemView.findViewById(R.id.txtKetThuc);
             btnDatLich = itemView.findViewById(R.id.btnDatLich);
             txtSuat=itemView.findViewById(R.id.txtSuat);
+            txtDaDienRa=itemView.findViewById(R.id.txtDaDienRa);
+            OverlayDim=itemView.findViewById(R.id.overlayDim);
         }
     }
 }

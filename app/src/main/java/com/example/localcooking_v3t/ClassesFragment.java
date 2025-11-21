@@ -266,6 +266,89 @@ public class ClassesFragment extends Fragment {
         ));
 
         danhSachGoc.add(lopHanoi);
+        // ========== LỚP HỌC ẨM THỰC ĐÀ NẴNG ==========
+        Class lopDaNang = new Class(
+                "Ẩm thực địa phương Đà Nẵng",
+                "Hương vị miền Trung đậm đà với biển cả: mì Quảng, bún chả cá, bánh tráng cuốn thịt heo",
+                "09:00 - 12:30",
+                "03/10/2025",
+                "23 Lê Duẩn - Đà Nẵng",
+                "680.000₫",
+                4.8f,
+                189,
+                R.drawable.hue,  // tạm dùng, bạn có thể thay bằng hình Đà Nẵng sau
+                false,           // không ưu đãi
+                "23:30:00",
+                12
+        );
+
+        // Khai vị
+        lopDaNang.addFoodToCategory(0, new Food(
+                "Bánh tráng cuốn thịt heo",
+                "Món cuốn đặc trưng Đà Nẵng với thịt heo luộc, bánh tráng Đại Lộc, rau sống tươi mát và nước mắm nêm đậm đà.",
+                "Thịt ba chỉ, bánh tráng, rau sống (xà lách, húng, diếp cá...), mắm nêm, tỏi, ớt, dứa.",
+                R.drawable.banhbeo
+        ));
+
+        // Món chính
+        lopDaNang.addFoodToCategory(1, new Food(
+                "Mì Quảng",
+                "Món mì đặc sản với nước dùng đậm đà, tôm, thịt heo, trứng cút, ăn kèm bánh tráng giòn và rau sống.",
+                "Mì sợi to, tôm tươi, thịt heo, trứng cút, đậu phộng rang, hành phi, bánh tráng, rau sống.",
+                R.drawable.hue
+        ));
+
+        // Tráng miệng
+        lopDaNang.addFoodToCategory(2, new Food(
+                "Kem bơ Đà Nẵng",
+                "Món kem bơ nổi tiếng với bơ sáp dẻo mịn, cốt dừa béo ngậy và chút muối lạc rang.",
+                "Bơ sáp, sữa đặc, nước cốt dừa, đá bào, đậu phộng rang.",
+                R.drawable.banhbeo
+        ));
+
+        danhSachGoc.add(lopDaNang);
+
+        // ========== LỚP HỌC ẨM THỰC PHÚ YÊN ==========
+        Class lopPhuYen = new Class(
+                "Ẩm thực địa phương Phú Yên",
+                "Khám phá hương vị biển khơi: mắt cá ngừ đại dương, bánh ướt thịt nướng, chả dông",
+                "14:00 - 17:30",
+                "04/10/2025",
+                "23 Lê Duẩn - Đà Nẵng",
+                "650.000₫",
+                4.7f,
+                93,
+                R.drawable.hue,  // tạm dùng
+                false,           // không ưu đãi
+                "23:30:00",
+                10
+        );
+
+        // Khai vị
+        lopPhuYen.addFoodToCategory(0, new Food(
+                "Bánh ướt thịt nướng Phú Yên",
+                "Bánh ướt mỏng mềm cuốn cùng thịt heo nướng thơm lừng, rau sống và nước mắm chua ngọt.",
+                "Bánh ướt, thịt heo nướng lá chuối, rau sống, hành phi, nước mắm tỏi ớt.",
+                R.drawable.banhbeo
+        ));
+
+        // Món chính
+        lopPhuYen.addFoodToCategory(1, new Food(
+                "Mắt cá ngừ đại dương nấu tiêu xanh",
+                "Món ăn thượng hạng từ mắt cá ngừ đại dương hầm mềm với tiêu xanh thơm nồng, bổ dưỡng.",
+                "Mắt cá ngừ đại dương, tiêu xanh, gừng, hành tím, nước mắm, gia vị.",
+                R.drawable.hue
+        ));
+
+        // Tráng miệng
+        lopPhuYen.addFoodToCategory(2, new Food(
+                "Bánh hồng Phú Yên",
+                "Món bánh hồng dẻo ngọt từ nếp cái hoa vàng và dừa nạo, đặc sản làm quà nổi tiếng.",
+                "Nếp cái hoa vàng, dừa nạo, đường, gừng, lá dứa.",
+                R.drawable.banhbeo
+        ));
+
+        danhSachGoc.add(lopPhuYen);
 
         // Copy sang danh sách hiển thị
         danhSachLopHoc = new ArrayList<>(danhSachGoc);

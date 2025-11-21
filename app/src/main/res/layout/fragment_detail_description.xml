@@ -94,7 +94,7 @@
                             android:textColor="#454545" />
 
                         <ImageView
-                            android:id="@+id/btnDown"
+                            android:id="@+id/btnDownTeacher"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:layout_gravity="center_vertical"
@@ -174,7 +174,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvCategories"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/textView52"

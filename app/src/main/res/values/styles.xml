@@ -29,6 +29,6 @@
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:letterSpacing">0.001</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">15sp</item>
     </style>
 </resources>

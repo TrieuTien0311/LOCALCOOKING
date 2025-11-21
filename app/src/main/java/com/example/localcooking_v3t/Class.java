@@ -17,6 +17,7 @@ public class Class {
     private String thoiGianKetThuc;
     private int suat;
     private boolean isFavorite;
+    private boolean daDienRa;
     private List<Category> lichTrinhLopHoc; // Thêm lịch trình
 
     public Class(String tenLop, String moTa, String thoiGian, String ngay,
@@ -36,6 +37,7 @@ public class Class {
         this.suat = suat;
         this.isFavorite = false;
         this.lichTrinhLopHoc = new ArrayList<>();
+        this.daDienRa = false;
 
         // Khởi tạo lịch trình mặc định
         initDefaultSchedule();
@@ -71,6 +73,14 @@ public class Class {
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
     public void setLichTrinhLopHoc(List<Category> lichTrinhLopHoc) {
         this.lichTrinhLopHoc = lichTrinhLopHoc;
+    }
+
+    public boolean isDaDienRa() {
+        return daDienRa;
+    }
+
+    public void setDaDienRa(boolean daDienRa) {
+        this.daDienRa = daDienRa;
     }
 
     // Phương thức thêm món vào danh mục

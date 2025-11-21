@@ -39,8 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:tint="#CB7E61"
-            app:srcCompat="@drawable/ic_back" />
+            app:srcCompat="@drawable/ic_back"
+            app:tint="#CB7E61" />
         <!-- Hình ảnh món ăn với CardView bo tròn -->
         <LinearLayout
             android:layout_width="wrap_content"
@@ -78,39 +78,39 @@
                     android:layout_width="9dp"
                     android:layout_height="9dp"
                     android:layout_marginRight="8dp"
-                    android:tint="#BA5632"
-                    app:srcCompat="@drawable/ic_circle_tn" />
+                    app:srcCompat="@drawable/ic_circle_tn"
+                    app:tint="#BA5632" />
 
                 <ImageView
                     android:id="@+id/circle2"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
                     android:layout_marginRight="8dp"
-                    android:tint="#DCA790"
-                    app:srcCompat="@drawable/ic_circle_tn" />
+                    app:srcCompat="@drawable/ic_circle_tn"
+                    app:tint="#DCA790" />
 
                 <ImageView
                     android:id="@+id/circle3"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
                     android:layout_marginRight="8dp"
-                    android:tint="#DCA790"
-                    app:srcCompat="@drawable/ic_circle_tn" />
+                    app:srcCompat="@drawable/ic_circle_tn"
+                    app:tint="#DCA790" />
 
                 <ImageView
                     android:id="@+id/circle4"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
                     android:layout_marginRight="8dp"
-                    android:tint="#DCA790"
-                    app:srcCompat="@drawable/ic_circle_tn" />
+                    app:srcCompat="@drawable/ic_circle_tn"
+                    app:tint="#DCA790" />
 
                 <ImageView
                     android:id="@+id/circle5"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
-                    android:tint="#DCA790"
-                    app:srcCompat="@drawable/ic_circle_tn" />
+                    app:srcCompat="@drawable/ic_circle_tn"
+                    app:tint="#DCA790" />
             </LinearLayout>
 
         </LinearLayout>
@@ -123,8 +123,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:rotation="180"
-            android:tint="#CB7E61"
-            app:srcCompat="@drawable/ic_back" />
+            app:srcCompat="@drawable/ic_back"
+            app:tint="#CB7E61" />
     </LinearLayout>
 
     <LinearLayout

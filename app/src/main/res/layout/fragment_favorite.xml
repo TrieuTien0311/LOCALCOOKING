@@ -1,64 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF5E6">
 
-    <!-- BỌC TOÀN BỘ TRONG ScrollView -->
-    <ScrollView
+    <!-- THANH CHỌN NGÀY - CỐ ĐỊNH Ở TRÊN -->
+    <include
+        android:id="@+id/datePickerBar"
+        layout="@layout/layout_date_picker_bar" />
+
+    <!-- Nội dung cuộn được -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFavorite"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp" />
+
+    </LinearLayout>
+
+    <!-- Empty State - Đè lên trên cùng -->
+    <LinearLayout
+        android:id="@+id/txtEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="120dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:alpha="0.3"
+            android:src="@drawable/ic_heart"
+            app:tint="#999999" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#C1A0A0"
-            android:paddingBottom="80dp"> <!-- Để bottom nav không che -->
+            android:layout_marginTop="16dp"
+            android:text="Chưa có lớp học yêu thích"
+            android:textColor="#999999"
+            android:textSize="16sp" />
+    </LinearLayout>
 
-            <!-- Dùng app:layout_constraintTop_toTopOf="parent" + marginTop nhỏ -->
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:src="@drawable/button_bg"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:src="@drawable/button_bg"
-                app:layout_constraintTop_toBottomOf="@id/imageView2"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:src="@drawable/button_bg"
-                app:layout_constraintTop_toBottomOf="@id/imageView3"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="500dp"
-                android:src="@drawable/button_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imageView4" />
-
-            <!-- Thêm nhiều item nữa nếu cần -->
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-</FrameLayout>
+</LinearLayout>
