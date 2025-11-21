@@ -180,6 +180,7 @@
                                 android:textSize="15sp" />
 
                             <TextView
+                                android:id="@+id/txtGioHoc"
                                 android:layout_gravity="end"
                                 android:text="21:45"
                                 android:textStyle="bold" />
@@ -192,6 +193,7 @@
                                 android:textSize="15sp" />
 
                             <TextView
+                                android:id="@+id/txtNgayHoc"
                                 android:layout_gravity="end"
                                 android:text="03/09/2025"
                                 android:textStyle="bold" />
@@ -232,6 +234,7 @@
                             <TextView android:text="Mã giao dịch" />
 
                             <TextView
+                                android:id="@+id/txtMaGiaoDic"
                                 android:layout_gravity="end"
                                 android:text="91992550407" />
                         </TableRow>
@@ -243,6 +246,7 @@
                                 android:text="Tài khoản/thẻ" />
 
                             <TextView
+                                android:id="@+id/txtPhuongThuc"
                                 android:layout_gravity="end"
                                 android:text="Momo" />
                         </TableRow>
@@ -255,6 +259,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/txtSoTien"
                                 android:layout_gravity="end"
                                 android:text="715.000₫"
                                 android:textColor="#D32F2F"
@@ -320,7 +325,7 @@
                         android:paddingRight="24dp">
 
                         <ImageView
-                            android:id="@+id/imageView42"
+                            android:id="@+id/imAnhHoc"
                             android:layout_width="183dp"
                             android:layout_height="89dp"
                             android:layout_weight="1"
@@ -338,7 +343,7 @@
                             android:padding="15dp">
 
                             <TextView
-                                android:id="@+id/textView50"
+                                android:id="@+id/txtTenLopHoc"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Ẩm thực địa phương Huế"
@@ -362,7 +367,7 @@
                                     app:srcCompat="@drawable/ic_location_tn" />
 
                                 <TextView
-                                    android:id="@+id/textView53"
+                                    android:id="@+id/txtDiaDiemBill"
                                     android:layout_width="173dp"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="left"
@@ -406,7 +411,7 @@
                                 android:text="Người đặt:" />
 
                             <TextView
-                                android:id="@+id/textView60"
+                                android:id="@+id/txtNguoiDatBill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Nhóm V3T"
@@ -428,7 +433,7 @@
                                 android:text="Số điện thoại:" />
 
                             <TextView
-                                android:id="@+id/textView62"
+                                android:id="@+id/txtSDTBill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0905100789"
@@ -449,7 +454,7 @@
                                 android:text="Thời gian:" />
 
                             <TextView
-                                android:id="@+id/textView63"
+                                android:id="@+id/txtThoiGianHocBill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="14:00 - 17:00"
@@ -470,7 +475,7 @@
                                 android:text="Ngày:" />
 
                             <TextView
-                                android:id="@+id/textView66"
+                                android:id="@+id/txtNgayHocBill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="02/10/2025"
@@ -491,7 +496,7 @@
                                 android:text="Số người:" />
 
                             <TextView
-                                android:id="@+id/textView68"
+                                android:id="@+id/txtSoPaxBill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="1 người"
@@ -511,7 +516,7 @@
                         app:cardElevation="0dp">
 
                         <TextView
-                            android:id="@+id/textView70"
+                            android:id="@+id/txtNoiDungBill"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
@@ -550,7 +555,7 @@
 
                     <!-- Mã vạch -->
                     <ImageView
-                        android:id="@+id/imageView45"
+                        android:id="@+id/imMaCodeBill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
