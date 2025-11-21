@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LOCALCOOKING_V3T">
         <activity
-            android:name=".Bill"
+            android:name=".Classes"
             android:exported="false" />
         <activity
             android:name=".Payment"
@@ -33,7 +33,7 @@
             android:name=".OtpVerification"
             android:exported="false" />
         <activity
-            android:name=".Classes"
+            android:name=".Bill"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
