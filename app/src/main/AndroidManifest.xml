@@ -40,7 +40,7 @@
             android:name=".OtpVerification"
             android:exported="false" />
         <activity
-            android:name=".Header"
+            android:name=".Booking"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
