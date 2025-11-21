@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,11 @@ public class HomeFragment extends Fragment {
 
         ivArrow.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Xem thông tin tài khoản", Toast.LENGTH_SHORT).show();
+        });
+
+        tvDate.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), CalendarActivity.class);
+            startActivityForResult(intent, CalendarActivity.REQUEST_CODE_CALENDAR);
         });
 
         return view;

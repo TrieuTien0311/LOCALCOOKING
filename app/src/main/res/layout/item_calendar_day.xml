@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameDay"
+    android:layout_width="0dp"
+    android:layout_height="40dp"
+    android:layout_columnWeight="1"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp">
+
+    <TextView
+        android:id="@+id/tvDay"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+</FrameLayout>
