@@ -66,6 +66,7 @@ public class DetailDescriptionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         // Setup RecyclerView cho lịch trình lớp học
         if (lopHoc != null && lopHoc.getLichTrinhLopHoc() != null) {
             rcvCategories.setLayoutManager(new LinearLayoutManager(getContext()));

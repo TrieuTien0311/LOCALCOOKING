@@ -13,16 +13,16 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SuccessfulOrderFragment extends Fragment {
+public class CancelledOrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OrderHistoryAdapter adapter;
     private List<OrderHistory> danhSachLichSuDatLich;
 
-    public SuccessfulOrderFragment() {}
+    public CancelledOrderFragment() {}
 
-    public static SuccessfulOrderFragment newInstance() {
-        return new SuccessfulOrderFragment();
+    public static CancelledOrderFragment newInstance() {
+        return new CancelledOrderFragment();
     }
 
     @Nullable
@@ -31,7 +31,7 @@ public class SuccessfulOrderFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_successful_order, container, false);
+        View view = inflater.inflate(R.layout.fragment_cancelled_order, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerViewNotices);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -42,20 +42,9 @@ public class SuccessfulOrderFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
-            @Override
-            public void onHuyDatClick(OrderHistory lichSuDatLich) {
-                // Không cần xử lý nút hủy
-            }
-
-            @Override
-            public void onDatLaiClick(OrderHistory lichSuDatLich) {
-                // Xử lý chuyển sang trang đặt lại
-            }
-
-            @Override
-            public void onDanhGiaClick(OrderHistory lichSuDatLich) {
-                // Xử lý chuyển sang trang đánh giá
-            }
+            @Override public void onHuyDatClick(OrderHistory lichSuDatLich) {}
+            @Override public void onDatLaiClick(OrderHistory lichSuDatLich) {}
+            @Override public void onDanhGiaClick(OrderHistory lichSuDatLich) {}
         });
 
         return view;
@@ -66,22 +55,13 @@ public class SuccessfulOrderFragment extends Fragment {
 
         danhSachLichSuDatLich.add(new OrderHistory(
                 R.drawable.phuyen_h,
-                "Ẩm thực địa phương Phú Yên",
+                "Ẩm thực địa phương Đà Nẵng",
                 "1 người",
-                "13:00 - 16:00, 21/08/2024",
-                "290 Ngô Quyền, Tp.HCM",
-                "810.000₫",
-                "Đã hoàn thành"
-        ));
-
-        danhSachLichSuDatLich.add(new OrderHistory(
-                R.drawable.hanoi_h,
-                "Ẩm thực thủ đô Hà Nội",
-                "2 người",
-                "08:00 - 11:00, 23/05/2025",
-                "175 Lê Lợi, Huế",
-                "1.450.000₫",
-                "Đã hoàn thành"
+                "08:00 - 11:00, 12/11/2024",
+                "84 Phố Hàng Mã, Hà Nội",
+                "830.000₫",
+                "10:52 - T3, 11/11/2024",
+                "Đã hủy"
         ));
     }
 }
