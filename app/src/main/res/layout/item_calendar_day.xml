@@ -2,10 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frameDay"
     android:layout_width="0dp"
-    android:layout_height="40dp"
+    android:layout_height="wrap_content"
     android:layout_columnWeight="1"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp">
+    android:layout_gravity="fill"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/tvDay"
