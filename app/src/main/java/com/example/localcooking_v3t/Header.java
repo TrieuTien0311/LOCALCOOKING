@@ -38,33 +38,33 @@ public class Header extends AppCompatActivity {
 
         // Set listener cho các button
         btnHome.setOnClickListener(v -> {
-            selectButton(btnHome, "Trang chủ", R.drawable.ic_homefilled, R.drawable.ic_home);
+            selectButton(btnHome, "Trang chủ", R.drawable.ic_home_state2_thu, R.drawable.ic_home_thu);
 
             loadFragment(new HomeFragment());
         });
 
         btnFav.setOnClickListener(v -> {
-            selectButton(btnFav, "Yêu thích", R.drawable.ic_heartfilled, R.drawable.ic_heart);
+            selectButton(btnFav, "Yêu thích", R.drawable.ic_heart_state2_thu, R.drawable.ic_heart_thu);
             loadFragment(new FavoriteFragment());
         });
 
         btnHis.setOnClickListener(v -> {
-            selectButton(btnHis, "Lịch sử đặt lịch", R.drawable.ic_historyfilled, R.drawable.ic_history);
+            selectButton(btnHis, "Lịch sử đặt lịch", R.drawable.ic_history_state2_thu, R.drawable.ic_history_thu);
             loadFragment(new OrderHistoryFragment());
         });
 
         btnNotice.setOnClickListener(v -> {
-            selectButton(btnNotice, "Thông báo", R.drawable.ic_noticefilled, R.drawable.ic_notice);
+            selectButton(btnNotice, "Thông báo", R.drawable.ic_noti_state2_thu, R.drawable.ic_noti_thu);
             loadFragment(new NoticeFragment());
         });
 
         btnPerson.setOnClickListener(v -> {
-            selectButton(btnPerson, "Trang cá nhân", R.drawable.ic_personfilled, R.drawable.ic_person);
+            selectButton(btnPerson, "Trang cá nhân", R.drawable.ic_profile_state2_thu, R.drawable.ic_profile_thu);
             loadFragment(new ProfileFragment());
         });
 
         // Mặc định chọn Trang chủ
-        selectButton(btnHome, "Trang chủ", R.drawable.ic_homefilled, R.drawable.ic_home);
+        selectButton(btnHome, "Trang chủ", R.drawable.ic_home_state2_thu, R.drawable.ic_home_thu);
         loadFragment(new HomeFragment());
     }
 
@@ -105,11 +105,11 @@ public class Header extends AppCompatActivity {
 
 
     private void resetAllButtons() {
-        resetButton(btnHome, R.drawable.ic_home);
-        resetButton(btnFav, R.drawable.ic_heart);
-        resetButton(btnHis, R.drawable.ic_history);
-        resetButton(btnNotice, R.drawable.ic_notice);
-        resetButton(btnPerson, R.drawable.ic_person);
+        resetButton(btnHome, R.drawable.ic_home_thu);
+        resetButton(btnFav, R.drawable.ic_heart_thu);
+        resetButton(btnHis, R.drawable.ic_history_thu);
+        resetButton(btnNotice, R.drawable.ic_noti_thu);
+        resetButton(btnPerson, R.drawable.ic_profile_thu);
     }
 
     private void resetButton(ImageView button, int normalIcon) {

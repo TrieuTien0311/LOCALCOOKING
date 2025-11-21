@@ -1,6 +1,8 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,5 +31,9 @@ public class Classes extends AppCompatActivity {
             transaction.replace(R.id.fragmentContainer, fragment);
             transaction.commit();
         }
+
+        // Xử lý sự kiện nút Back
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 }

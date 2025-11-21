@@ -52,7 +52,8 @@ public class Login extends AppCompatActivity {
         btnGG = findViewById(R.id.btnGG);
         btnFB = findViewById(R.id.btnFB);
 
-        // Xử lý sự kiện Quên mật khẩu - CHUYỂN ĐÊN TRANG FORGOT PASSWORD
+        // --- Xử lý sự kiện ---
+        // Chuyển sang trang QMK
         tvForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +62,16 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện chuyển sang trang Đăng ký
+        // Chuyển sang trang Home
+        btnDangNhap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, Header.class);
+                startActivity(intent);
+            }
+        });
+
+        // Chuyển sang trang Đăng ký
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

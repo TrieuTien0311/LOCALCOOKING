@@ -43,7 +43,7 @@ public class ForgotPassword extends AppCompatActivity {
         idEmail = findViewById(R.id.idEmail);
         btnGuiLienKet = findViewById(R.id.btnGuiLienKet);
 
-        // Xử lý sự kiện nút Back (icon)
+        // Xử lý sự kiện nút Back
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +51,6 @@ public class ForgotPassword extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện nút Back (text)
         tvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,21 +72,8 @@ public class ForgotPassword extends AppCompatActivity {
         btnGuiLienKet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = idEmail.getText().toString().trim();
-
-                if (email.isEmpty()) {
-                    Toast.makeText(ForgotPassword.this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
-                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    Toast.makeText(ForgotPassword.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Chuyển sang trang OTP
-                    Toast.makeText(ForgotPassword.this, "Đã gửi mã OTP đến " + email, Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(ForgotPassword.this, OtpVerification.class);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                    finish();
-                }
+                Intent intent = new Intent(ForgotPassword.this, OtpVerification.class);
+                startActivity(intent);
             }
         });
     }
