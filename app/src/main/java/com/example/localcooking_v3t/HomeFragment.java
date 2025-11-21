@@ -2,12 +2,12 @@ package com.example.localcooking_v3t;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color; // [MỚI] Import Color
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window; // [MỚI] Import Window
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,17 +17,15 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.WindowCompat; // [MỚI]
-import androidx.core.view.WindowInsetsControllerCompat; // [MỚI]
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
 public class HomeFragment extends Fragment {
-
     private ImageView ivLogo, ivArrow;
     private TextView tvAppName, tvHello, tvCurrentLocation, tvDestination, tvDate;
     private TextView tvViewAll;
     private Button btnSearch;
-
     private ActivityResultLauncher<Intent> calendarLauncher;
 
     @Override
@@ -63,17 +61,16 @@ public class HomeFragment extends Fragment {
         tvViewAll = view.findViewById(R.id.tvViewAll);
         btnSearch = view.findViewById(R.id.btnSearch);
 
-        // Xử lý sự kiện
-        btnSearch.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Tìm kiếm...", Toast.LENGTH_SHORT).show();
-        });
+        // --- Xử lý sự kiện ---
 
-        tvViewAll.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Xóa tất cả lịch sử", Toast.LENGTH_SHORT).show();
+        tvHello.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), Login.class);
+            startActivity(intent);
         });
 
         ivArrow.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Xem thông tin tài khoản", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), Login.class);
+            startActivity(intent);
         });
 
         tvDate.setOnClickListener(v -> {
@@ -90,6 +87,7 @@ public class HomeFragment extends Fragment {
 
         Window window = requireActivity().getWindow();
 
+        // Đặt lại màu Status Bar
         window.setStatusBarColor(Color.parseColor("#FFC59D"));
 
         WindowInsetsControllerCompat windowInsetsController =

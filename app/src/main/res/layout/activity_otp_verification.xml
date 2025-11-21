@@ -262,7 +262,7 @@
 
             <!-- Submit Button -->
             <Button
-                android:id="@+id/btnGuiLienKet"
+                android:id="@+id/btnXacNhan"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
