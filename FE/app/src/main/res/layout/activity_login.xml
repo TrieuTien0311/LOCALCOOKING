@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#F5E6D3"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:context=".Login">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -105,7 +107,7 @@
                         android:padding="10dp"
                         android:text="Đăng nhập"
                         android:textColor="#3D2817"
-                        android:textSize="30sp"
+                        android:textSize="25sp"
                         android:textStyle="bold" />
 
                     <!-- Form Inputs -->
@@ -120,61 +122,46 @@
                         <!-- Email Input with Floating Label -->
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilEmail"
+                            style="@style/CustomTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="10dp"
                             android:hint="Email"
-                            app:boxBackgroundColor="@android:color/transparent"
-                            app:boxBackgroundMode="none"
                             app:hintAnimationEnabled="true"
-                            app:hintEnabled="true"
-                            app:hintTextColor="#666666">
+                            app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/idEmail"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/input_bg"
-                                android:hint="Email"
                                 android:inputType="textEmailAddress"
-                                android:paddingLeft="30dp"
-                                android:paddingTop="10dp"
-                                android:paddingEnd="15dp"
-                                android:paddingBottom="10dp"
+                                android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textColorHint="#666666" />
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Mật khẩu Input with Floating Label and Password Toggle -->
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilMatKhau"
+                            style="@style/CustomTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="8dp"
                             android:hint="Mật khẩu"
-                            app:boxBackgroundColor="@android:color/transparent"
-                            app:boxBackgroundMode="none"
                             app:hintAnimationEnabled="true"
                             app:hintEnabled="true"
-                            app:hintTextColor="#666666"
                             app:passwordToggleEnabled="true"
-                            app:passwordToggleTint="#666666">
+                            app:passwordToggleTint="#666666"
+                            app:endIconMode="password_toggle">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/idMatKhau"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/input_bg"
-                                android:hint="Mật khẩu"
                                 android:inputType="textPassword"
-                                android:paddingLeft="30dp"
-                                android:paddingTop="10dp"
-                                android:paddingEnd="50dp"
-                                android:paddingBottom="10dp"
+                                android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textColorHint="#666666" />
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Remember Me and Forgot Password Row -->
