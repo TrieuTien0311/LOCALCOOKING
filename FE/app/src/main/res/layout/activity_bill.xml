@@ -102,6 +102,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@color/white"
                             android:orientation="horizontal"
                             android:padding="12dp">
 
@@ -124,6 +125,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="ĐẶT LỊCH LỚP HỌC"
+                                    android:textColor="#707070"
                                     android:textSize="17sp"
                                     android:textStyle="bold" />
 
@@ -152,13 +154,19 @@
 
                             <TextView
                                 android:text="Trạng thái"
+                                android:textColor="#7F7F7F"
                                 android:textSize="15sp" />
+
+                            <View
+                                android:id="@+id/view27"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/button3"
-                                android:layout_width="20dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="90dp"
                                 android:insetTop="0dp"
                                 android:insetBottom="0dp"
                                 android:letterSpacing="0.001"
@@ -177,12 +185,20 @@
 
                             <TextView
                                 android:text="Thời gian thanh toán"
+                                android:textColor="#7F7F7F"
                                 android:textSize="15sp" />
+
+                            <View
+                                android:id="@+id/view28"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
 
                             <TextView
                                 android:id="@+id/txtGioHoc"
                                 android:layout_gravity="end"
                                 android:text="21:45"
+                                android:textColor="#000000"
                                 android:textStyle="bold" />
                         </TableRow>
 
@@ -190,27 +206,23 @@
 
                             <TextView
                                 android:text="Ngày thanh toán"
+                                android:textColor="#7F7F7F"
                                 android:textSize="15sp" />
+
+                            <View
+                                android:id="@+id/view29"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
 
                             <TextView
                                 android:id="@+id/txtNgayHoc"
                                 android:layout_gravity="end"
                                 android:text="03/09/2025"
+                                android:textColor="#000000"
                                 android:textStyle="bold" />
                         </TableRow>
 
-                        <TableRow android:paddingVertical="6dp">
-
-                            <TextView
-                                android:text="Quá trình giao dịch"
-                                android:textSize="15sp" />
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="end|center_vertical"
-                                app:srcCompat="@drawable/ic_down_tn" />
-                        </TableRow>
                     </TableLayout>
 
                     <!-- Đường nét đứt -->
@@ -231,24 +243,29 @@
 
                         <TableRow android:paddingVertical="6dp">
 
-                            <TextView android:text="Mã giao dịch" />
+                            <TextView
+                                android:text="Mã giao dịch"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtMaGiaoDic"
                                 android:layout_gravity="end"
-                                android:text="91992550407" />
+                                android:text="91992550407"
+                                android:textColor="#000000" />
                         </TableRow>
 
                         <TableRow android:paddingVertical="6dp">
 
                             <TextView
                                 android:layout_marginRight="50dp"
-                                android:text="Tài khoản/thẻ" />
+                                android:text="Tài khoản/thẻ"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtPhuongThuc"
                                 android:layout_gravity="end"
-                                android:text="Momo" />
+                                android:text="Momo"
+                                android:textColor="#000000" />
                         </TableRow>
 
                         <TableRow android:paddingVertical="8dp">
@@ -256,6 +273,7 @@
                             <TextView
                                 android:layout_marginRight="70dp"
                                 android:text="Tổng hóa đơn"
+                                android:textColor="#7F7F7F"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -374,7 +392,8 @@
                                     android:layout_marginRight="10dp"
                                     android:layout_weight="1"
                                     android:paddingTop="3dp"
-                                    android:text="23 Lê Duẩn, Đà Nẵng" />
+                                    android:text="23 Lê Duẩn, Đà Nẵng"
+                                    android:textColor="#7F7F7F" />
                             </LinearLayout>
 
                         </LinearLayout>
@@ -408,7 +427,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="30dp"
-                                android:text="Người đặt:" />
+                                android:text="Người đặt:"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtNguoiDatBill"
@@ -430,7 +450,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="50dp"
-                                android:text="Số điện thoại:" />
+                                android:text="Số điện thoại:"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtSDTBill"
@@ -451,7 +472,8 @@
                                 android:id="@+id/textView64"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Thời gian:" />
+                                android:text="Thời gian:"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtThoiGianHocBill"
@@ -472,7 +494,8 @@
                                 android:id="@+id/textView65"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Ngày:" />
+                                android:text="Ngày:"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtNgayHocBill"
@@ -493,7 +516,8 @@
                                 android:id="@+id/textView67"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Số người:" />
+                                android:text="Số người:"
+                                android:textColor="#7F7F7F" />
 
                             <TextView
                                 android:id="@+id/txtSoPaxBill"
@@ -521,7 +545,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
                             android:justificationMode="inter_word"
-                            android:text="Trải nghiệm lớp học ẩm thực Huế tinh tế, đa dạng với món cung đình và dân dã, đậm đà hương vị, cầu kỳ trong từng chi tiết." />
+                            android:text="Trải nghiệm lớp học ẩm thực Huế tinh tế, đa dạng với món cung đình và dân dã, đậm đà hương vị, cầu kỳ trong từng chi tiết."
+                            android:textColor="#7F7F7F" />
                     </androidx.cardview.widget.CardView>
 
                     <LinearLayout
@@ -540,7 +565,7 @@
 
                         <View
                             android:id="@+id/view26"
-                            android:layout_width="313dp"
+                            android:layout_width="291dp"
                             android:layout_height="2dp"
                             android:background="@drawable/dashed_line_tn" />
 
@@ -548,7 +573,7 @@
                             android:id="@+id/imageView40"
                             android:layout_width="70dp"
                             android:layout_height="70dp"
-                            android:layout_marginEnd="-35dp"
+                            android:layout_marginEnd="-150dp"
                             app:srcCompat="@drawable/ic_elip_tt" />
                     </LinearLayout>
 

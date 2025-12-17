@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +56,10 @@ public class SuccessfulOrderFragment extends Fragment {
             @Override
             public void onDanhGiaClick(OrderHistory lichSuDatLich) {
                 // Xử lý chuyển sang trang đánh giá
+                Intent intent = new Intent(getActivity(), Review.class);
+                intent.putExtra("orderTitle", lichSuDatLich.getTieuDe());
+                intent.putExtra("orderImage", lichSuDatLich.getHinhAnh());
+                startActivity(intent);
             }
         });
 

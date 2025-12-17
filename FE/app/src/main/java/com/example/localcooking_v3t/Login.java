@@ -53,6 +53,25 @@ public class Login extends AppCompatActivity {
         btnFB = findViewById(R.id.btnFB);
 
         // --- Xử lý sự kiện ---
+        // Nút quay lại - về Header (fragment home)
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, Header.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        tvBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, Header.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         // Chuyển sang trang QMK
         tvForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override

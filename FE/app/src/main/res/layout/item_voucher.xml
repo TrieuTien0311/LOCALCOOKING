@@ -11,16 +11,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FFF9EF"
         android:orientation="horizontal"
-        android:paddingLeft="15dp"
+        android:paddingLeft="10dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:background="#FFF9EF">
+        android:paddingBottom="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgMonAn"
-            android:layout_width="141dp"
-            android:layout_height="141dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:contentDescription="Food Image"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,9 +32,10 @@
             app:srcCompat="@drawable/voucher" />
 
         <LinearLayout
-            android:layout_width="187dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="0dp"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:paddingLeft="8dp"
             android:paddingTop="3dp"
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dành cho hôi viên"
                 android:textColor="#6A3B1A"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="Giảm 20%, thêm ưu đãi bên dưới"
                 android:textColor="#9A6A3B1A"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -81,7 +82,8 @@
             android:id="@+id/rdbChon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
             android:buttonTint="#DC874C" />
 
     </LinearLayout>

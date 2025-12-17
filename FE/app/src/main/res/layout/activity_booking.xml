@@ -40,7 +40,7 @@
             android:text="Ẩm thực địa phương Huế"
             android:textColor="#6A3B1A"
 
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -242,12 +242,12 @@
 
                         <TextView
                             android:id="@+id/txt_TenLop_DL"
-                            android:layout_width="wrap_content"
+                            android:layout_width="170dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Ẩm thực địa phương Huế"
                             android:textColor="@color/black"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -258,7 +258,8 @@
                             android:layout_weight="1"
                             android:text="Chỉ từ "
                             android:textAlignment="textEnd"
-                            android:textSize="9dp" />
+                            android:textColor="#7A7777"
+                            android:textSize="8dp" />
 
                         <TextView
                             android:id="@+id/txt_GiaTien_DL"
@@ -267,7 +268,7 @@
                             android:layout_weight="1"
                             android:text="715.000₫"
                             android:textColor="#EF0909"
-                            android:textSize="15sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <ImageView
@@ -296,6 +297,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"
                                 android:text="900.000đ"
+                                android:textColor="#7A7777"
                                 android:textSize="9sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -311,6 +313,7 @@
                                 android:padding="1dp"
                                 android:text="-21%"
                                 android:textAllCaps="false"
+                                android:textColor="#FFFEFE"
                                 android:textSize="7dp"
                                 app:cornerRadius="40dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
@@ -348,7 +351,7 @@
                             android:layout_weight="1"
                             android:text="4.9"
                             android:textColor="@color/black"
-                            android:textSize="15sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <ImageView
@@ -365,6 +368,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="(211 đánh giá)"
+                            android:textColor="#7A7777"
                             android:textSize="9sp" />
 
                     </LinearLayout>
@@ -393,7 +397,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text=" 23 Lê Duẩn - Đà Nẵng"
-                            android:textSize="13sp" />
+                            android:textColor="#7A7777"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <View
@@ -416,7 +421,7 @@
                             android:layout_marginBottom="5dp"
                             android:text="Giáo viên đứng lớp"
                             android:textColor="@color/black"
-                            android:textSize="18dp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -466,7 +471,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Bà Nguyễn Thị Thương"
                                     android:textColor="#BA5632"
-                                    android:textSize="18sp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold" />
 
                                 <LinearLayout
@@ -538,7 +543,7 @@
                             android:layout_marginBottom="5dp"
                             android:text="Giới thiệu lớp học"
                             android:textColor="@color/black"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -550,7 +555,8 @@
                             android:justificationMode="inter_word"
                             android:padding="15dp"
                             android:text="Khám phá hương vị đặc trưng của ẩm thực cố đô Huế - nơi giao thoa giữa tinh hoa cung đình và phong vị dân gian. Trong buổi học này, bạn sẽ được trải nghiệm trực tiếp việc chế biến các món ăn truyền thống mang đậm dấu ấn văn hóa xứ Huế."
-                            android:textAlignment="gravity" />
+                            android:textAlignment="gravity"
+                            android:textColor="#454545" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -618,6 +624,7 @@
                     android:backgroundTint="#B73F41"
                     android:text="Đặt lịch"
                     android:textAllCaps="false"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:cornerRadius="5dp" />
@@ -689,7 +696,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Mô tả" />
+                                    android:text="Mô tả"
+                                    android:textColor="#7A7777" />
 
                                 <TextView
                                     android:id="@+id/txt_DanhGia_DL"
@@ -697,7 +705,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Đánh giá" />
+                                    android:text="Đánh giá"
+                                    android:textColor="#7A7777" />
 
                                 <TextView
                                     android:id="@+id/txt_ChinhSach_DL"
@@ -705,7 +714,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Chính sách" />
+                                    android:text="Chính sách"
+                                    android:textColor="#7A7777" />
 
                                 <TextView
                                     android:id="@+id/txt_UuDai_DL"
@@ -713,7 +723,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Ưu đãi" />
+                                    android:text="Ưu đãi"
+                                    android:textColor="#7A7777" />
                             </LinearLayout>
 
                         </LinearLayout>
@@ -725,4 +736,17 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Container cho Fragment -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

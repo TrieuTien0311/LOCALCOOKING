@@ -1,6 +1,8 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,15 @@ public class Bill extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // Xử lý nút quay lại - về trang chủ (Header)
+        ImageView btnBack = findViewById(R.id.imageView6);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(Bill.this, Header.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         });
     }
 }

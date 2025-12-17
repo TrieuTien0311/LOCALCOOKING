@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/bounce_interpolator">
+
+    <!-- Logo bay từ dưới lên chậm hơn -->
+    <translate
+        android:duration="1500"
+        android:fromYDelta="400dp"
+        android:toYDelta="0dp" />
+
+    <!-- Logo từ nhỏ phóng to chậm hơn -->
+    <scale
+        android:duration="1500"
+        android:fromXScale="0.2"
+        android:fromYScale="0.2"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.0"
+        android:toYScale="1.0" />
+
+    <!-- Hiệu ứng fade in -->
+    <alpha
+        android:duration="1200"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+
+</set>

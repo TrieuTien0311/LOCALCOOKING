@@ -54,6 +54,10 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
 
+        // Xử lý nút quay lại
+        btnBack.setOnClickListener(v -> finish());
+        tvBack.setOnClickListener(v -> finish());
+
         // Xử lý sự kiện nút Gửi mã xác nhận
         btnGuiMaXacNhan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +65,17 @@ public class ChangePassword extends AppCompatActivity {
                 String currentPassword = idMatKhauHienTai.getText().toString().trim();
                 String newPassword = idMatKhauMoi.getText().toString().trim();
                 String confirmPassword = idXacNhanMatKhau.getText().toString().trim();
+
+                // Validate input
+                if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                    Toast.makeText(ChangePassword.this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!newPassword.equals(confirmPassword)) {
+                    Toast.makeText(ChangePassword.this, "Mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 // Xử lý đổi mật khẩu ở đây
                 Toast.makeText(ChangePassword.this, "Đã gửi mã xác nhận đến email của bạn", Toast.LENGTH_SHORT).show();
@@ -70,7 +85,6 @@ public class ChangePassword extends AppCompatActivity {
                 intent.putExtra("newPassword", newPassword);
                 intent.putExtra("confirmPassword", confirmPassword);
                 startActivity(intent);
-                finish();
             }
         });
     }

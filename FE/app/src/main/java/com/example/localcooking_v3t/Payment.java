@@ -1,8 +1,13 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,6 +21,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class Payment extends AppCompatActivity {
 
@@ -28,6 +34,8 @@ public class Payment extends AppCompatActivity {
     private RadioGroup rdGroupPayment;
     private RadioButton rdMomo, rdThe;
     private ImageView txtTrangThai1, txtTrangThai2;
+    private TextInputEditText idName, idEmail, idPhone;
+    private View mainLayout;
 
     // Dữ liệu nhận được
     private Class lopHoc;
@@ -50,9 +58,11 @@ public class Payment extends AppCompatActivity {
         nhanDuLieuTuIntent();
         capNhatGiaoDien();
         xuLySuKien();
+        setupClearFocusOnTouch();
     }
 
     private void initViews() {
+        mainLayout = findViewById(R.id.main);
         imgMonAn = findViewById(R.id.imgMonAn);
         txtTenLop = findViewById(R.id.txtTenLop);
         txtGiaTien = findViewById(R.id.txtGiaTien);
@@ -74,6 +84,10 @@ public class Payment extends AppCompatActivity {
         rdThe = findViewById(R.id.rdThe);
         txtTrangThai1 = findViewById(R.id.txtTrangThai1);
         txtTrangThai2 = findViewById(R.id.txtTrangThai2);
+
+        idName = findViewById(R.id.idName);
+        idEmail = findViewById(R.id.idEmail);
+        idPhone = findViewById(R.id.idPhone);
     }
 
     private void nhanDuLieuTuIntent() {
@@ -127,21 +141,117 @@ public class Payment extends AppCompatActivity {
     private void xuLySuKien() {
         btnBack.setOnClickListener(v -> finish());
 
-        rdGroupPayment.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rdMomo) {
-                txtTrangThai1.setVisibility(View.VISIBLE);
-                txtTrangThai2.setVisibility(View.INVISIBLE);
-            } else if (checkedId == R.id.rdThe) {
-                txtTrangThai1.setVisibility(View.INVISIBLE);
-                txtTrangThai2.setVisibility(View.VISIBLE);
-            }
+        // Xử lý click vào "Thêm ưu đãi" - chuyển đến Vouchers
+        findViewById(R.id.cardView2).setOnClickListener(v -> {
+            Intent intent = new Intent(Payment.this, Vouchers.class);
+            startActivity(intent);
         });
 
-        btnConfirmPayment.setOnClickListener(v -> {
-            Toast.makeText(this, "Đặt lịch thành công! Cảm ơn bạn ❤️", Toast.LENGTH_LONG).show();
-            // TODO: Gọi API đặt lịch, lưu vào database, gửi thông báo...
-            finish(); // Quay về màn hình trước
+        // Xử lý RadioButton Momo
+        rdMomo.setOnClickListener(v -> {
+            rdMomo.setChecked(true);
+            rdThe.setChecked(false);
+            txtTrangThai1.setVisibility(View.VISIBLE);
+            txtTrangThai2.setVisibility(View.INVISIBLE);
         });
+
+        // Xử lý RadioButton Thẻ
+        rdThe.setOnClickListener(v -> {
+            rdThe.setChecked(true);
+            rdMomo.setChecked(false);
+            txtTrangThai1.setVisibility(View.INVISIBLE);
+            txtTrangThai2.setVisibility(View.VISIBLE);
+        });
+
+        // Nút thanh toán - chuyển đến Bill
+        btnConfirmPayment.setOnClickListener(v -> {
+            // Validate thông tin liên hệ
+            String name = idName.getText() != null ? idName.getText().toString().trim() : "";
+            String email = idEmail.getText() != null ? idEmail.getText().toString().trim() : "";
+            String phone = idPhone.getText() != null ? idPhone.getText().toString().trim() : "";
+
+            if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(this, "Vui lòng điền đầy đủ thông tin liên hệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Intent intent = new Intent(Payment.this, Bill.class);
+            startActivity(intent);
+        });
+    }
+
+    /**
+     * Thiết lập clear focus khi chạm vào vùng ngoài EditText
+     */
+    private void setupClearFocusOnTouch() {
+        if (mainLayout != null) {
+            setupTouchListener(mainLayout);
+        }
+    }
+
+    /**
+     * Thiết lập touch listener đệ quy cho tất cả các view
+     */
+    private void setupTouchListener(View view) {
+        // Nếu không phải EditText, thiết lập listener để clear focus
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearFocusFromEditTexts();
+                }
+                return false;
+            });
+        }
+
+        // Nếu là ViewGroup, đệ quy cho các view con
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                setupTouchListener(child);
+            }
+        }
+    }
+
+    /**
+     * Xóa focus khỏi tất cả EditText và ẩn bàn phím
+     */
+    private void clearFocusFromEditTexts() {
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+            // Ẩn bàn phím
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
+        // Request focus vào main layout để EditText mất focus hoàn toàn
+        if (mainLayout != null) {
+            mainLayout.requestFocus();
+        }
+    }
+
+    /**
+     * Override dispatchTouchEvent để xử lý clear focus toàn cục
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                float x = event.getRawX() + v.getLeft() - location[0];
+                float y = event.getRawY() + v.getTop() - location[1];
+
+                // Nếu chạm bên ngoài EditText đang focus
+                if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                    clearFocusFromEditTexts();
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
     // Helper: Định dạng tiền đẹp

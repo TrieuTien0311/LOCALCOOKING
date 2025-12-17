@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Style cho floating hint text -->
-    <style name="FloatingHintText" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">#666666</item>
-        <item name="android:paddingStart">4dp</item>
-        <item name="android:paddingEnd">4dp</item>
-        <item name="android:layout_marginBottom">5dp</item>
-    </style>
+
     <style name="RoundedImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">12dp</item> <!-- bán kính bo góc -->
@@ -29,6 +22,18 @@
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:letterSpacing">0.001</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    
+    <!-- Style cho TextInputLayout với floating label đẹp -->
+    <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">#eeb965</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">#BA5632</item>
+        <item name="android:textColorHint">#999999</item>
     </style>
 </resources>

@@ -61,6 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/button_orange"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
@@ -71,9 +72,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="10dp"
-            android:paddingTop="20dp"
+            android:paddingTop="40dp"
             android:paddingRight="10dp"
-            android:paddingBottom="20dp">
+            android:paddingBottom="40dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -81,10 +82,10 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/view1"
-                    android:layout_width="394dp"
-                    android:layout_height="127dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.428"
@@ -94,7 +95,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:background="@color/white"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -108,8 +111,6 @@
                                 android:contentDescription="Food Image"
                                 android:scaleType="centerCrop"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.054"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:shapeAppearanceOverlay="@style/RoundedImage"
@@ -146,13 +147,13 @@
 
                             <TextView
                                 android:id="@+id/textView18"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="10dp"
                                 android:text="Ẩm thực địa  phương Huế"
                                 android:textColor="#020202"
-                                android:textSize="20sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.07"
@@ -179,7 +180,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     app:cardBackgroundColor="@color/bg_orange"
                     app:cardCornerRadius="0dp"
@@ -269,6 +270,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:text="Tuyệt vời!"
+                                android:textColor="#4F4646"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.47"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -283,7 +285,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/view3"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -293,31 +295,25 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="20dp"
+                        android:paddingBottom="10dp">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:id="@+id/textView33"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginEnd="20dp"
-                                android:justificationMode="inter_word"
-                                android:text="Không gian lớp thoải mái, đầy đủ dụng cụ và nguyên liệu nên mình rất yên tâm. Giáo viên hướng dẫn chi tiết, luôn hỗ trợ khi gặp khó khăn nên mình học được nhiều kỹ năng mới. Thành quả là món ăn vừa ngon vừa đẹp mắt và được thưởng thức ngay tại lớp."
-                                android:textAlignment="gravity"
-                                android:textColor="#000000"
-                                android:textColorLink="#9C27B0"
-                                android:textSize="18sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-                            />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/textView33"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:justificationMode="inter_word"
+                            android:text="Không gian lớp thoải mái, đầy đủ dụng cụ và nguyên liệu nên mình rất yên tâm. Giáo viên hướng dẫn chi tiết, luôn hỗ trợ khi gặp khó khăn nên mình học được nhiều kỹ năng mới. Thành quả là món ăn vừa ngon vừa đẹp mắt và được thưởng thức ngay tại lớp."
+                            android:textAlignment="gravity"
+                            android:textColor="#000000"
+                            android:textColorLink="#9C27B0"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -429,14 +425,11 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgFood5"
-                    android:layout_width="190dp"
+                    android:layout_width="170dp"
                     android:layout_height="99dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="10dp"
                     android:contentDescription="Food Image"
                     android:scaleType="centerCrop"
-                    app:layout_constraintEnd_toStartOf="@+id/imgFood6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
                     app:shapeAppearanceOverlay="@style/RoundedImage"
@@ -456,16 +449,13 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgFood6"
-                    android:layout_width="190dp"
+                    android:layout_width="170dp"
                     android:layout_height="99dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="10dp"
                     android:contentDescription="Food Image"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imgFood5"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
                     app:shapeAppearanceOverlay="@style/RoundedImage"
                     app:srcCompat="@drawable/hue" />
@@ -489,10 +479,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:backgroundTint="#B43F40"
                 android:text="Gửi đánh giá"
+                android:textColor="@color/white"
                 android:textColorLink="#F44336"
                 app:cornerRadius="15dp" />
 

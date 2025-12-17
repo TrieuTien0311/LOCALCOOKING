@@ -8,32 +8,124 @@
     android:background="@drawable/splash_gradient"
     tools:context=".Splash">
 
+    <!-- Background decorative circles -->
+    <View
+        android:id="@+id/circle1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:alpha="0.1"
+        android:background="@drawable/ic_circle_tn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <View
+        android:id="@+id/circle2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:alpha="0.15"
+        android:background="@drawable/ic_circle_tn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <View
+        android:id="@+id/circle3"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:alpha="0.08"
+        android:background="@drawable/ic_circle_tn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintVertical_bias="0.8" />
+
     <!-- Logo Image -->
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:scaleType="fitCenter"
         android:src="@drawable/logo"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.35" />
 
     <!-- App Name Text -->
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="cursive"
-        android:text="LocalCooking"
+        android:text="Local Cooking"
         android:textColor="#6B4423"
-        android:textSize="25sp"
+        android:textSize="32sp"
         android:textStyle="bold"
+        android:letterSpacing="0.05"
+        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imgLogo" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:alpha="0.8"
+        android:fontFamily="@font/inter"
+        android:text="Khám phá ẩm thực địa phương"
+        android:textColor="#8B6F47"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAppName" />
+
+    <!-- Loading dots container với đủ không gian cho animation -->
+    <LinearLayout
+        android:id="@+id/loadingDots"
+        android:layout_width="120dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="35dp"
+        android:paddingBottom="15dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+        <View
+            android:id="@+id/dot1"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.6"
+            android:background="@drawable/ic_circle_tn" />
+
+        <View
+            android:id="@+id/dot2"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.6"
+            android:background="@drawable/ic_circle_tn" />
+
+        <View
+            android:id="@+id/dot3"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:alpha="0.6"
+            android:background="@drawable/ic_circle_tn" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

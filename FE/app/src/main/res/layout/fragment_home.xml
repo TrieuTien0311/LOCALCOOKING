@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Chào V3T"
+                android:text="Đăng nhập"
                 android:textColor="#6A3B1A"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -142,12 +142,6 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="Swap"
-                        android:src="@drawable/ic_switch_thu" />
                 </LinearLayout>
 
                 <!-- Divider -->
@@ -218,7 +212,7 @@
                         android:layout_gravity="center_vertical"
                         android:contentDescription="Calendar"
                         android:src="@drawable/ic_calendar_thu"
-                        app:tint="#000000" />
+                        app:tint="#6A3B1A" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -526,6 +520,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
                         android:orientation="vertical">
 
                         <ImageView
@@ -568,6 +563,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
                         android:orientation="vertical">
 
                         <ImageView
@@ -610,6 +606,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
                         android:orientation="vertical">
 
                         <ImageView
@@ -651,6 +648,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
                         android:orientation="vertical">
 
                         <ImageView

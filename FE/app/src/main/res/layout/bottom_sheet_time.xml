@@ -26,11 +26,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <View
+            android:id="@+id/view24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
         <TextView
             android:id="@+id/btnDong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="240dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="22dp"
             android:text="Đóng"
             android:textColor="#8B4513"
             android:textSize="16sp"

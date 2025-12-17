@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -59,6 +60,27 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        
+        // Xử lý click vào "Đổi mật khẩu"
+        View changePasswordLayout = view.findViewById(R.id.cDMatKhau);
+        changePasswordLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ChangePassword.class);
+            startActivity(intent);
+        });
+        
+        // Xử lý nút "Đăng xuất"
+        View logoutButton = view.findViewById(R.id.button4);
+        logoutButton.setOnClickListener(v -> {
+            // Chuyển về trang đăng nhập và xóa stack
+            Intent intent = new Intent(getActivity(), Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
+        
+        return view;
     }
 }

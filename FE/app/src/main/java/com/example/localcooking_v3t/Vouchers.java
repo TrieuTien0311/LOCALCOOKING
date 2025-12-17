@@ -1,6 +1,8 @@
 package com.example.localcooking_v3t;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,18 @@ public class Vouchers extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // Xử lý nút quay lại
+        ImageView btnBack = findViewById(R.id.imageView6);
+        btnBack.setOnClickListener(v -> {
+            finish(); // Quay lại Payment
+        });
+
+        // Xử lý nút áp dụng
+        Button btnApDung = findViewById(R.id.btnApDung);
+        btnApDung.setOnClickListener(v -> {
+            finish(); // Quay lại Payment với voucher đã chọn
         });
 
         // Thêm Fragment vào container

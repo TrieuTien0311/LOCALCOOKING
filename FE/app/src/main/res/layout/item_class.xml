@@ -19,7 +19,7 @@
             android:background="#D45155"
             android:orientation="horizontal"
             android:padding="7dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -32,13 +32,19 @@
                 app:tint="#FFFFFF" />
 
             <TextView
-                android:layout_width="230dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:text="ƯU ĐÃI GIỜ CHÓT !"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <View
+                android:id="@+id/view22"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/txtKetThuc"
@@ -54,7 +60,8 @@
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="15dp"
+            android:layout_marginTop="-15dp"
+            app:cardCornerRadius="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutBanner">
@@ -68,8 +75,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
+                    android:background="#FBFBFB"
                     android:orientation="horizontal"
+                    android:paddingLeft="10dp"
                     android:paddingTop="10dp"
+                    android:paddingRight="10dp"
                     android:paddingBottom="8dp">
 
                     <!-- Hình ảnh món ăn với CardView bo tròn -->
@@ -77,7 +87,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:paddingLeft="10dp"
                         android:paddingTop="5dp"
                         android:paddingRight="10dp">
 
@@ -115,6 +124,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="0dp"
                         android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -131,8 +141,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:maxLines="2"
+                            android:ellipsize="start"
+                            android:maxLines="3"
                             android:text="Khám phá tinh hoa ẩm thực cung đình với hương vị đặc trưng vị Huế"
                             android:textColor="#666666"
                             android:textSize="12sp" />
@@ -210,23 +220,29 @@
 
                             </LinearLayout>
 
+                            <View
+                                android:id="@+id/view21"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1" />
+
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnDatLich"
-                                android:layout_width="80dp"
+                                android:layout_width="60dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="60dp"
-                                android:layout_marginTop="15dp"
+                                android:layout_marginLeft="0dp"
+                                android:layout_marginTop="0dp"
                                 android:background="@drawable/button_red"
                                 android:letterSpacing="0.001"
                                 android:minHeight="0dp"
-                                android:paddingLeft="0dp"
+                                android:paddingLeft="3dp"
                                 android:paddingTop="0dp"
-                                android:paddingRight="0dp"
+                                android:paddingRight="3dp"
                                 android:paddingBottom="0dp"
                                 android:text="Đặt lịch"
                                 android:textAllCaps="false"
                                 android:textColor="#FDFDFD"
-                                android:textSize="14sp"
+                                android:textSize="10sp"
                                 android:textStyle="bold"
                                 app:backgroundTint="@null" />
 
@@ -273,7 +289,7 @@
 
         <LinearLayout
             android:id="@+id/footer"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-22dp"
             android:background="#FFDD91"
@@ -283,13 +299,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView">
 
+            <View
+                android:id="@+id/view20"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
             <TextView
                 android:id="@+id/txtChiTiet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="320dp"
+                android:layout_marginLeft="0dp"
                 android:layout_marginTop="3dp"
+                android:layout_marginRight="40dp"
                 android:layout_marginBottom="3dp"
                 android:text="Chi tiết"
                 android:textColor="#6A3B1A"

@@ -160,7 +160,8 @@
                 android:justificationMode="inter_word"
                 android:padding="15dp"
                 android:text="Khám phá hương vị đặc trưng của ẩm thực cố đô Huế - nơi giao thoa giữa tinh hoa cung đình và phong vị dân gian. Trong buổi học này, bạn sẽ được trải nghiệm trực tiếp việc chế biến các món ăn truyền thống mang đậm dấu ấn văn hóa xứ Huế."
-                android:textAlignment="gravity" />
+                android:textAlignment="gravity"
+                android:textColor="#454545" />
 
             <TextView
                 android:id="@+id/txtTenLopHoc"
@@ -193,9 +194,9 @@
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/bg_detail_description"
                 android:orientation="vertical"
-                android:paddingLeft="20dp"
+                android:paddingLeft="10dp"
                 android:paddingTop="15dp"
-                android:paddingRight="20dp"
+                android:paddingRight="10dp"
                 android:paddingBottom="15dp">
 
                 <TextView

@@ -29,7 +29,7 @@
                     android:id="@+id/txtDanhGia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="240dp"
+                    android:layout_marginRight="0dp"
                     android:layout_weight="1"
                     android:text="Đánh giá"
                     android:textColor="#000000"
@@ -40,8 +40,7 @@
                     android:id="@+id/txtSao1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
+                    android:layout_marginRight="0dp"
                     android:text="4.8"
                     android:textColor="#000000"
                     android:textSize="20dp"
@@ -51,10 +50,9 @@
                     android:id="@+id/imgSao1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="-10dp"
+                    android:layout_marginLeft="0dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="3dp"
-                    android:layout_weight="1"
                     android:src="@drawable/ic_star" />
             </LinearLayout>
 

@@ -63,14 +63,17 @@
                     android:layout_height="wrap_content"
                     android:text="Lớp học sắp diễn ra "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtNoiDungTB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Lớp “Ẩm thực địa phương Huế” của bạn sẽ bắt đầu vào ngày mai. Đừng quên nhé!" />
+                    android:text="Lớp “Ẩm thực địa phương Huế” của bạn sẽ bắt đầu vào ngày mai. Đừng quên nhé!"
+                    android:textColor="#707070"
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -88,6 +91,8 @@
             android:paddingLeft="15dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="15 phút trước" />
+            android:text="15 phút trước"
+            android:textColor="#707070"
+            android:textSize="12sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
