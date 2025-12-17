@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -45,10 +44,10 @@ public class UuDai {
     private Integer soLuongDaSuDung = 0;
     
     @Column(name = "ngayBatDau", nullable = false)
-    private LocalDate ngayBatDau;
+    private String ngayBatDau; // SQLite stores DATE as TEXT (YYYY-MM-DD)
     
     @Column(name = "ngayKetThuc", nullable = false)
-    private LocalDate ngayKetThuc;
+    private String ngayKetThuc; // SQLite stores DATE as TEXT (YYYY-MM-DD)
     
     @Column(name = "hinhAnh")
     private String hinhAnh;

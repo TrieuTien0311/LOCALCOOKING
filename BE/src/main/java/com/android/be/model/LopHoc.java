@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -51,13 +50,13 @@ public class LopHoc {
     private String trangThai = "Sắp diễn ra";
     
     @Column(name = "ngayDienRa")
-    private LocalDate ngayDienRa;
+    private String ngayDienRa; // SQLite stores DATE as TEXT (YYYY-MM-DD)
     
     @Column(name = "gioBatDau")
-    private java.sql.Time gioBatDau;
+    private String gioBatDau; // SQLite stores TIME as TEXT (HH:MM)
     
     @Column(name = "gioKetThuc")
-    private java.sql.Time gioKetThuc;
+    private String gioKetThuc; // SQLite stores TIME as TEXT
     
     @Column(name = "hinhAnh")
     private String hinhAnh;

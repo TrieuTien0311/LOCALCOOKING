@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "LichHoc")
@@ -22,13 +21,13 @@ public class LichHoc {
     private Integer maLopHoc;
     
     @Column(name = "ngayHoc", nullable = false)
-    private LocalDate ngayHoc;
+    private String ngayHoc; // SQLite stores DATE as TEXT (YYYY-MM-DD)
     
     @Column(name = "gioBatDau", nullable = false)
-    private java.sql.Time gioBatDau;
+    private String gioBatDau; // SQLite stores TIME as TEXT (HH:MM) 
     
     @Column(name = "gioKetThuc", nullable = false)
-    private java.sql.Time gioKetThuc;
+    private String gioKetThuc; 
     
     @Column(name = "noiDung", length = 500)
     private String noiDung;
