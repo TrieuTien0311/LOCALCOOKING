@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,7 @@ public class ClassesFragment extends Fragment {
     private RecyclerView recyclerView;
     private ClassAdapter adapter;
     private List<Class> danhSachLopHoc;
-    private List<Class> danhSachGoc; // Lưu danh sách gốc
+    private List<Class> danhSachGoc;
     private int currentSortType = ArrangeBottomSheet.MAC_DINH;
     private int currentMinCost = 500000;
     private int currentMaxCost = 3000000;
@@ -48,14 +49,11 @@ public class ClassesFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_classes, container, false);
 
-        // Khởi tạo RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewLopHoc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Tạo dữ liệu mẫu
         taoDuLieuMau();
 
-        // Khởi tạo adapter
         adapter = new ClassAdapter(danhSachLopHoc);
         recyclerView.setAdapter(adapter);
 
@@ -63,8 +61,9 @@ public class ClassesFragment extends Fragment {
         adapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
             @Override
             public void onDatLichClick(Class lopHoc) {
-                Toast.makeText(getContext(), "Đặt lịch: " + lopHoc.getTenLop(),
-                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), Booking.class);
+                intent.putExtra("lopHoc", lopHoc); // Truyền cả object, có luôn món ăn!
+                startActivity(intent);
             }
 
             @Override
@@ -97,16 +96,13 @@ public class ClassesFragment extends Fragment {
             });
             sheet.show(getChildFragmentManager(), "TimeFilter");
         });
+
         btnGiaCa.setOnClickListener(v -> {
             CostBottomSheet sheet = new CostBottomSheet();
             sheet.setOnFilterAppliedListener((minCost, maxCost, sortType) -> {
                 currentMinCost = minCost;
                 currentMaxCost = maxCost;
-
-                // Lọc theo giá
                 locTheoGia(minCost, maxCost);
-
-                // Sắp xếp theo loại
                 sapXepDanhSach(sortType == 1 ? ArrangeBottomSheet.GIA_GIAM_DAN :
                         sortType == 2 ? ArrangeBottomSheet.GIA_TANG_DAN :
                                 ArrangeBottomSheet.MAC_DINH);
@@ -136,7 +132,6 @@ public class ClassesFragment extends Fragment {
                 8
         );
 
-        // Thêm món khai vị cho lớp Huế
         lopHue.addFoodToCategory(0, new Food(
                 "Nem lụi Huế",
                 "Món nem thơm ngon đặc trưng xứ Huế với hương vị đậm đà từ thịt heo băm nhuyễn, nướng trên than hồng, ăn kèm bánh tráng và rau sống.",
@@ -151,7 +146,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Thêm món chính cho lớp Huế
         lopHue.addFoodToCategory(1, new Food(
                 "Bánh bèo chén",
                 "Món bánh nhỏ xinh đặc trưng xứ Huế, với lớp bánh mềm mịn, tôm khô thơm và mỡ hành béo ngậy, ăn kèm nước mắm chua ngọt đậm đà.",
@@ -173,7 +167,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Thêm món tráng miệng cho lớp Huế
         lopHue.addFoodToCategory(2, new Food(
                 "Chè sen long nhãn",
                 "Món chè thanh mát với hạt sen bùi béo, long nhãn ngọt thanh, nước đường trong vắt.",
@@ -206,7 +199,6 @@ public class ClassesFragment extends Fragment {
                 19
         );
 
-        // Thêm món khai vị cho lớp Hà Nội
         lopHanoi.addFoodToCategory(0, new Food(
                 "Chả cá Lã Vọng",
                 "Món chả cá trứ danh Hà Nội với cá lăng tẩm gia vị, chiên thơm, ăn kèm bún, thì là và đậu phộng rang.",
@@ -228,7 +220,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Thêm món chính cho lớp Hà Nội
         lopHanoi.addFoodToCategory(1, new Food(
                 "Phở Hà Nội",
                 "Món phở truyền thống với nước dùng trong veo từ xương hầm, bánh phở dai mềm, thịt bò mềm ngọt.",
@@ -250,7 +241,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Thêm món tráng miệng cho lớp Hà Nội
         lopHanoi.addFoodToCategory(2, new Food(
                 "Chè bưởi",
                 "Món chè thanh mát với múi bưởi giòn, nước đường thanh mát, tô điểm bởi nước cốt dừa béo ngậy.",
@@ -266,6 +256,7 @@ public class ClassesFragment extends Fragment {
         ));
 
         danhSachGoc.add(lopHanoi);
+
         // ========== LỚP HỌC ẨM THỰC ĐÀ NẴNG ==========
         Class lopDaNang = new Class(
                 "Ẩm thực địa phương Đà Nẵng",
@@ -276,13 +267,12 @@ public class ClassesFragment extends Fragment {
                 "680.000₫",
                 4.8f,
                 189,
-                R.drawable.hue,  // tạm dùng, bạn có thể thay bằng hình Đà Nẵng sau
-                false,           // không ưu đãi
+                R.drawable.hue,
+                false,
                 "23:30:00",
                 12
         );
 
-        // Khai vị
         lopDaNang.addFoodToCategory(0, new Food(
                 "Bánh tráng cuốn thịt heo",
                 "Món cuốn đặc trưng Đà Nẵng với thịt heo luộc, bánh tráng Đại Lộc, rau sống tươi mát và nước mắm nêm đậm đà.",
@@ -290,7 +280,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Món chính
         lopDaNang.addFoodToCategory(1, new Food(
                 "Mì Quảng",
                 "Món mì đặc sản với nước dùng đậm đà, tôm, thịt heo, trứng cút, ăn kèm bánh tráng giòn và rau sống.",
@@ -298,7 +287,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.hue
         ));
 
-        // Tráng miệng
         lopDaNang.addFoodToCategory(2, new Food(
                 "Kem bơ Đà Nẵng",
                 "Món kem bơ nổi tiếng với bơ sáp dẻo mịn, cốt dừa béo ngậy và chút muối lạc rang.",
@@ -318,13 +306,12 @@ public class ClassesFragment extends Fragment {
                 "650.000₫",
                 4.7f,
                 93,
-                R.drawable.hue,  // tạm dùng
-                false,           // không ưu đãi
+                R.drawable.hue,
+                false,
                 "23:30:00",
                 10
         );
 
-        // Khai vị
         lopPhuYen.addFoodToCategory(0, new Food(
                 "Bánh ướt thịt nướng Phú Yên",
                 "Bánh ướt mỏng mềm cuốn cùng thịt heo nướng thơm lừng, rau sống và nước mắm chua ngọt.",
@@ -332,7 +319,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.banhbeo
         ));
 
-        // Món chính
         lopPhuYen.addFoodToCategory(1, new Food(
                 "Mắt cá ngừ đại dương nấu tiêu xanh",
                 "Món ăn thượng hạng từ mắt cá ngừ đại dương hầm mềm với tiêu xanh thơm nồng, bổ dưỡng.",
@@ -340,7 +326,6 @@ public class ClassesFragment extends Fragment {
                 R.drawable.hue
         ));
 
-        // Tráng miệng
         lopPhuYen.addFoodToCategory(2, new Food(
                 "Bánh hồng Phú Yên",
                 "Món bánh hồng dẻo ngọt từ nếp cái hoa vàng và dừa nạo, đặc sản làm quà nổi tiếng.",
@@ -350,9 +335,9 @@ public class ClassesFragment extends Fragment {
 
         danhSachGoc.add(lopPhuYen);
 
-        // Copy sang danh sách hiển thị
         danhSachLopHoc = new ArrayList<>(danhSachGoc);
     }
+
     private void showSapXepBottomSheet() {
         ArrangeBottomSheet bottomSheet = ArrangeBottomSheet.newInstance(currentSortType);
         bottomSheet.setOnSapXepListener(loaiSapXep -> {
@@ -361,15 +346,16 @@ public class ClassesFragment extends Fragment {
         });
         bottomSheet.show(getChildFragmentManager(), "ArrangeBottomSheet");
     }
+
     private void locTheoThoiGian(int startHour, int startMinute, int endHour, int endMinute) {
         int startMinutes = startHour * 60 + startMinute;
         int endMinutes = endHour * 60 + endMinute;
 
         ArrayList<Class> filtered = new ArrayList<>();
         for (Class lop : danhSachGoc) {
-            String thoiGian = lop.getThoiGian(); // ví dụ: "14:00 - 17:00"
+            String thoiGian = lop.getThoiGian();
             try {
-                String startStr = thoiGian.split("-")[0].trim(); // "14:00 "
+                String startStr = thoiGian.split("-")[0].trim();
                 String[] parts = startStr.split(":");
                 int hour = Integer.parseInt(parts[0]);
                 int minute = Integer.parseInt(parts[1]);
@@ -379,7 +365,6 @@ public class ClassesFragment extends Fragment {
                     filtered.add(lop);
                 }
             } catch (Exception e) {
-                // Nếu lỗi format thì vẫn thêm để tránh mất dữ liệu
                 filtered.add(lop);
             }
         }
@@ -387,6 +372,7 @@ public class ClassesFragment extends Fragment {
         danhSachLopHoc = filtered;
         adapter.updateData(danhSachLopHoc);
     }
+
     private void sapXepDanhSach(int loaiSapXep) {
         switch (loaiSapXep) {
             case ArrangeBottomSheet.MAC_DINH:
@@ -441,18 +427,17 @@ public class ClassesFragment extends Fragment {
 
         adapter.updateData(danhSachLopHoc);
     }
+
     private void locTheoGia(int minCost, int maxCost) {
         ArrayList<Class> filtered = new ArrayList<>();
         for (Class lop : danhSachGoc) {
             try {
-                // Lấy giá số từ chuỗi giá (ví dụ: "715.000₫" -> 715000)
                 double giaSo = lop.getGiaSo();
 
                 if (giaSo >= minCost && giaSo <= maxCost) {
                     filtered.add(lop);
                 }
             } catch (Exception e) {
-                // Nếu lỗi format thì vẫn thêm để tránh mất dữ liệu
                 filtered.add(lop);
             }
         }

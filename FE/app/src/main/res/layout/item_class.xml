@@ -249,7 +249,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="205dp"
                     android:background="#73474545"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <!-- Text "Đã diễn ra" ở giữa overlay -->
                 <TextView
@@ -266,7 +266,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="12sp"
                     android:textStyle="normal"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
             </FrameLayout>
         </androidx.cardview.widget.CardView>

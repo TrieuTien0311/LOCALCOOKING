@@ -1,6 +1,7 @@
 package com.example.localcooking_v3t;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,25 +98,58 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
             }
         }).attach();
 
-        // Xử lý nút Đặt lịch
+        // Xử lý nút Đặt lịch - Chuyển sang Booking Activity
         btnDatLich.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Đặt lịch: " + lopHoc.getTenLop(),
-                    Toast.LENGTH_SHORT).show();
-            // TODO: Xử lý logic đặt lịch
+            if (lopHoc != null) {
+                // Đóng bottom sheet
+                dismiss();
+
+                // Chuyển sang Booking Activity
+                Intent intent = new Intent(getActivity(), Booking.class);
+
+                // Truyền dữ liệu lớp học
+                intent.putExtra("tenLop", lopHoc.getTenLop());
+                intent.putExtra("moTa", lopHoc.getMoTa());
+                intent.putExtra("thoiGian", lopHoc.getThoiGian());
+                intent.putExtra("ngay", lopHoc.getNgay());
+                intent.putExtra("diaDiem", lopHoc.getDiaDiem());
+                intent.putExtra("gia", lopHoc.getGia());
+                intent.putExtra("giaSo", lopHoc.getGiaSo());
+                intent.putExtra("danhGia", lopHoc.getDanhGia());
+                intent.putExtra("soDanhGia", lopHoc.getSoDanhGia());
+                intent.putExtra("hinhAnh", lopHoc.getHinhAnh());
+                intent.putExtra("coUuDai", lopHoc.isCoUuDai());
+                intent.putExtra("thoiGianKetThuc", lopHoc.getThoiGianKetThuc());
+                intent.putExtra("suat", lopHoc.getSuat());
+
+                startActivity(intent);
+            }
         });
 
         // Xử lý nút Favorite
         btnFav.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Yêu thích: " + lopHoc.getTenLop(),
-                    Toast.LENGTH_SHORT).show();
-            // TODO: Xử lý logic thêm/xóa yêu thích
+            if (lopHoc != null) {
+                // Toggle trạng thái yêu thích
+                lopHoc.setFavorite(!lopHoc.isFavorite());
+
+                // Cập nhật icon
+                if (lopHoc.isFavorite()) {
+                    btnFav.setIconResource(R.drawable.ic_heartredfilled);
+                    Toast.makeText(getContext(), "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
+                } else {
+                    btnFav.setIconResource(R.drawable.ic_heart);
+                    Toast.makeText(getContext(), "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
         // Xử lý nút Share
         btnShare.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Chia sẻ: " + lopHoc.getTenLop(),
-                    Toast.LENGTH_SHORT).show();
-            // TODO: Xử lý logic chia sẻ
+            if (lopHoc != null) {
+                Toast.makeText(getContext(), "Chia sẻ: " + lopHoc.getTenLop(),
+                        Toast.LENGTH_SHORT).show();
+                // TODO: Xử lý logic chia sẻ
+            }
         });
 
         return view;

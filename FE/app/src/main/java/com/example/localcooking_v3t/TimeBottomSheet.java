@@ -64,8 +64,6 @@ public class TimeBottomSheet extends BottomSheetDialogFragment {
         btnXoaLoc = view.findViewById(R.id.btnXoaLoc);
         radioGroup = view.findViewById(R.id.radioGroupSapXep);
 
-        slider.setMinSeparationValue(1f);
-
         slider.addOnChangeListener((s, value, fromUser) -> {
             if (!fromUser) return;
             List<Float> values = s.getValues();
