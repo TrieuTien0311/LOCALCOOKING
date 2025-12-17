@@ -13,13 +13,14 @@ GO
 
 -- 1. NGƯỜI DÙNG
 CREATE TABLE NguoiDung (
-    maNguoiDung INT PRIMARY KEY,
+    maNguoiDung INT PRIMARY KEY IDENTITY(1,1),
     tenDangNhap VARCHAR(50) UNIQUE NOT NULL,
     matKhau VARCHAR(255) NOT NULL,
-    hoTen NVARCHAR(100) NOT NULL,
+    hoTen NVARCHAR(100),
     email VARCHAR(100) UNIQUE NOT NULL,
     soDienThoai VARCHAR(15),
     diaChi NVARCHAR(255),
+    vaiTro NVARCHAR(20) DEFAULT N'HocVien', -- HocVien | GiaoVien | Admin
     trangThai NVARCHAR(20) DEFAULT N'HoatDong', -- HoatDong | BiKhoa
     ngayTao DATETIME DEFAULT GETDATE(),
     lanCapNhatCuoi DATETIME DEFAULT GETDATE()
@@ -27,7 +28,7 @@ CREATE TABLE NguoiDung (
 
 -- 2. OTP
 CREATE TABLE OTP (
-    maOTP INT PRIMARY KEY,
+    maOTP INT PRIMARY KEY IDENTITY(1,1),
     maNguoiDung INT,
     maXacThuc VARCHAR(6) NOT NULL,
     loaiOTP NVARCHAR(30) NOT NULL, -- DangKy | QuenMatKhau | XacThuc
@@ -37,66 +38,115 @@ CREATE TABLE OTP (
     FOREIGN KEY (maNguoiDung) REFERENCES NguoiDung(maNguoiDung)
 );
 
--- 3. LỚP HỌC
+-- 3. GIÁO VIÊN (Thông tin chi tiết giáo viên)
+CREATE TABLE GiaoVien (
+    maGiaoVien INT PRIMARY KEY IDENTITY(1,1),
+    maNguoiDung INT UNIQUE NOT NULL,
+    chuyenMon NVARCHAR(200),
+    kinhNghiem NVARCHAR(MAX),
+    moTa NVARCHAR(MAX),
+    hinhAnh VARCHAR(255),
+    FOREIGN KEY (maNguoiDung) REFERENCES NguoiDung(maNguoiDung)
+);
+
+-- 4. LỚP HỌC
 CREATE TABLE LopHoc (
-    maLopHoc INT PRIMARY KEY,
+    maLopHoc INT PRIMARY KEY IDENTITY(1,1),
     tenLopHoc NVARCHAR(200) NOT NULL,
     moTa NVARCHAR(MAX),
     maGiaoVien INT,
+    tenGiaoVien NVARCHAR(100),
     soLuongToiDa INT DEFAULT 20,
     soLuongHienTai INT DEFAULT 0,
     giaTien DECIMAL(10,2) NOT NULL,
     thoiGian NVARCHAR(100),
     diaDiem NVARCHAR(255),
-    trangThai NVARCHAR(30) DEFAULT N'SapKhaiGiang',
-    ngayBatDau DATE,
-    ngayKetThuc DATE,
+    trangThai NVARCHAR(30) DEFAULT N'Sắp diễn ra',
+    ngayDienRa DATE,
+    gioBatDau TIME,
+    gioKetThuc TIME,
     hinhAnh VARCHAR(255),
+    coUuDai BIT DEFAULT 0,
     ngayTao DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (maGiaoVien) REFERENCES NguoiDung(maNguoiDung)
+    FOREIGN KEY (maGiaoVien) REFERENCES GiaoVien(maGiaoVien)
 );
 
--- 4. LỊCH HỌC
+-- 5. DANH MỤC MÓN ĂN (Category trong FE)
+CREATE TABLE DanhMucMonAn (
+    maDanhMuc INT PRIMARY KEY IDENTITY(1,1),
+    maLopHoc INT NOT NULL,
+    tenDanhMuc NVARCHAR(100) NOT NULL, -- Món khai vị, Món chính, Món tráng miệng
+    thoiGian NVARCHAR(50), -- 14:00 - 15:00
+    iconDanhMuc VARCHAR(255),
+    thuTu INT DEFAULT 1,
+    FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc)
+);
+
+-- 6. MÓN ĂN (Food trong FE)
+CREATE TABLE MonAn (
+    maMonAn INT PRIMARY KEY IDENTITY(1,1),
+    maDanhMuc INT NOT NULL,
+    tenMon NVARCHAR(200) NOT NULL,
+    gioiThieu NVARCHAR(MAX),
+    nguyenLieu NVARCHAR(MAX),
+    hinhAnh VARCHAR(255),
+    FOREIGN KEY (maDanhMuc) REFERENCES DanhMucMonAn(maDanhMuc)
+);
+
+-- 7. HÌNH ẢNH LỚP HỌC (Nhiều ảnh cho 1 lớp)
+CREATE TABLE HinhAnhLopHoc (
+    maHinhAnh INT PRIMARY KEY IDENTITY(1,1),
+    maLopHoc INT NOT NULL,
+    duongDan VARCHAR(255) NOT NULL,
+    thuTu INT DEFAULT 1,
+    FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc)
+);
+
+-- 8. LỊCH HỌC
 CREATE TABLE LichHoc (
-    maLichHoc INT PRIMARY KEY,
+    maLichHoc INT PRIMARY KEY IDENTITY(1,1),
     maLopHoc INT NOT NULL,
     ngayHoc DATE NOT NULL,
     gioBatDau TIME NOT NULL,
     gioKetThuc TIME NOT NULL,
     noiDung NVARCHAR(500),
-    trangThai NVARCHAR(20) DEFAULT N'ChuaHoc',
+    trangThai NVARCHAR(20) DEFAULT N'Chưa Học',
     FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc)
 );
 
--- 5. ĐẶT LỊCH
+-- 9. ĐẶT LỊCH
 CREATE TABLE DatLich (
-    maDatLich INT PRIMARY KEY,
+    maDatLich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
     maLopHoc INT NOT NULL,
+    soLuongNguoi INT DEFAULT 1,
+    tongTien DECIMAL(10,2),
+    tenNguoiDat NVARCHAR(100),
+    emailNguoiDat VARCHAR(100),
+    sdtNguoiDat VARCHAR(15),
     ngayDat DATETIME DEFAULT GETDATE(),
-    trangThai NVARCHAR(30) DEFAULT N'ChoDuyet',
+    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
     ghiChu NVARCHAR(MAX),
     FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
-    FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc),
-    CONSTRAINT UQ_DatLich UNIQUE (maHocVien, maLopHoc)
+    FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc)
 );
 
--- 6. THANH TOÁN
+-- 10. THANH TOÁN
 CREATE TABLE ThanhToan (
-    maThanhToan INT PRIMARY KEY,
+    maThanhToan INT PRIMARY KEY IDENTITY(1,1),
     maDatLich INT NOT NULL,
     soTien DECIMAL(10,2) NOT NULL,
-    phuongThuc NVARCHAR(30) NOT NULL, -- ChuyenKhoan | MoMo
-    trangThai NVARCHAR(30) DEFAULT N'ChuaThanhToan',
+    phuongThuc NVARCHAR(30) NOT NULL, -- ChuyenKhoan | MoMo | The
+    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
     ngayThanhToan DATETIME,
     maGiaoDich VARCHAR(100),
     ghiChu NVARCHAR(MAX),
     FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
 );
 
--- 7. ĐÁNH GIÁ
+-- 11. ĐÁNH GIÁ
 CREATE TABLE DanhGia (
-    maDanhGia INT PRIMARY KEY,
+    maDanhGia INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
     maLopHoc INT NOT NULL,
     diemDanhGia INT CHECK (diemDanhGia BETWEEN 1 AND 5),
@@ -106,21 +156,22 @@ CREATE TABLE DanhGia (
     FOREIGN KEY (maLopHoc) REFERENCES LopHoc(maLopHoc)
 );
 
--- 8. THÔNG BÁO
+-- 12. THÔNG BÁO
 CREATE TABLE ThongBao (
-    maThongBao INT PRIMARY KEY,
+    maThongBao INT PRIMARY KEY IDENTITY(1,1),
     maNguoiNhan INT,
     tieuDe NVARCHAR(255) NOT NULL,
     noiDung NVARCHAR(MAX) NOT NULL,
-    loaiThongBao NVARCHAR(30) DEFAULT N'HeThong',
+    loaiThongBao NVARCHAR(30) DEFAULT N'Hệ Thống',
+    hinhAnh VARCHAR(255),
     daDoc BIT DEFAULT 0,
     ngayTao DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (maNguoiNhan) REFERENCES NguoiDung(maNguoiDung)
 );
 
--- 9. YÊU THÍCH
+-- 13. YÊU THÍCH
 CREATE TABLE YeuThich (
-    maYeuThich INT PRIMARY KEY,
+    maYeuThich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
     maLopHoc INT NOT NULL,
     ngayThem DATETIME DEFAULT GETDATE(),
@@ -129,9 +180,9 @@ CREATE TABLE YeuThich (
     CONSTRAINT UQ_YeuThich UNIQUE (maHocVien, maLopHoc)
 );
 
--- 10. ƯU ĐÃI
+-- 14. ƯU ĐÃI
 CREATE TABLE UuDai (
-    maUuDai INT PRIMARY KEY,
+    maUuDai INT PRIMARY KEY IDENTITY(1,1),
     maCode VARCHAR(50) UNIQUE NOT NULL,
     tenUuDai NVARCHAR(200) NOT NULL,
     moTa NVARCHAR(MAX),
@@ -142,13 +193,14 @@ CREATE TABLE UuDai (
     soLuongDaSuDung INT DEFAULT 0,
     ngayBatDau DATE NOT NULL,
     ngayKetThuc DATE NOT NULL,
-    trangThai NVARCHAR(20) DEFAULT N'HoatDong',
+    hinhAnh VARCHAR(255),
+    trangThai NVARCHAR(20) DEFAULT N'Hoạt Động',
     ngayTao DATETIME DEFAULT GETDATE()
 );
 
--- 11. LỊCH SỬ ƯU ĐÃI
+-- 15. LỊCH SỬ ƯU ĐÃI
 CREATE TABLE LichSuUuDai (
-    maLichSu INT PRIMARY KEY,
+    maLichSu INT PRIMARY KEY IDENTITY(1,1),
     maUuDai INT NOT NULL,
     maDatLich INT NOT NULL,
     soTienGiam DECIMAL(10,2) NOT NULL,
@@ -157,16 +209,16 @@ CREATE TABLE LichSuUuDai (
     FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
 );
 
--- 12. HÓA ĐƠN
+-- 16. HÓA ĐƠN
 CREATE TABLE HoaDon (
-    maHoaDon INT PRIMARY KEY,
+    maHoaDon INT PRIMARY KEY IDENTITY(1,1),
     maThanhToan INT NOT NULL,
     soHoaDon VARCHAR(50) UNIQUE NOT NULL,
     ngayXuatHoaDon DATETIME DEFAULT GETDATE(),
     tongTien DECIMAL(10,2) NOT NULL,
     VAT DECIMAL(10,2) DEFAULT 0,
     thanhTien DECIMAL(10,2) NOT NULL,
-    trangThai NVARCHAR(20) DEFAULT N'DaXuat',
+    trangThai NVARCHAR(20) DEFAULT N'Đã Xuất',
     filePDF VARCHAR(255),
     FOREIGN KEY (maThanhToan) REFERENCES ThanhToan(maThanhToan)
 );
@@ -182,7 +234,7 @@ BEGIN
     SET soLuongHienTai = soLuongHienTai + 1
     FROM LopHoc lh
     JOIN inserted i ON lh.maLopHoc = i.maLopHoc
-    WHERE i.trangThai = N'DaDuyet';
+    WHERE i.trangThai = N'Đã Duyệt';
 END;
 GO
 
@@ -199,8 +251,8 @@ BEGIN
     FROM LopHoc lh
     JOIN deleted d ON lh.maLopHoc = d.maLopHoc
     JOIN inserted i ON d.maDatLich = i.maDatLich
-    WHERE d.trangThai = N'DaDuyet'
-      AND i.trangThai = N'DaHuy';
+    WHERE d.trangThai = N'Đã Duyệt'
+      AND i.trangThai = N'Đã Hủy';
 
     -- Từ khác → DaDuyet
     UPDATE LopHoc
@@ -208,8 +260,8 @@ BEGIN
     FROM LopHoc lh
     JOIN deleted d ON lh.maLopHoc = d.maLopHoc
     JOIN inserted i ON d.maDatLich = i.maDatLich
-    WHERE d.trangThai <> N'DaDuyet'
-      AND i.trangThai = N'DaDuyet';
+    WHERE d.trangThai <> N'Đã Duyệt'
+      AND i.trangThai = N'Đã Duyệt';
 END;
 GO
 
@@ -250,7 +302,6 @@ INSTEAD OF INSERT
 AS
 BEGIN
     INSERT INTO OTP (
-        maOTP,
         maNguoiDung,
         maXacThuc,
         loaiOTP,
@@ -259,7 +310,6 @@ BEGIN
         daSuDung
     )
     SELECT
-        maOTP,
         maNguoiDung,
         maXacThuc,
         loaiOTP,
@@ -477,7 +527,6 @@ BEGIN
 
         -- Thêm OTP mới
         INSERT INTO OTP (
-            maOTP,
             maNguoiDung,
             maXacThuc,
             loaiOTP,
@@ -486,7 +535,6 @@ BEGIN
             daSuDung
         )
         VALUES (
-            ABS(CHECKSUM(NEWID())),
             @MaNguoiDung,
             @MaXacThuc,
             @LoaiOTP,

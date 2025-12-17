@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class NguoiDung {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maNguoiDung")
     private Integer maNguoiDung;
     
@@ -23,7 +24,7 @@ public class NguoiDung {
     @Column(name = "matKhau", nullable = false)
     private String matKhau;
     
-    @Column(name = "hoTen", nullable = false, length = 100)
+    @Column(name = "hoTen", length = 100)
     private String hoTen;
     
     @Column(name = "email", unique = true, nullable = false, length = 100)
@@ -34,6 +35,9 @@ public class NguoiDung {
     
     @Column(name = "diaChi")
     private String diaChi;
+    
+    @Column(name = "vaiTro", length = 20)
+    private String vaiTro = "HocVien"; // HocVien | GiaoVien | Admin
     
     @Column(name = "trangThai", length = 20)
     private String trangThai = "HoatDong";

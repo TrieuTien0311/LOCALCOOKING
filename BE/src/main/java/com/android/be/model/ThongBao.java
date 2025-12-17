@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ThongBao {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maThongBao")
     private Integer maThongBao;
     
@@ -27,7 +28,10 @@ public class ThongBao {
     private String noiDung;
     
     @Column(name = "loaiThongBao", length = 30)
-    private String loaiThongBao = "HeThong";
+    private String loaiThongBao = "Hệ Thống";
+    
+    @Column(name = "hinhAnh")
+    private String hinhAnh;
     
     @Column(name = "daDoc")
     private Boolean daDoc = false;

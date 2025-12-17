@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class UuDai {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maUuDai")
     private Integer maUuDai;
     
@@ -29,7 +30,7 @@ public class UuDai {
     private String moTa;
     
     @Column(name = "loaiGiam", nullable = false, length = 20)
-    private String loaiGiam;
+    private String loaiGiam; // PhanTram | SoTien
     
     @Column(name = "giaTriGiam", precision = 10, scale = 2, nullable = false)
     private BigDecimal giaTriGiam;
@@ -49,8 +50,11 @@ public class UuDai {
     @Column(name = "ngayKetThuc", nullable = false)
     private LocalDate ngayKetThuc;
     
+    @Column(name = "hinhAnh")
+    private String hinhAnh;
+    
     @Column(name = "trangThai", length = 20)
-    private String trangThai = "HoatDong";
+    private String trangThai = "Hoạt Động";
     
     @Column(name = "ngayTao")
     private LocalDateTime ngayTao = LocalDateTime.now();

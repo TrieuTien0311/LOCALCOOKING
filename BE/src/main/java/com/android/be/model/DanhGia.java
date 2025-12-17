@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class DanhGia {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maDanhGia")
     private Integer maDanhGia;
     
@@ -24,7 +25,7 @@ public class DanhGia {
     private Integer maLopHoc;
     
     @Column(name = "diemDanhGia")
-    private Integer diemDanhGia;
+    private Integer diemDanhGia; // 1-5
     
     @Column(name = "binhLuan", columnDefinition = "NVARCHAR(MAX)")
     private String binhLuan;

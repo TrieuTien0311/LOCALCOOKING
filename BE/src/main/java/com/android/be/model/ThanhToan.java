@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class ThanhToan {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maThanhToan")
     private Integer maThanhToan;
     
@@ -25,10 +26,10 @@ public class ThanhToan {
     private BigDecimal soTien;
     
     @Column(name = "phuongThuc", nullable = false, length = 30)
-    private String phuongThuc;
+    private String phuongThuc; // ChuyenKhoan | MoMo | The
     
     @Column(name = "trangThai", length = 30)
-    private String trangThai = "ChuaThanhToan";
+    private String trangThai = "Chưa Thanh Toán";
     
     @Column(name = "ngayThanhToan")
     private LocalDateTime ngayThanhToan;

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class LopHoc {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "maLopHoc")
     private Integer maLopHoc;
     
@@ -27,6 +28,9 @@ public class LopHoc {
     
     @Column(name = "maGiaoVien")
     private Integer maGiaoVien;
+    
+    @Column(name = "tenGiaoVien", length = 100)
+    private String tenGiaoVien;
     
     @Column(name = "soLuongToiDa")
     private Integer soLuongToiDa = 20;
@@ -44,16 +48,22 @@ public class LopHoc {
     private String diaDiem;
     
     @Column(name = "trangThai", length = 30)
-    private String trangThai = "SapKhaiGiang";
+    private String trangThai = "Sắp diễn ra";
     
-    @Column(name = "ngayBatDau")
-    private LocalDate ngayBatDau;
+    @Column(name = "ngayDienRa")
+    private LocalDate ngayDienRa;
     
-    @Column(name = "ngayKetThuc")
-    private LocalDate ngayKetThuc;
+    @Column(name = "gioBatDau")
+    private java.sql.Time gioBatDau;
+    
+    @Column(name = "gioKetThuc")
+    private java.sql.Time gioKetThuc;
     
     @Column(name = "hinhAnh")
     private String hinhAnh;
+    
+    @Column(name = "coUuDai")
+    private Boolean coUuDai = false;
     
     @Column(name = "ngayTao")
     private LocalDateTime ngayTao = LocalDateTime.now();
