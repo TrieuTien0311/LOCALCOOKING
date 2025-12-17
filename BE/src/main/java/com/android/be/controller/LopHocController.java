@@ -1,8 +1,10 @@
 package com.android.be.controller;
 
+import com.android.be.dto.LopHocDTO;
 import com.android.be.model.LopHoc;
 import com.android.be.service.LopHocService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,7 +18,31 @@ public class LopHocController {
     private final LopHocService lopHocService;
     
     @GetMapping
-    public ResponseEntity<List<LopHoc>> getAllLopHoc() {
+    public ResponseEntity<List<LopHocDTO>> getAllLopHoc() {
         return ResponseEntity.ok(lopHocService.getAllLopHoc());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<LopHocDTO> getLopHocById(@PathVariable Integer id) {
+        return lopHocService.getLopHocById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PostMapping
+    public ResponseEntity<LopHoc> createLopHoc(@RequestBody LopHoc lopHoc) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(lopHocService.createLopHoc(lopHoc));
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<LopHoc> updateLopHoc(@PathVariable Integer id, @RequestBody LopHoc lopHoc) {
+        return ResponseEntity.ok(lopHocService.updateLopHoc(id, lopHoc));
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLopHoc(@PathVariable Integer id) {
+        lopHocService.deleteLopHoc(id);
+        return ResponseEntity.noContent().build();
     }
 }
