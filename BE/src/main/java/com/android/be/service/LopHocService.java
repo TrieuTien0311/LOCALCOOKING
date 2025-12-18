@@ -8,8 +8,10 @@ import com.android.be.mapper.MonAnMapper;
 import com.android.be.model.LopHoc;
 import com.android.be.repository.DanhGiaRepository;
 import com.android.be.repository.DanhMucMonAnRepository;
+import com.android.be.repository.GiaoVienRepository;
 import com.android.be.repository.LopHocRepository;
 import com.android.be.repository.MonAnRepository;
+import com.android.be.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,10 @@ public class LopHocService {
     private final DanhGiaRepository danhGiaRepository;
     private final DanhMucMonAnRepository danhMucMonAnRepository;
     private final MonAnRepository monAnRepository;
+    private final GiaoVienRepository giaoVienRepository;
+    private final NguoiDungRepository nguoiDungRepository;
     private final LopHocMapper lopHocMapper;
     private final MonAnMapper monAnMapper;
-    private final com.android.be.repository.GiaoVienRepository giaoVienRepository;
-    private final com.android.be.repository.NguoiDungRepository nguoiDungRepository;
     
     public List<LopHocDTO> getAllLopHoc() {
         return lopHocRepository.findAll().stream()
@@ -68,7 +70,7 @@ public class LopHocService {
         
         // Đánh giá đã được tính tự động bởi trigger trong database
         // Không cần tính lại ở đây
-        
+
         // Load lịch trình lớp học (DanhMucMonAn + MonAn)
         // Lấy tất cả món ăn của lớp học này
         List<MonAnDTO> monAnsOfLopHoc = monAnRepository.findByMaLopHoc(lopHoc.getMaLopHoc()).stream()
@@ -97,7 +99,7 @@ public class LopHocService {
                 .collect(Collectors.toList());
         
         dto.setLichTrinhLopHoc(lichTrinh);
-        
+       
         return dto;
     }
 }
