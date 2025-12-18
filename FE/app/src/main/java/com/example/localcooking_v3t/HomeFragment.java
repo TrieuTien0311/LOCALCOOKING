@@ -21,12 +21,15 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.localcooking_v3t.utils.SessionManager;
+
 public class HomeFragment extends Fragment {
     private ImageView ivLogo, ivArrow;
     private TextView tvAppName, tvHello, tvCurrentLocation, tvDestination, tvDate;
     private TextView tvViewAll;
     private Button btnSearch;
     private ActivityResultLauncher<Intent> calendarLauncher;
+    private SessionManager sessionManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,17 +63,27 @@ public class HomeFragment extends Fragment {
         tvDate = view.findViewById(R.id.tvDate);
         tvViewAll = view.findViewById(R.id.tvViewAll);
         btnSearch = view.findViewById(R.id.btnSearch);
+        
+        // Khởi tạo SessionManager
+        sessionManager = new SessionManager(requireContext());
+        
+        // Hiển thị tên người dùng hoặc "Đăng nhập"
+        updateUserDisplay();
 
         // --- Xử lý sự kiện ---
 
         tvHello.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), Login.class);
-            startActivity(intent);
+            if (!sessionManager.isLoggedIn()) {
+                Intent intent = new Intent(requireContext(), Login.class);
+                startActivity(intent);
+            }
         });
 
         ivArrow.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), Login.class);
-            startActivity(intent);
+            if (!sessionManager.isLoggedIn()) {
+                Intent intent = new Intent(requireContext(), Login.class);
+                startActivity(intent);
+            }
         });
 
         tvDate.setOnClickListener(v -> {
@@ -87,6 +100,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        
+        // Cập nhật lại hiển thị user khi quay lại fragment
+        updateUserDisplay();
 
         Window window = requireActivity().getWindow();
 
@@ -97,6 +113,25 @@ public class HomeFragment extends Fragment {
                 WindowCompat.getInsetsController(window, window.getDecorView());
         if (windowInsetsController != null) {
             windowInsetsController.setAppearanceLightStatusBars(true);
+        }
+    }
+    
+    /**
+     * Cập nhật hiển thị tên người dùng
+     */
+    private void updateUserDisplay() {
+        if (sessionManager.isLoggedIn()) {
+            String tenDangNhap = sessionManager.getTenDangNhap();
+            if (tenDangNhap != null && !tenDangNhap.isEmpty()) {
+                tvHello.setText("Chào " + tenDangNhap);
+            } else {
+                tvHello.setText("Chào bạn");
+            }
+            // Ẩn mũi tên khi đã đăng nhập
+            ivArrow.setVisibility(View.GONE);
+        } else {
+            tvHello.setText("Đăng nhập");
+            ivArrow.setVisibility(View.VISIBLE);
         }
     }
 }

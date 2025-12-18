@@ -3,84 +3,139 @@ package com.example.localcooking_v3t;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.localcooking_v3t.utils.SessionManager;
+
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private SessionManager sessionManager;
+    private TextView tvUserName;
+    private TextView tvUserEmail;
+    private Button btnLogout;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        sessionManager = new SessionManager(requireContext());
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        
+        // Ánh xạ view
+        tvUserName = view.findViewById(R.id.textView2);
+        tvUserEmail = view.findViewById(R.id.textView38);
+        btnLogout = view.findViewById(R.id.button4);
+        
+        // Hiển thị thông tin người dùng
+        loadUserInfo();
         
         // Xử lý click vào "Đổi mật khẩu"
         View changePasswordLayout = view.findViewById(R.id.cDMatKhau);
         changePasswordLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ChangePassword.class);
-            startActivity(intent);
-        });
-        
-        // Xử lý nút "Đăng xuất"
-        View logoutButton = view.findViewById(R.id.button4);
-        logoutButton.setOnClickListener(v -> {
-            // Chuyển về trang đăng nhập và xóa stack
-            Intent intent = new Intent(getActivity(), Login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            if (getActivity() != null) {
-                getActivity().finish();
+            if (sessionManager.isLoggedIn()) {
+                Intent intent = new Intent(getActivity(), ChangePassword.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                navigateToLogin();
             }
         });
         
+        // Xử lý nút "Đăng xuất"
+        btnLogout.setOnClickListener(v -> {
+            performLogout();
+        });
+        
         return view;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Cập nhật lại thông tin khi quay lại fragment
+        loadUserInfo();
+    }
+    
+    /**
+     * Load thông tin người dùng từ session
+     */
+    private void loadUserInfo() {
+        if (sessionManager.isLoggedIn()) {
+            String hoTen = sessionManager.getHoTen();
+            String tenDangNhap = sessionManager.getTenDangNhap();
+            String email = sessionManager.getEmail();
+            
+            // Hiển thị họ tên hoặc tên đăng nhập
+            if (hoTen != null && !hoTen.isEmpty()) {
+                tvUserName.setText(hoTen);
+            } else if (tenDangNhap != null && !tenDangNhap.isEmpty()) {
+                tvUserName.setText(tenDangNhap);
+            } else {
+                tvUserName.setText("Người dùng");
+            }
+            
+            // Hiển thị email
+            if (email != null && !email.isEmpty()) {
+                tvUserEmail.setText(email);
+            } else {
+                tvUserEmail.setText("Chưa có email");
+            }
+            
+            btnLogout.setText("Đăng xuất");
+        } else {
+            tvUserName.setText("Khách");
+            tvUserEmail.setText("Vui lòng đăng nhập");
+            btnLogout.setText("Đăng nhập");
+        }
+    }
+    
+    /**
+     * Thực hiện đăng xuất
+     */
+    private void performLogout() {
+        if (sessionManager.isLoggedIn()) {
+            // Xóa session
+            sessionManager.logout();
+            
+            Toast.makeText(requireContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
+            
+            // Reload lại fragment để cập nhật UI
+            loadUserInfo();
+            
+            // Chuyển về HomeFragment
+            if (getActivity() instanceof Header) {
+                ((Header) getActivity()).navigateToHome();
+            }
+        } else {
+            // Nếu chưa đăng nhập, chuyển đến trang đăng nhập
+            navigateToLogin();
+        }
+    }
+    
+    /**
+     * Chuyển đến trang đăng nhập
+     */
+    private void navigateToLogin() {
+        Intent intent = new Intent(getActivity(), Login.class);
+        startActivity(intent);
     }
 }

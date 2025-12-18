@@ -2,6 +2,7 @@ package com.example.localcooking_v3t;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.LoginRequest;
+import com.example.localcooking_v3t.model.LoginResponse;
+import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
@@ -31,6 +40,8 @@ public class Login extends AppCompatActivity {
     private Button btnDangNhap;
     private MaterialButton btnGG, btnFB;
     private View mainLayout;
+    private boolean isPasswordVisible = false;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +68,19 @@ public class Login extends AppCompatActivity {
         btnDangNhap = findViewById(R.id.btnDangNhap);
         btnGG = findViewById(R.id.btnGG);
         btnFB = findViewById(R.id.btnFB);
+        
+        // Khởi tạo SessionManager
+        sessionManager = new SessionManager(this);
+        
+        // Debug: Hiển thị URL API đang sử dụng
+        String apiUrl = RetrofitClient.getBaseUrl();
+        android.util.Log.d("LOGIN_DEBUG", "API URL: " + apiUrl);
 
         // Thiết lập clear focus khi chạm ra ngoài
         setupClearFocusOnTouch();
+
+        // Thiết lập toggle password visibility
+        setupPasswordToggle();
 
         // --- Xử lý sự kiện ---
         // Nút quay lại - về Header (fragment home)
@@ -90,12 +111,11 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        // Chuyển sang trang Home
+        // Xử lý đăng nhập
         btnDangNhap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, Header.class);
-                startActivity(intent);
+                performLogin();
             }
         });
 
@@ -106,6 +126,37 @@ public class Login extends AppCompatActivity {
                 Intent intent = new Intent(Login.this, Register.class);
                 startActivity(intent);
             }
+        });
+    }
+
+    /**
+     * Thiết lập toggle hiển thị/ẩn mật khẩu
+     */
+    private void setupPasswordToggle() {
+        idMatKhau.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (idMatKhau.getRight() - idMatKhau.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    // Toggle password visibility
+                    if (isPasswordVisible) {
+                        // Ẩn mật khẩu
+                        idMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        idMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye_hide_tt, 0);
+                        isPasswordVisible = false;
+                    } else {
+                        // Hiển thị mật khẩu
+                        idMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        idMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye, 0);
+                        isPasswordVisible = true;
+                    }
+                    
+                    // Đặt con trỏ về cuối text
+                    idMatKhau.setSelection(idMatKhau.getText().length());
+                    return true;
+                }
+            }
+            return false;
         });
     }
 
@@ -181,5 +232,83 @@ public class Login extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+    
+    /**
+     * Thực hiện đăng nhập
+     */
+    private void performLogin() {
+        String email = idEmail.getText().toString().trim();
+        String matKhau = idMatKhau.getText().toString().trim();
+        
+        // Validate input
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
+            idEmail.requestFocus();
+            return;
+        }
+        
+        if (matKhau.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
+            idMatKhau.requestFocus();
+            return;
+        }
+        
+        // Disable button để tránh click nhiều lần
+        btnDangNhap.setEnabled(false);
+        btnDangNhap.setText("Đang đăng nhập...");
+        
+        // Gọi API
+        LoginRequest request = new LoginRequest(email, matKhau);
+        Call<LoginResponse> call = RetrofitClient.getApiService().login(request);
+        
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                btnDangNhap.setEnabled(true);
+                btnDangNhap.setText("Đăng nhập");
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse loginResponse = response.body();
+                    
+                    if (loginResponse.isSuccess()) {
+                        // Lưu session
+                        sessionManager.createLoginSession(
+                            loginResponse.getMaNguoiDung(),
+                            loginResponse.getTenDangNhap(),
+                            loginResponse.getHoTen(),
+                            loginResponse.getEmail(),
+                            loginResponse.getVaiTro()
+                        );
+                        
+                        Toast.makeText(Login.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        
+                        // Chuyển sang màn hình Home
+                        navigateToHome();
+                    } else {
+                        Toast.makeText(Login.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Login.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                btnDangNhap.setEnabled(true);
+                btnDangNhap.setText("Đăng nhập");
+                Toast.makeText(Login.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
+    /**
+     * Chuyển sang màn hình Home
+     */
+    private void navigateToHome() {
+        Intent intent = new Intent(Login.this, Header.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
