@@ -116,4 +116,12 @@ public class Header extends AppCompatActivity {
         button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFFFFF));
         button.setImageResource(normalIcon);
     }
+    
+    /**
+     * Chuyển về HomeFragment (dùng khi đăng xuất)
+     */
+    public void navigateToHome() {
+        selectButton(btnHome, "Trang chủ", R.drawable.ic_home_state2_thu, R.drawable.ic_home_thu);
+        loadFragment(new HomeFragment());
+    }
 }

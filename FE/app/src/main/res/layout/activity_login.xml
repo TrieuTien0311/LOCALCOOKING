@@ -140,7 +140,7 @@
                                 android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Mật khẩu Input with Floating Label and Password Toggle -->
+                        <!-- Mật khẩu Input with Floating Label -->
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilMatKhau"
                             style="@style/CustomTextInputLayout"
@@ -149,15 +149,13 @@
                             android:layout_marginBottom="8dp"
                             android:hint="Mật khẩu"
                             app:hintAnimationEnabled="true"
-                            app:hintEnabled="true"
-                            app:passwordToggleEnabled="true"
-                            app:passwordToggleTint="#666666"
-                            app:endIconMode="password_toggle">
+                            app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/idMatKhau"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:drawableRight="@drawable/icon_eye_hide_tt"
                                 android:inputType="textPassword"
                                 android:padding="16dp"
                                 android:textColor="#000000"

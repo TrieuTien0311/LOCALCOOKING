@@ -204,8 +204,8 @@ public class Splash extends AppCompatActivity {
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        // Chuyển sang màn hình chính
-                        Intent intent = new Intent(Splash.this, Login.class);
+                        // Chuyển sang màn hình chính (Header - HomeFragment)
+                        Intent intent = new Intent(Splash.this, Header.class);
                         startActivity(intent);
                         finish();
                         // Thêm transition effect
