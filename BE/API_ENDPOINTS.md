@@ -12,6 +12,10 @@ http://localhost:8080/api
 - **PUT** `/nguoidung/{id}` - Cập nhật người dùng
 - **DELETE** `/nguoidung/{id}` - Xóa người dùng
 - **POST** `/nguoidung/login` - Đăng nhập
+- **POST** `/nguoidung/register` - Đăng ký
+- **POST** `/nguoidung/change-password/send-otp` - Gửi OTP để đổi mật khẩu
+- **POST** `/nguoidung/change-password/verify` - Xác thực OTP và đổi mật khẩu
+- **POST** `/nguoidung/login` - Đăng nhập
 - **POST** `/nguoidung/register` - Đăng ký tài khoản mới
 
 ## 2. Giáo Viên (GiaoVien)
@@ -161,6 +165,46 @@ http://localhost:8080/api
   "soDienThoai": "0123456789",
   "diaChi": "123 Đường ABC",
   "vaiTro": "HocVien"
+}
+```
+
+### Đổi Mật Khẩu - Bước 1: Gửi OTP
+**POST** `/api/nguoidung/change-password/send-otp`
+```json
+{
+  "email": "user@example.com",
+  "matKhauHienTai": "password123",
+  "matKhauMoi": "newpassword456",
+  "xacNhanMatKhauMoi": "newpassword456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Mã OTP đã được gửi đến email user@example.com",
+  "email": "user@example.com"
+}
+```
+
+### Đổi Mật Khẩu - Bước 2: Xác Thực OTP và Đổi Mật Khẩu
+**POST** `/api/nguoidung/change-password/verify`
+```json
+{
+  "email": "user@example.com",
+  "matKhauHienTai": "password123",
+  "matKhauMoi": "newpassword456",
+  "xacNhanMatKhauMoi": "newpassword456",
+  "otp": "123456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Đổi mật khẩu thành công"
 }
 ```
 

@@ -1,15 +1,15 @@
 package com.android.be.service;
 
-import com.android.be.dto.LoginRequest;
-import com.android.be.dto.LoginResponse;
-import com.android.be.dto.RegisterRequest;
-import com.android.be.dto.RegisterResponse;
+import com.android.be.dto.*;
 import com.android.be.model.NguoiDung;
 import com.android.be.repository.NguoiDungRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,6 +17,8 @@ import java.util.Optional;
 public class NguoiDungService {
     
     private final NguoiDungRepository nguoiDungRepository;
+    private final OtpService otpService;
+    private final EmailService emailService;
     
     public List<NguoiDung> getAllNguoiDung() {
         return nguoiDungRepository.findAll();
@@ -118,5 +120,111 @@ public class NguoiDungService {
             savedNguoiDung.getEmail(),
             savedNguoiDung.getVaiTro()
         );
+    }
+    
+    // Gửi OTP để đổi mật khẩu
+    public Map<String, Object> sendOtpForChangePassword(ChangePasswordRequest request) throws Exception {
+        Map<String, Object> response = new HashMap<>();
+        
+        // Validate input
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new Exception("Email không được để trống");
+        }
+        
+        if (request.getMatKhauHienTai() == null || request.getMatKhauHienTai().isBlank()) {
+            throw new Exception("Mật khẩu hiện tại không được để trống");
+        }
+        
+        if (request.getMatKhauMoi() == null || request.getMatKhauMoi().isBlank()) {
+            throw new Exception("Mật khẩu mới không được để trống");
+        }
+        
+        if (request.getXacNhanMatKhauMoi() == null || request.getXacNhanMatKhauMoi().isBlank()) {
+            throw new Exception("Xác nhận mật khẩu mới không được để trống");
+        }
+        
+        // Kiểm tra mật khẩu mới và xác nhận khớp nhau
+        if (!request.getMatKhauMoi().equals(request.getXacNhanMatKhauMoi())) {
+            throw new Exception("Mật khẩu mới và xác nhận mật khẩu không khớp");
+        }
+        
+        // Kiểm tra mật khẩu mới khác mật khẩu cũ
+        if (request.getMatKhauHienTai().equals(request.getMatKhauMoi())) {
+            throw new Exception("Mật khẩu mới phải khác mật khẩu hiện tại");
+        }
+        
+        // Kiểm tra email tồn tại
+        Optional<NguoiDung> nguoiDungOpt = nguoiDungRepository.findByEmail(request.getEmail());
+        if (nguoiDungOpt.isEmpty()) {
+            throw new Exception("Email không tồn tại trong hệ thống");
+        }
+        
+        NguoiDung nguoiDung = nguoiDungOpt.get();
+        
+        // Kiểm tra mật khẩu hiện tại đúng không
+        if (!nguoiDung.getMatKhau().equals(request.getMatKhauHienTai())) {
+            throw new Exception("Mật khẩu hiện tại không đúng");
+        }
+        
+        // Kiểm tra trạng thái tài khoản
+        if (!"HoatDong".equals(nguoiDung.getTrangThai())) {
+            throw new Exception("Tài khoản đã bị khóa");
+        }
+        
+        // Tạo và gửi OTP
+        try {
+            String otp = otpService.generateOtp(request.getEmail());
+            emailService.sendOtpEmail(request.getEmail(), otp);
+            
+            response.put("success", true);
+            response.put("message", "Mã OTP đã được gửi đến email " + request.getEmail());
+            response.put("email", request.getEmail());
+        } catch (MessagingException e) {
+            throw new Exception("Lỗi gửi email: " + e.getMessage());
+        }
+        
+        return response;
+    }
+    
+    // Đổi mật khẩu với OTP
+    public Map<String, Object> changePasswordWithOtp(ChangePasswordWithOtpRequest request) throws Exception {
+        Map<String, Object> response = new HashMap<>();
+        
+        // Validate input
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new Exception("Email không được để trống");
+        }
+        
+        if (request.getOtp() == null || request.getOtp().isBlank()) {
+            throw new Exception("Mã OTP không được để trống");
+        }
+        
+        if (request.getMatKhauMoi() == null || request.getMatKhauMoi().isBlank()) {
+            throw new Exception("Mật khẩu mới không được để trống");
+        }
+        
+        // Xác thực OTP
+        boolean otpValid = otpService.verifyOtp(request.getEmail(), request.getOtp());
+        if (!otpValid) {
+            throw new Exception("Mã OTP không hợp lệ hoặc đã hết hạn");
+        }
+        
+        // Tìm người dùng
+        Optional<NguoiDung> nguoiDungOpt = nguoiDungRepository.findByEmail(request.getEmail());
+        if (nguoiDungOpt.isEmpty()) {
+            throw new Exception("Email không tồn tại trong hệ thống");
+        }
+        
+        NguoiDung nguoiDung = nguoiDungOpt.get();
+        
+        // Cập nhật mật khẩu mới
+        nguoiDung.setMatKhau(request.getMatKhauMoi());
+        nguoiDung.setLanCapNhatCuoi(LocalDateTime.now());
+        nguoiDungRepository.save(nguoiDung);
+        
+        response.put("success", true);
+        response.put("message", "Đổi mật khẩu thành công");
+        
+        return response;
     }
 }
