@@ -33,4 +33,12 @@ public class MonAnService {
     public void deleteMonAn(Integer id) {
         monAnRepository.deleteById(id);
     }
+    
+    public List<MonAn> getMonAnByLopHoc(Integer maLopHoc) {
+        return monAnRepository.findByMaLopHoc(maLopHoc);
+    }
+    
+    public List<MonAn> getMonAnByDanhMuc(Integer maDanhMuc) {
+        return monAnRepository.findByMaDanhMuc(maDanhMuc);
+    }
 }

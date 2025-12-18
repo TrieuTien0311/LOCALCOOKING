@@ -6,22 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "DanhMucMonAn")
+@Table(name = "HinhAnhMonAn")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DanhMucMonAn {
+public class HinhAnhMonAn {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "maDanhMuc")
-    private Integer maDanhMuc;
+    @Column(name = "maHinhAnh")
+    private Integer maHinhAnh;
     
-    @Column(name = "tenDanhMuc", nullable = false, length = 100)
-    private String tenDanhMuc; // Món khai vị, Món chính, Món tráng miệng
+    @Column(name = "maMonAn", nullable = false)
+    private Integer maMonAn;
     
-    @Column(name = "iconDanhMuc")
-    private String iconDanhMuc;
+    @Column(name = "duongDan", nullable = false)
+    private String duongDan;
     
     @Column(name = "thuTu")
     private Integer thuTu = 1;

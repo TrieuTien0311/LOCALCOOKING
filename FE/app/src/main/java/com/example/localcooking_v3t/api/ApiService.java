@@ -4,6 +4,7 @@ import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
+import com.example.localcooking_v3t.model.LopHoc;
 import com.example.localcooking_v3t.model.RegisterRequest;
 import com.example.localcooking_v3t.model.RegisterResponse;
 import com.example.localcooking_v3t.model.ResetPasswordRequest;
@@ -11,8 +12,11 @@ import com.example.localcooking_v3t.model.ResetPasswordResponse;
 import com.example.localcooking_v3t.model.VerifyOtpRequest;
 import com.example.localcooking_v3t.model.VerifyOtpResponse;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface ApiService {
@@ -33,4 +37,9 @@ public interface ApiService {
     // Quên mật khẩu - Bước 3: Đặt mật khẩu mới
     @POST("api/quenmatkhau/reset-password")
     Call<ResetPasswordResponse> resetPassword(@Body ResetPasswordRequest request);
+
+
+    @GET("api/lophoc")
+    Call<List<LopHoc>> getAllLopHoc();
+
 }

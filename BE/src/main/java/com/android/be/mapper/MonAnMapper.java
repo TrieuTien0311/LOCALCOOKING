@@ -12,10 +12,11 @@ public class MonAnMapper {
         
         MonAnDTO dto = new MonAnDTO();
         dto.setMaMonAn(monAn.getMaMonAn());
+        dto.setMaLopHoc(monAn.getMaLopHoc());
+        dto.setMaDanhMuc(monAn.getMaDanhMuc());
         dto.setTenMon(monAn.getTenMon());
         dto.setGioiThieu(monAn.getGioiThieu());
         dto.setNguyenLieu(monAn.getNguyenLieu());
-        dto.setHinhAnh(monAn.getHinhAnh());
         
         return dto;
     }

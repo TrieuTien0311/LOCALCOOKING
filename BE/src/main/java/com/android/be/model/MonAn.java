@@ -17,6 +17,9 @@ public class MonAn {
     @Column(name = "maMonAn")
     private Integer maMonAn;
     
+    @Column(name = "maLopHoc", nullable = false)
+    private Integer maLopHoc;
+    
     @Column(name = "maDanhMuc", nullable = false)
     private Integer maDanhMuc;
     
@@ -28,7 +31,4 @@ public class MonAn {
     
     @Column(name = "nguyenLieu", columnDefinition = "NVARCHAR(MAX)")
     private String nguyenLieu;
-    
-    @Column(name = "hinhAnh")
-    private String hinhAnh;
 }
