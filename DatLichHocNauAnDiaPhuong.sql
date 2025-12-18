@@ -752,3 +752,4 @@ select * from MonAn
 select * from HinhAnhMonAn
 select * from LopHoc
 select * from UuDai
+select * from NguoiDung
