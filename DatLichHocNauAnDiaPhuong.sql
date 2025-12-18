@@ -1,4 +1,4 @@
-IF EXISTS (SELECT * FROM sys.databases WHERE name = 'DatLichHocNauAn')
+﻿IF EXISTS (SELECT * FROM sys.databases WHERE name = 'DatLichHocNauAn')
 BEGIN
     USE master;
     ALTER DATABASE DatLichHocNauAn SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
