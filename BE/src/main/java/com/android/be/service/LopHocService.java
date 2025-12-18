@@ -8,8 +8,10 @@ import com.android.be.mapper.MonAnMapper;
 import com.android.be.model.LopHoc;
 import com.android.be.repository.DanhGiaRepository;
 import com.android.be.repository.DanhMucMonAnRepository;
+import com.android.be.repository.GiaoVienRepository;
 import com.android.be.repository.LopHocRepository;
 import com.android.be.repository.MonAnRepository;
+import com.android.be.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class LopHocService {
     private final DanhGiaRepository danhGiaRepository;
     private final DanhMucMonAnRepository danhMucMonAnRepository;
     private final MonAnRepository monAnRepository;
+    private final GiaoVienRepository giaoVienRepository;
+    private final NguoiDungRepository nguoiDungRepository;
     private final LopHocMapper lopHocMapper;
     private final MonAnMapper monAnMapper;
     
@@ -69,7 +73,14 @@ public class LopHocService {
             dto.setDanhGia(avg);
             dto.setSoDanhGia(danhGias.size());
         }
-        
+        //Map ten giao vien
+        if (lopHoc.getMaGiaoVien() != null) {
+            giaoVienRepository.findById(lopHoc.getMaGiaoVien())
+                    .ifPresent(giaoVien -> {
+                        nguoiDungRepository.findById(giaoVien.getMaNguoiDung())
+                                .ifPresent(nguoiDung -> dto.setTenGiaoVien(nguoiDung.getHoTen()));
+                    });
+        }
         // Load lịch trình lớp học (DanhMucMonAn + MonAn)
         List<DanhMucMonAnDTO> lichTrinh = danhMucMonAnRepository.findAll().stream()
                 .filter(dm -> dm.getMaLopHoc().equals(lopHoc.getMaLopHoc()))
@@ -94,7 +105,7 @@ public class LopHocService {
                 .collect(Collectors.toList());
         
         dto.setLichTrinhLopHoc(lichTrinh);
-        
+       
         return dto;
     }
 }
