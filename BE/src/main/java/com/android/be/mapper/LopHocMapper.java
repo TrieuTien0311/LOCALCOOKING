@@ -23,17 +23,22 @@ public class LopHocMapper {
         dto.setMaLopHoc(lopHoc.getMaLopHoc());
         dto.setTenLop(lopHoc.getTenLopHoc());
         dto.setMoTa(lopHoc.getMoTa());
+        dto.setGioiThieu(lopHoc.getGioiThieu());
+        dto.setGiaTriSauBuoiHoc(lopHoc.getGiaTriSauBuoiHoc());
         dto.setThoiGian(lopHoc.getThoiGian());
         
-        // Format ngày
-        if (lopHoc.getNgayDienRa() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            if (lopHoc.getNgayDienRa() instanceof LocalDate) {
-                dto.setNgay(((LocalDate) lopHoc.getNgayDienRa()).format(formatter));
-            } else {
-                // Fallback for java.sql.Date
-                dto.setNgay(lopHoc.getNgayDienRa().toString());
-            }
+        // Lịch trình lặp lại
+        dto.setLoaiLich(lopHoc.getLoaiLich());
+        dto.setCacNgayTrongTuan(lopHoc.getCacNgayTrongTuan());
+        
+        // Format ngày bắt đầu và kết thúc
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        if (lopHoc.getNgayBatDau() != null) {
+            dto.setNgayBatDau(lopHoc.getNgayBatDau().format(formatter));
+            dto.setNgay(lopHoc.getNgayBatDau().format(formatter));  // Backward compatibility
+        }
+        if (lopHoc.getNgayKetThuc() != null) {
+            dto.setNgayKetThuc(lopHoc.getNgayKetThuc().format(formatter));
         }
         
         dto.setDiaDiem(lopHoc.getDiaDiem());
@@ -43,8 +48,9 @@ public class LopHocMapper {
             dto.setGia(String.format("%.0f₫", lopHoc.getGiaTien()));
         }
         
-        dto.setDanhGia(0.0f); // Sẽ tính từ DanhGia
-        dto.setSoDanhGia(0); // Sẽ tính từ DanhGia
+        // Sử dụng giá trị từ database (đã được trigger tự động tính)
+        dto.setDanhGia(lopHoc.getSaoTrungBinh() != null ? lopHoc.getSaoTrungBinh() : 0.0f);
+        dto.setSoDanhGia(lopHoc.getSoLuongDanhGia() != null ? lopHoc.getSoLuongDanhGia() : 0);
         dto.setHinhAnh(lopHoc.getHinhAnh());
         dto.setCoUuDai(lopHoc.getCoUuDai() != null ? lopHoc.getCoUuDai() : false);
         
@@ -61,7 +67,7 @@ public class LopHocMapper {
         dto.setIsFavorite(false); // Sẽ check từ YeuThich table
         dto.setDaDienRa(false); // Sẽ check từ ngày
         dto.setLichTrinhLopHoc(new ArrayList<>());
-        dto.setTenGiaoVien(lopHoc.getTenGiaoVien());
+        dto.setTenGiaoVien(null); // Sẽ load từ bảng GiaoVien nếu cần
         dto.setTrangThai(lopHoc.getTrangThai());
         
         return dto;

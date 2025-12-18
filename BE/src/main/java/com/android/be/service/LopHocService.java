@@ -27,6 +27,8 @@ public class LopHocService {
     private final MonAnRepository monAnRepository;
     private final LopHocMapper lopHocMapper;
     private final MonAnMapper monAnMapper;
+    private final com.android.be.repository.GiaoVienRepository giaoVienRepository;
+    private final com.android.be.repository.NguoiDungRepository nguoiDungRepository;
     
     public List<LopHocDTO> getAllLopHoc() {
         return lopHocRepository.findAll().stream()
@@ -55,41 +57,42 @@ public class LopHocService {
     private LopHocDTO convertToDTO(LopHoc lopHoc) {
         LopHocDTO dto = lopHocMapper.toDTO(lopHoc);
         
-        // Tính điểm đánh giá trung bình
-        List<Integer> danhGias = danhGiaRepository.findAll().stream()
-                .filter(dg -> dg.getMaLopHoc().equals(lopHoc.getMaLopHoc()))
-                .map(dg -> dg.getDiemDanhGia())
-                .collect(Collectors.toList());
-        
-        if (!danhGias.isEmpty()) {
-            float avg = (float) danhGias.stream()
-                    .mapToInt(Integer::intValue)
-                    .average()
-                    .orElse(0.0);
-            dto.setDanhGia(avg);
-            dto.setSoDanhGia(danhGias.size());
+        // Lấy tên giáo viên từ bảng GiaoVien và NguoiDung
+        if (lopHoc.getMaGiaoVien() != null) {
+            giaoVienRepository.findById(lopHoc.getMaGiaoVien()).ifPresent(giaoVien -> {
+                nguoiDungRepository.findById(giaoVien.getMaNguoiDung()).ifPresent(nguoiDung -> {
+                    dto.setTenGiaoVien(nguoiDung.getHoTen());
+                });
+            });
         }
         
+        // Đánh giá đã được tính tự động bởi trigger trong database
+        // Không cần tính lại ở đây
+        
         // Load lịch trình lớp học (DanhMucMonAn + MonAn)
+        // Lấy tất cả món ăn của lớp học này
+        List<MonAnDTO> monAnsOfLopHoc = monAnRepository.findByMaLopHoc(lopHoc.getMaLopHoc()).stream()
+                .map(monAnMapper::toDTO)
+                .collect(Collectors.toList());
+        
+        // Nhóm món ăn theo danh mục
         List<DanhMucMonAnDTO> lichTrinh = danhMucMonAnRepository.findAll().stream()
-                .filter(dm -> dm.getMaLopHoc().equals(lopHoc.getMaLopHoc()))
                 .map(danhMuc -> {
                     DanhMucMonAnDTO dmDTO = new DanhMucMonAnDTO();
                     dmDTO.setMaDanhMuc(danhMuc.getMaDanhMuc());
                     dmDTO.setTenDanhMuc(danhMuc.getTenDanhMuc());
-                    dmDTO.setThoiGian(danhMuc.getThoiGian());
                     dmDTO.setIconDanhMuc(danhMuc.getIconDanhMuc());
                     dmDTO.setThuTu(danhMuc.getThuTu());
                     
-                    // Load món ăn của danh mục này
-                    List<MonAnDTO> monAns = monAnRepository.findAll().stream()
+                    // Lọc món ăn thuộc danh mục này
+                    List<MonAnDTO> monAns = monAnsOfLopHoc.stream()
                             .filter(ma -> ma.getMaDanhMuc().equals(danhMuc.getMaDanhMuc()))
-                            .map(monAnMapper::toDTO)
                             .collect(Collectors.toList());
                     
                     dmDTO.setDanhSachMon(monAns);
                     return dmDTO;
                 })
+                .filter(dm -> !dm.getDanhSachMon().isEmpty()) // Chỉ lấy danh mục có món ăn
                 .sorted((a, b) -> Integer.compare(a.getThuTu(), b.getThuTu()))
                 .collect(Collectors.toList());
         

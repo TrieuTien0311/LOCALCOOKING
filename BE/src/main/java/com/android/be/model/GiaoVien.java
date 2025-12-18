@@ -26,6 +26,9 @@ public class GiaoVien {
     @Column(name = "kinhNghiem", columnDefinition = "NVARCHAR(MAX)")
     private String kinhNghiem;
     
+    @Column(name = "lichSuKinhNghiem", columnDefinition = "NVARCHAR(MAX)")
+    private String lichSuKinhNghiem;
+    
     @Column(name = "moTa", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
     

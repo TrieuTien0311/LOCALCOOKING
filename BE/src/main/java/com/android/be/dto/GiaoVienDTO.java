@@ -15,6 +15,7 @@ public class GiaoVienDTO {
     private String soDienThoai;
     private String chuyenMon;
     private String kinhNghiem;
+    private String lichSuKinhNghiem;
     private String moTa;
     private String hinhAnh;
 }
