@@ -38,7 +38,7 @@ public class LopHoc {
     @Column(name = "soLuongHienTai")
     private Integer soLuongHienTai = 0;
     
-    @Column(name = "giaTien", precision = 10, scale = 2, nullable = false)
+    @Column(name =z "giaTien", precision = 10, scale = 2, nullable = false)
     private BigDecimal giaTien;
     
     @Column(name = "thoiGian", length = 100)
