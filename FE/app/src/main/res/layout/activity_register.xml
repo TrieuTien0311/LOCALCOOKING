@@ -107,117 +107,160 @@
                         android:padding="10dp"
                         android:text="Đăng ký"
                         android:textColor="#3D2817"
-                        android:textSize="30sp"
+                        android:textSize="25sp"
                         android:textStyle="bold" />
 
-                    <!-- Tài khoản Input with Floating Label -->
+                    <!-- Form Inputs -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
+                        android:paddingTop="15dp"
                         android:paddingRight="15dp">
 
+                        <!-- Tên đăng nhập (Bắt buộc) -->
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/tilTaiKhoan"
+                            android:id="@+id/tilTenDangNhap"
+                            style="@style/CustomTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="10dp"
-                            android:hint="Tài khoản"
-                            app:boxBackgroundColor="@android:color/transparent"
-                            app:boxBackgroundMode="none"
+                            android:hint="Tên đăng nhập *"
                             app:hintAnimationEnabled="true"
-                            app:hintEnabled="true"
-                            app:hintTextColor="#CAC8C8">
+                            app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/idTaiKhoan"
+                                android:id="@+id/idTenDangNhap"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/input_bg"
-                                android:hint="Tài khoản"
                                 android:inputType="text"
-                                android:paddingLeft="30dp"
-                                android:paddingTop="10dp"
-                                android:paddingEnd="15dp"
-                                android:paddingBottom="10dp"
+                                android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textColorHint="#666666" />
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
+                        <!-- Họ và tên (Không bắt buộc) -->
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/tilEmail"
+                            android:id="@+id/tilHoTen"
+                            style="@style/CustomTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="10dp"
-                            android:hint="Email"
-                            app:boxBackgroundColor="@android:color/transparent"
-                            app:boxBackgroundMode="none"
+                            android:hint="Họ và tên"
                             app:hintAnimationEnabled="true"
-                            app:hintEnabled="true"
-                            app:hintTextColor="#666666">
+                            app:hintEnabled="true">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/idHoTen"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:padding="16dp"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Email (Bắt buộc) -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilEmail"
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:hint="Email *"
+                            app:hintAnimationEnabled="true"
+                            app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/idEmail"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/input_bg"
-                                android:hint="Email"
                                 android:inputType="textEmailAddress"
-                                android:paddingLeft="30dp"
-                                android:paddingTop="10dp"
-                                android:paddingEnd="15dp"
-                                android:paddingBottom="10dp"
+                                android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textColorHint="#666666" />
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
+                        <!-- Số điện thoại (Không bắt buộc) -->
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/tilMatKhau"
+                            android:id="@+id/tilSoDienThoai"
+                            style="@style/CustomTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginBottom="3dp"
-                            android:hint="Mật khẩu"
-                            app:boxBackgroundColor="@android:color/transparent"
-                            app:boxBackgroundMode="none"
+                            android:layout_marginBottom="10dp"
+                            android:hint="Số điện thoại"
                             app:hintAnimationEnabled="true"
-                            app:hintEnabled="true"
-                            app:hintTextColor="#666666"
-                            app:passwordToggleEnabled="true"
-                            app:passwordToggleTint="#666666">
+                            app:hintEnabled="true">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/idSoDienThoai"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone"
+                                android:padding="16dp"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Mật khẩu (Bắt buộc) -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilMatKhau"
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:hint="Mật khẩu *"
+                            app:hintAnimationEnabled="true"
+                            app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/idMatKhau"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/input_bg"
-                                android:hint="Mật khẩu"
+                                android:drawableRight="@drawable/icon_eye_hide_tt"
                                 android:inputType="textPassword"
-                                android:paddingLeft="30dp"
-                                android:paddingTop="10dp"
-                                android:paddingEnd="50dp"
-                                android:paddingBottom="10dp"
+                                android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textColorHint="#666666" />
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
+                        <!-- Nhập lại mật khẩu (Bắt buộc) -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilNhapLaiMatKhau"
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="Nhập lại mật khẩu *"
+                            app:hintAnimationEnabled="true"
+                            app:hintEnabled="true">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/idNhapLaiMatKhau"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableRight="@drawable/icon_eye_hide_tt"
+                                android:inputType="textPassword"
+                                android:padding="16dp"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Checkbox điều khoản -->
                         <CheckBox
                             android:id="@+id/cbTerms"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginBottom="0dp"
+                            android:layout_marginBottom="3dp"
                             android:buttonTint="#83827A"
                             android:text="Tôi đồng ý với các điều khoản của LocalCooking"
                             android:textColor="#666666"
                             android:textSize="13sp" />
 
+                        <!-- Register Button -->
                         <Button
-                            android:id="@+id/btnTaoTaiKhoan"
+                            android:id="@+id/btnDangKy"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_gravity="center_horizontal"
@@ -225,10 +268,11 @@
                             android:layout_marginTop="0dp"
                             android:layout_marginRight="8dp"
                             android:backgroundTint="#B73F41"
-                            android:text="Tạo tài khoản"
+                            android:letterSpacing="0.01"
+                            android:text="Đăng ký"
                             android:textAllCaps="false"
                             android:textColor="#FAF6F6"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"

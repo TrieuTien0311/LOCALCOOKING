@@ -2,10 +2,13 @@ package com.android.be.service;
 
 import com.android.be.dto.LoginRequest;
 import com.android.be.dto.LoginResponse;
+import com.android.be.dto.RegisterRequest;
+import com.android.be.dto.RegisterResponse;
 import com.android.be.model.NguoiDung;
 import com.android.be.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +72,51 @@ public class NguoiDungService {
             false, 
             "Email hoặc mật khẩu không đúng", 
             null, null, null, null, null
+        );
+    }
+    
+    public RegisterResponse register(RegisterRequest request) {
+        // Kiểm tra email đã tồn tại
+        if (nguoiDungRepository.findByEmail(request.getEmail()).isPresent()) {
+            return new RegisterResponse(
+                false,
+                "Email đã được sử dụng",
+                null, null, null, null, null
+            );
+        }
+        
+        // Kiểm tra tên đăng nhập đã tồn tại
+        if (nguoiDungRepository.findByTenDangNhap(request.getTenDangNhap()).isPresent()) {
+            return new RegisterResponse(
+                false,
+                "Tên đăng nhập đã được sử dụng",
+                null, null, null, null, null
+            );
+        }
+        
+        // Tạo người dùng mới
+        NguoiDung nguoiDung = new NguoiDung();
+        nguoiDung.setTenDangNhap(request.getTenDangNhap());
+        nguoiDung.setMatKhau(request.getMatKhau());
+        nguoiDung.setHoTen(request.getHoTen());
+        nguoiDung.setEmail(request.getEmail());
+        nguoiDung.setSoDienThoai(request.getSoDienThoai());
+        nguoiDung.setVaiTro("HocVien"); // Mặc định là học viên
+        nguoiDung.setTrangThai("HoatDong");
+        nguoiDung.setNgayTao(LocalDateTime.now());
+        nguoiDung.setLanCapNhatCuoi(LocalDateTime.now());
+        
+        // Lưu vào database
+        NguoiDung savedNguoiDung = nguoiDungRepository.save(nguoiDung);
+        
+        return new RegisterResponse(
+            true,
+            "Đăng ký thành công",
+            savedNguoiDung.getMaNguoiDung(),
+            savedNguoiDung.getTenDangNhap(),
+            savedNguoiDung.getHoTen(),
+            savedNguoiDung.getEmail(),
+            savedNguoiDung.getVaiTro()
         );
     }
 }

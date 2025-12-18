@@ -1,0 +1,16 @@
+package com.android.be.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterRequest {
+    private String tenDangNhap;
+    private String matKhau;
+    private String hoTen;
+    private String email;
+    private String soDienThoai;
+}

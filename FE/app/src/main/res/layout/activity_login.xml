@@ -201,10 +201,11 @@
                             android:layout_marginTop="0dp"
                             android:layout_marginRight="8dp"
                             android:backgroundTint="#B73F41"
+                            android:letterSpacing="0.01"
                             android:text="Đăng nhập"
                             android:textAllCaps="false"
                             android:textColor="#FAF6F6"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <!-- Divider -->
                         <LinearLayout

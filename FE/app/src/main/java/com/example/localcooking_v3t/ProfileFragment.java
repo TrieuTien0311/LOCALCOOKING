@@ -80,14 +80,11 @@ public class ProfileFragment extends Fragment {
      */
     private void loadUserInfo() {
         if (sessionManager.isLoggedIn()) {
-            String hoTen = sessionManager.getHoTen();
             String tenDangNhap = sessionManager.getTenDangNhap();
             String email = sessionManager.getEmail();
             
-            // Hiển thị họ tên hoặc tên đăng nhập
-            if (hoTen != null && !hoTen.isEmpty()) {
-                tvUserName.setText(hoTen);
-            } else if (tenDangNhap != null && !tenDangNhap.isEmpty()) {
+            // Hiển thị tên đăng nhập (luôn có giá trị)
+            if (tenDangNhap != null && !tenDangNhap.isEmpty()) {
                 tvUserName.setText(tenDangNhap);
             } else {
                 tvUserName.setText("Người dùng");

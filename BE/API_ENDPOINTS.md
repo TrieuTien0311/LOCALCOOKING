@@ -11,6 +11,8 @@ http://localhost:8080/api
 - **POST** `/nguoidung` - Tạo người dùng mới
 - **PUT** `/nguoidung/{id}` - Cập nhật người dùng
 - **DELETE** `/nguoidung/{id}` - Xóa người dùng
+- **POST** `/nguoidung/login` - Đăng nhập
+- **POST** `/nguoidung/register` - Đăng ký tài khoản mới
 
 ## 2. Giáo Viên (GiaoVien)
 - **GET** `/giaovien` - Lấy tất cả giáo viên
@@ -90,6 +92,64 @@ http://localhost:8080/api
 - **DELETE** `/uudai/{id}` - Xóa ưu đãi
 
 ## Ví dụ Request Body
+
+### Đăng Ký (Register)
+```json
+{
+  "tenDangNhap": "user123",
+  "matKhau": "password123",
+  "hoTen": "Nguyễn Văn A",
+  "email": "user@example.com",
+  "soDienThoai": "0123456789"
+}
+```
+
+**Response Success:**
+```json
+{
+  "success": true,
+  "message": "Đăng ký thành công",
+  "maNguoiDung": 7,
+  "tenDangNhap": "user123",
+  "hoTen": "Nguyễn Văn A",
+  "email": "user@example.com",
+  "vaiTro": "HocVien"
+}
+```
+
+**Response Error:**
+```json
+{
+  "success": false,
+  "message": "Email đã được sử dụng",
+  "maNguoiDung": null,
+  "tenDangNhap": null,
+  "hoTen": null,
+  "email": null,
+  "vaiTro": null
+}
+```
+
+### Đăng Nhập (Login)
+```json
+{
+  "email": "admin@localcooking.vn",
+  "matKhau": "admin123"
+}
+```
+
+**Response Success:**
+```json
+{
+  "success": true,
+  "message": "Đăng nhập thành công",
+  "maNguoiDung": 1,
+  "tenDangNhap": "admin",
+  "hoTen": "Quản Trị Viên",
+  "email": "admin@localcooking.vn",
+  "vaiTro": "Admin"
+}
+```
 
 ### Tạo Người Dùng
 ```json
