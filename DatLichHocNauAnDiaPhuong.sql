@@ -591,14 +591,14 @@ GO
 -- INSERT DATA MẪU
 ---------------------------------------------------------------
 
--- 1. NGƯỜI DÙNG (Admin, Giáo viên, Học viên)
+-- 1. NGƯỜI DÙNG (Admin, Giáo viên, Học viên) hoangvanem@gmail.com
 INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, diaChi, vaiTro, trangThai) VALUES
 (N'admin', N'admin123', N'Quản Trị Viên', N'admin@localcooking.vn', N'0901234567', N'123 Nguyễn Huệ, Q1, TP.HCM', N'Admin', N'HoatDong'),
 (N'giaovien1', N'gv123', N'Nguyễn Văn An', N'nguyenvanan@gmail.com', N'0912345678', N'456 Lê Lợi, Q1, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'giaovien2', N'gv123', N'Trần Thị Bình', N'tranthibinh@gmail.com', N'0923456789', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'hocvien1', N'hv123', N'Lê Văn Cường', N'levancuong@gmail.com', N'0934567890', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'hocvien2', N'hv123', N'Phạm Thị Dung', N'phamthidung@gmail.com', N'0945678901', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
-(N'hocvien3', N'hv123', N'Hoàng Văn Em', N'hoangvanem@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
+(N'hocvien3', N'hv123', N'Hoàng Văn Em', N'nguyentrieutien2005py@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
 
 -- 2. GIÁO VIÊN
 INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, moTa, hinhAnh) VALUES
