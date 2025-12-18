@@ -2,6 +2,8 @@ package com.android.be.controller;
 
 import com.android.be.dto.LoginRequest;
 import com.android.be.dto.LoginResponse;
+import com.android.be.dto.RegisterRequest;
+import com.android.be.dto.RegisterResponse;
 import com.android.be.model.NguoiDung;
 import com.android.be.service.NguoiDungService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,12 @@ public class NguoiDungController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse response = nguoiDungService.login(request);
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+        RegisterResponse response = nguoiDungService.register(request);
         return ResponseEntity.ok(response);
     }
     
