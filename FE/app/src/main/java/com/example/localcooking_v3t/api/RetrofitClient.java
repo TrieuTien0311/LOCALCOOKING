@@ -8,13 +8,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     
     // ===== CẤU HÌNH IP =====
-    // IP máy tính khi dùng Hotspot: 192.168.137.1
-    // (Từ ipconfig: Wireless LAN adapter Local Area Connection* 10)
-    private static final String IP_MAY_TINH = "192.168.137.1";
+    // HƯỚNG DẪN TÌM IP:
+    // 1. Mở CMD → gõ: ipconfig
+    // 2. Tìm "IPv4 Address" của adapter đang dùng
+    // 3. Cập nhật IP_MAY_TINH bên dưới
+    
+    // IP máy tính (cập nhật theo ipconfig của bạn)
+    private static final String IP_MAY_TINH = "10.0.2.2"; // Hotspot
+    // private static final String IP_MAY_TINH = "192.168.1.x"; // WiFi thường
     
     // Tự động chọn URL dựa trên môi trường
     private static final String BASE_URL = isEmulator() 
-            ? "http://10.0.2.2:8080/"           // Máy ảo
+            ? "http://10.0.2.2:8080/"           // Máy ảo Android
             : "http://" + IP_MAY_TINH + ":8080/"; // Điện thoại thật
     
     private static Retrofit retrofit = null;
