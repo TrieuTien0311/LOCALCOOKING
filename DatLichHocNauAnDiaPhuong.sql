@@ -716,3 +716,4 @@ PRINT N'- 4 đặt lịch';
 PRINT N'- 3 đánh giá';
 PRINT N'- 3 ưu đãi';
 GO
+select* from nguoidung
