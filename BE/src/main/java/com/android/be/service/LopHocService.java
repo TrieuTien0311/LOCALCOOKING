@@ -56,6 +56,69 @@ public class LopHocService {
         lopHocRepository.deleteById(id);
     }
     
+    public List<LopHocDTO> searchLopHocByDiaDiem(String diaDiem) {
+        java.time.LocalDate ngayHienTai = java.time.LocalDate.now();
+        
+        // Tìm các lớp học theo địa điểm và còn trong thời gian hoạt động
+        List<LopHoc> lopHocs = lopHocRepository.findByDiaDiemContainingIgnoreCase(diaDiem);
+        
+        // Lọc các lớp học còn hiệu lực (ngayBatDau <= ngayHienTai và (ngayKetThuc >= ngayHienTai hoặc ngayKetThuc = null))
+        return lopHocs.stream()
+                .filter(lh -> {
+                    boolean batDauOk = lh.getNgayBatDau() == null || !lh.getNgayBatDau().isAfter(ngayHienTai);
+                    boolean ketThucOk = lh.getNgayKetThuc() == null || !lh.getNgayKetThuc().isBefore(ngayHienTai);
+                    return batDauOk && ketThucOk;
+                })
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    public List<LopHocDTO> searchLopHocByDiaDiemAndDate(String diaDiem, java.time.LocalDate ngayTimKiem) {
+        // Tìm các lớp học theo địa điểm và ngày cụ thể
+        List<LopHoc> lopHocs = lopHocRepository.findByDiaDiemContainingIgnoreCase(diaDiem);
+        
+        // Lọc các lớp học có lịch vào ngày tìm kiếm
+        return lopHocs.stream()
+                .filter(lh -> {
+                    // Kiểm tra ngày tìm kiếm có nằm trong khoảng thời gian của lớp học không
+                    boolean trongKhoangThoiGian = !lh.getNgayBatDau().isAfter(ngayTimKiem) && 
+                                                  (lh.getNgayKetThuc() == null || !lh.getNgayKetThuc().isBefore(ngayTimKiem));
+                    
+                    if (!trongKhoangThoiGian) return false;
+                    
+                    // Kiểm tra loại lịch
+                    if ("MotLan".equals(lh.getLoaiLich())) {
+                        // Lớp học một lần: chỉ diễn ra vào ngày bắt đầu
+                        return lh.getNgayBatDau().equals(ngayTimKiem);
+                    } else if ("HangNgay".equals(lh.getLoaiLich())) {
+                        // Lớp học hàng ngày: diễn ra mọi ngày trong khoảng thời gian
+                        return true;
+                    } else if ("HangTuan".equals(lh.getLoaiLich())) {
+                        // Lớp học hàng tuần: kiểm tra ngày trong tuần
+                        if (lh.getCacNgayTrongTuan() == null || lh.getCacNgayTrongTuan().isEmpty()) {
+                            return false;
+                        }
+                        
+                        // Lấy thứ trong tuần (1=CN, 2=T2, ..., 7=T7)
+                        int dayOfWeek = ngayTimKiem.getDayOfWeek().getValue();
+                        if (dayOfWeek == 7) dayOfWeek = 1; // Chủ nhật = 1
+                        else dayOfWeek++; // Thứ 2-7 = 2-7
+                        
+                        String[] cacNgay = lh.getCacNgayTrongTuan().split(",");
+                        for (String ngay : cacNgay) {
+                            if (Integer.parseInt(ngay.trim()) == dayOfWeek) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    
+                    return false;
+                })
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
     private LopHocDTO convertToDTO(LopHoc lopHoc) {
         LopHocDTO dto = lopHocMapper.toDTO(lopHoc);
         

@@ -9,4 +9,5 @@ import java.util.List;
 public interface MonAnRepository extends JpaRepository<MonAn, Integer> {
     List<MonAn> findByMaLopHoc(Integer maLopHoc);
     List<MonAn> findByMaDanhMuc(Integer maDanhMuc);
+    List<MonAn> findByMaLopHocAndMaDanhMuc(Integer maLopHoc, Integer maDanhMuc);
 }

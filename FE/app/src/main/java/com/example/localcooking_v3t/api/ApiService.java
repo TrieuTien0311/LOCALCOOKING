@@ -1,7 +1,9 @@
 package com.example.localcooking_v3t.api;
 
+import com.example.localcooking_v3t.model.DanhMucMonAn;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
+import com.example.localcooking_v3t.model.HinhAnhMonAn;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
 import com.example.localcooking_v3t.model.LopHoc;
@@ -41,5 +43,17 @@ public interface ApiService {
 
     @GET("api/lophoc")
     Call<List<LopHoc>> getAllLopHoc();
+
+    @GET("api/danhmucmonan/lophoc/{maLopHoc}")
+    Call<List<DanhMucMonAn>> getDanhMucMonAnByLopHoc(@retrofit2.http.Path("maLopHoc") Integer maLopHoc);
+
+    @GET("api/lophoc/search")
+    Call<List<LopHoc>> searchLopHocByDiaDiem(
+        @retrofit2.http.Query("diaDiem") String diaDiem,
+        @retrofit2.http.Query("ngayTimKiem") String ngayTimKiem
+    );
+
+    @GET("api/hinhanh-monan/monan/{maMonAn}")
+    Call<List<HinhAnhMonAn>> getHinhAnhMonAn(@retrofit2.http.Path("maMonAn") Integer maMonAn);
 
 }

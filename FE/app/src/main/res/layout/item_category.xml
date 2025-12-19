@@ -46,16 +46,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/txtTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_clock_tt"
-                android:drawablePadding="3dp"
-                android:text="16:20 - 17:00"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                app:drawableTint="#FFFFFF" />
         </LinearLayout>
 
         <View

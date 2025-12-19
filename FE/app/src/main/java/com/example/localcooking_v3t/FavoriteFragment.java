@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.localcooking_v3t.model.LopHoc;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -142,32 +144,41 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void setupFavoriteData() {
-        List<Class> favoriteList = new ArrayList<>();
+        List<LopHoc> favoriteList = new ArrayList<>();
 
-        Class lopChuaDienRa = new Class(
-                "Ẩm thực địa phương Huế",
-                "Khám phá tinh hoa ẩm thực cung đình với hương vị đặc trưng vị Huế",
-                "14:00 - 17:00",
-                "02/10/2025",
-                "23 Lê Duẩn - Đà Nẵng",
-                "715.000₫",
-                4.9f, 211, R.drawable.hue, true, "23:30:00", 8
-        );
+        // TODO: Load from API instead of hardcoded data
+        LopHoc lopChuaDienRa = new LopHoc();
+        lopChuaDienRa.setTenLop("Ẩm thực địa phương Huế");
+        lopChuaDienRa.setMoTa("Khám phá tinh hoa ẩm thực cung đình với hương vị đặc trưng vị Huế");
+        lopChuaDienRa.setThoiGian("14:00 - 17:00");
+        lopChuaDienRa.setNgay("02/10/2025");
+        lopChuaDienRa.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
+        lopChuaDienRa.setGia("715.000₫");
+        lopChuaDienRa.setDanhGia(4.9f);
+        lopChuaDienRa.setSoDanhGia(211);
+        lopChuaDienRa.setHinhAnh("hue.png");
+        lopChuaDienRa.setCoUuDai(true);
+        lopChuaDienRa.setThoiGianKetThuc("23:30:00");
+        lopChuaDienRa.setSuat(8);
         lopChuaDienRa.setDaDienRa(false);
-        lopChuaDienRa.setFavorite(true);
+        lopChuaDienRa.setIsFavorite(true);
         favoriteList.add(lopChuaDienRa);
 
-        Class lopDaDienRa = new Class(
-                "Ẩm thực địa phương Sài Gòn",
-                "Hành trình khám phá phố phường qua những món ăn đường phố nổi tiếng",
-                "09:00 - 13:00",
-                "15/08/2025",
-                "23 Lê Duẩn - Đà Nẵng",
-                "750.000₫",
-                4.6f, 89, R.drawable.hue, false, "23:30:00", 0
-        );
+        LopHoc lopDaDienRa = new LopHoc();
+        lopDaDienRa.setTenLop("Ẩm thực địa phương Sài Gòn");
+        lopDaDienRa.setMoTa("Hành trình khám phá phố phường qua những món ăn đường phố nổi tiếng");
+        lopDaDienRa.setThoiGian("09:00 - 13:00");
+        lopDaDienRa.setNgay("15/08/2025");
+        lopDaDienRa.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
+        lopDaDienRa.setGia("750.000₫");
+        lopDaDienRa.setDanhGia(4.6f);
+        lopDaDienRa.setSoDanhGia(89);
+        lopDaDienRa.setHinhAnh("hue.png");
+        lopDaDienRa.setCoUuDai(false);
+        lopDaDienRa.setThoiGianKetThuc("23:30:00");
+        lopDaDienRa.setSuat(0);
         lopDaDienRa.setDaDienRa(true);
-        lopDaDienRa.setFavorite(true);
+        lopDaDienRa.setIsFavorite(true);
         favoriteList.add(lopDaDienRa);
 
         if (favoriteList.isEmpty()) {
@@ -177,16 +188,16 @@ public class FavoriteFragment extends Fragment {
             txtEmpty.setVisibility(View.GONE);
             recyclerViewFavorite.setVisibility(View.VISIBLE);
 
-            adapter = new ClassAdapter(favoriteList);
+            adapter = new ClassAdapter(favoriteList, null); // null vì không cần hiển thị ngày cụ thể
             recyclerViewFavorite.setAdapter(adapter);
 
             adapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
-                @Override public void onDatLichClick(Class lopHoc) { }
-                @Override public void onChiTietClick(Class lopHoc) {
+                @Override public void onDatLichClick(LopHoc lopHoc) { }
+                @Override public void onChiTietClick(LopHoc lopHoc) {
                     DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(lopHoc);
                     bottomSheet.show(getChildFragmentManager(), "DetailBottomSheet");
                 }
-                @Override public void onFavoriteClick(Class lopHoc) { }
+                @Override public void onFavoriteClick(LopHoc lopHoc) { }
             });
         }
     }

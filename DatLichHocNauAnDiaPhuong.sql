@@ -343,7 +343,7 @@ INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, diaChi, 
 (N'ThiBinh', N'gv123', N'Trần Thị Bình', N'tranthibinh@gmail.com', N'0923456789', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'VanCuong', N'hv123', N'Lê Văn Cường', N'levancuong@gmail.com', N'0934567890', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'ThiDung', N'hv123', N'Phạm Thị Dung', N'phamthidung@gmail.com', N'0945678901', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
-(N'VanEm', N'hv123', N'Hoàng Văn Em', N'hoangvanem@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
+(N'VanEm', N'hv123', N'Hoàng Văn Em', N'nguyentrieutien2005py@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
 
 -- 2. GIÁO VIÊN
 INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa, hinhAnh) VALUES
@@ -498,14 +498,14 @@ N'• Bí quyết làm bánh xèo giòn rụm
 N'HangTuan', '2025-01-01', '2025-12-31', '2,4,6',
 '14:00', '17:00', N'phobo.png', 0, 0, 0),
 
--- Lớp 11: Thứ 3, 5, 7
+-- Lớp 11: Thứ 3, 5, 7, CN
 (N'Bún mắm và bún cá Đà Nẵng', N'Nấu bún mắm nêm đậm đà và bún cá ngọt thanh', 
 N'Học cách nấu các món bún đặc trưng miền Trung', 
 N'• Nấu nước mắm nêm thơm ngon
 • Kỹ thuật làm chả cá tươi
 • Bí quyết nấu nước dùng ngọt', 
 1, 20, 0, 620000, N'09:00 - 12:00', N'78 Trần Phú, Đà Nẵng', N'Đang mở', 
-N'HangTuan', '2025-01-01', '2025-12-31', '3,5,7',
+N'HangTuan', '2025-01-01', '2025-12-31', '1,3,5,7',
 '09:00', '12:00', N'phobo.png', 0, 0, 1),
 
 -- Lớp 12: Cuối tuần

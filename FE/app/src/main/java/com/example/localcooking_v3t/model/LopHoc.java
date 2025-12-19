@@ -1,6 +1,9 @@
 package com.example.localcooking_v3t.model;
 
-public class LopHoc {
+import java.io.Serializable;
+
+public class LopHoc implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer maLopHoc;
     private String tenLop;
     private String moTa;
@@ -77,6 +80,10 @@ public class LopHoc {
     public Boolean getCoUuDai() { return coUuDai; }
     public void setCoUuDai(Boolean coUuDai) { this.coUuDai = coUuDai; }
 
+    public void setFavorite(Boolean favorite) {
+        isFavorite = favorite;
+    }
+
     public String getThoiGianKetThuc() { return thoiGianKetThuc; }
     public void setThoiGianKetThuc(String thoiGianKetThuc) { this.thoiGianKetThuc = thoiGianKetThuc; }
 
@@ -119,5 +126,39 @@ public class LopHoc {
             }
         }
         return gia;
+    }
+    
+    /**
+     * Lấy giá dưới dạng số (double)
+     * Parse từ string "715.000đ" hoặc "715000" thành 715000.0
+     */
+    public double getGiaSo() {
+        if (gia == null || gia.isEmpty()) {
+            return 0.0;
+        }
+        
+        try {
+            // Loại bỏ ký tự không phải số (đ, ₫, dấu chấm, dấu phẩy)
+            String giaStr = gia.replaceAll("[^0-9]", "");
+            return Double.parseDouble(giaStr);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+    
+    /**
+     * Lấy resource ID của hình ảnh
+     */
+    public int getHinhAnhResId(android.content.Context context) {
+        if (hinhAnh == null || hinhAnh.isEmpty()) {
+            return context.getResources().getIdentifier("hue", "drawable", context.getPackageName());
+        }
+        
+        // Loại bỏ extension
+        String name = hinhAnh.replace(".png", "").replace(".jpg", "");
+        
+        // Lấy resource ID
+        int resId = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+        return resId != 0 ? resId : context.getResources().getIdentifier("hue", "drawable", context.getPackageName());
     }
 }

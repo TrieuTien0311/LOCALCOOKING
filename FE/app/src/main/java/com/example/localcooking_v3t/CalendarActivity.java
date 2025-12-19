@@ -72,8 +72,9 @@ public class CalendarActivity extends AppCompatActivity {
     private void setupCalendar() {
         // Get current date or date from intent
         String receivedDate = getIntent().getStringExtra("selected_date");
-        if (receivedDate != null) {
-            // Parse the received date if needed
+        if (receivedDate != null && !receivedDate.isEmpty()) {
+            // Parse the received date (format: "T4, 19/12/2024")
+            parseDateString(receivedDate);
         }
 
         // Generate 4 months of calendar data (current month + 3 next months)
@@ -98,6 +99,29 @@ public class CalendarActivity extends AppCompatActivity {
 
         // Update initial date text
         updateSelectedDateText();
+    }
+    
+    /**
+     * Parse date string từ format "T4, 19/12/2024" thành Calendar
+     */
+    private void parseDateString(String dateString) {
+        try {
+            // Tách phần ngày/tháng/năm (bỏ phần thứ)
+            String[] parts = dateString.split(", ");
+            if (parts.length == 2) {
+                String[] dateParts = parts[1].split("/");
+                if (dateParts.length == 3) {
+                    int day = Integer.parseInt(dateParts[0]);
+                    int month = Integer.parseInt(dateParts[1]) - 1; // Calendar month is 0-based
+                    int year = Integer.parseInt(dateParts[2]);
+                    
+                    selectedCalendar.set(year, month, day);
+                }
+            }
+        } catch (Exception e) {
+            // Nếu parse lỗi, giữ nguyên ngày hiện tại
+            e.printStackTrace();
+        }
     }
 
     private void setupListeners() {

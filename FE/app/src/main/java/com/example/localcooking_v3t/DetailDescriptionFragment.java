@@ -1,6 +1,9 @@
 package com.example.localcooking_v3t;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,6 +15,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.localcooking_v3t.api.ApiService;
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.DanhMucMonAn;
+import com.example.localcooking_v3t.model.LopHoc;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DetailDescriptionFragment extends Fragment {
 
     private ImageView btnDownTeacher;
@@ -19,18 +33,22 @@ public class DetailDescriptionFragment extends Fragment {
     private boolean isExpanded = false;
     private RecyclerView rcvCategories;
     private CategoryAdapter categoryAdapter;
-    private Class lopHoc;
+    private LopHoc lopHoc;
 
     public DetailDescriptionFragment() {
         // Required empty public constructor
     }
 
-    public static DetailDescriptionFragment newInstance(Class lopHoc) {
+    public static DetailDescriptionFragment newInstance(LopHoc lopHoc) {
         DetailDescriptionFragment fragment = new DetailDescriptionFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         fragment.lopHoc = lopHoc;
         return fragment;
+    }
+    
+    public void setLopHoc(LopHoc lopHoc) {
+        this.lopHoc = lopHoc;
     }
 
     @Override
@@ -66,16 +84,42 @@ public class DetailDescriptionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Setup RecyclerView
+        rcvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Setup RecyclerView cho lịch trình lớp học
-        if (lopHoc != null && lopHoc.getLichTrinhLopHoc() != null) {
-            rcvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
-            categoryAdapter = new CategoryAdapter(lopHoc.getLichTrinhLopHoc());
-            rcvCategories.setAdapter(categoryAdapter);
+        // Gọi API để lấy danh mục món ăn theo lớp học
+        if (lopHoc != null && lopHoc.getMaLopHoc() != null) {
+            loadDanhMucMonAn(lopHoc.getMaLopHoc());
         }
     }
 
-    public void setLopHoc(Class lopHoc) {
-        this.lopHoc = lopHoc;
+    private void loadDanhMucMonAn(Integer maLopHoc) {
+        ApiService apiService = RetrofitClient.getApiService();
+        Call<List<DanhMucMonAn>> call = apiService.getDanhMucMonAnByLopHoc(maLopHoc);
+
+        call.enqueue(new Callback<List<DanhMucMonAn>>() {
+            @Override
+            public void onResponse(Call<List<DanhMucMonAn>> call, Response<List<DanhMucMonAn>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<DanhMucMonAn> danhMucList = response.body();
+                    
+                    // Cập nhật adapter với dữ liệu từ API
+                    categoryAdapter = new CategoryAdapter(danhMucList);
+                    rcvCategories.setAdapter(categoryAdapter);
+                    
+                    Log.d("DetailDescription", "Loaded " + danhMucList.size() + " categories");
+                } else {
+                    Log.e("DetailDescription", "Response not successful: " + response.code());
+                    Toast.makeText(getContext(), "Không thể tải danh mục món ăn", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DanhMucMonAn>> call, Throwable t) {
+                Log.e("DetailDescription", "API call failed: " + t.getMessage());
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 }

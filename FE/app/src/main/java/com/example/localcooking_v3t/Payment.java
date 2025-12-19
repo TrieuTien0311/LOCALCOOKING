@@ -20,6 +20,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.localcooking_v3t.model.LopHoc;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -38,7 +39,7 @@ public class Payment extends AppCompatActivity {
     private View mainLayout;
 
     // Dữ liệu nhận được
-    private Class lopHoc;
+    private LopHoc lopHoc;
     private int soLuongDat = 1;
     private double tongTien = 0;
 
@@ -112,14 +113,14 @@ public class Payment extends AppCompatActivity {
         txtNgay.setText("Ngày: " + lopHoc.getNgay());
         txtDiaDiem.setText("Địa điểm: " + lopHoc.getDiaDiem());
 
-        if (lopHoc.getHinhAnh() != 0) {
-            imgMonAn.setImageResource(lopHoc.getHinhAnh());
+        if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
+            imgMonAn.setImageResource(lopHoc.getHinhAnhResId(this));
         }
 
         // Tính toán tiền
         double giaGoc = lopHoc.getGiaSo();
         double tongGoc = giaGoc * soLuongDat;
-        double giamGia = lopHoc.isCoUuDai() ? tongGoc * 0.21 : 0; // Giả sử giảm 21%
+        double giamGia = (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) ? tongGoc * 0.21 : 0; // Giả sử giảm 21%
         double thanhToan = tongGoc - giamGia;
 
         // Cập nhật các TextView tiền
