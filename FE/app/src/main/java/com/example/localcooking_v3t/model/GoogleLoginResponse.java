@@ -1,0 +1,86 @@
+package com.example.localcooking_v3t.model;
+
+public class GoogleLoginResponse {
+    private boolean success;
+    private String message;
+    private Integer maNguoiDung;
+    private String tenDangNhap;
+    private String hoTen;
+    private String email;
+    private String vaiTro;
+    private String avatarUrl;
+    private boolean isNewUser;
+    
+    // Getters and Setters
+    public boolean isSuccess() {
+        return success;
+    }
+    
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
+    public Integer getMaNguoiDung() {
+        return maNguoiDung;
+    }
+    
+    public void setMaNguoiDung(Integer maNguoiDung) {
+        this.maNguoiDung = maNguoiDung;
+    }
+    
+    public String getTenDangNhap() {
+        return tenDangNhap;
+    }
+    
+    public void setTenDangNhap(String tenDangNhap) {
+        this.tenDangNhap = tenDangNhap;
+    }
+    
+    public String getHoTen() {
+        return hoTen;
+    }
+    
+    public void setHoTen(String hoTen) {
+        this.hoTen = hoTen;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getVaiTro() {
+        return vaiTro;
+    }
+    
+    public void setVaiTro(String vaiTro) {
+        this.vaiTro = vaiTro;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+    
+    public boolean isNewUser() {
+        return isNewUser;
+    }
+    
+    public void setNewUser(boolean newUser) {
+        isNewUser = newUser;
+    }
+}

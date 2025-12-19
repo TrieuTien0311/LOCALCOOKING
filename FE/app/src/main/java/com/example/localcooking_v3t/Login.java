@@ -21,11 +21,18 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.helper.GoogleSignInHelper;
+import com.example.localcooking_v3t.model.GoogleLoginRequest;
+import com.example.localcooking_v3t.model.GoogleLoginResponse;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
 import com.example.localcooking_v3t.utils.SessionManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +40,9 @@ import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
+    // Web Client ID từ Google Cloud Console
+    private static final String WEB_CLIENT_ID = "954091456874-iji1kkmljees7803o33p78gl34pl90ek.apps.googleusercontent.com";
+    
     private ImageView btnBack;
     private TextView tvBack, tvForgotPassword, tvRegister;
     private TextInputEditText idEmail, idMatKhau;
@@ -42,6 +52,10 @@ public class Login extends AppCompatActivity {
     private View mainLayout;
     private boolean isPasswordVisible = false;
     private SessionManager sessionManager;
+    
+    // Google Sign-In
+    private GoogleSignInHelper googleSignInHelper;
+    private ActivityResultLauncher<Intent> googleSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +85,19 @@ public class Login extends AppCompatActivity {
         
         // Khởi tạo SessionManager
         sessionManager = new SessionManager(this);
+        
+        // Khởi tạo Google Sign-In Helper
+        googleSignInHelper = new GoogleSignInHelper(this, WEB_CLIENT_ID);
+        
+        // Đăng ký launcher cho Google Sign-In
+        googleSignInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    handleGoogleSignInResult(result.getData());
+                }
+            }
+        );
         
         // Debug: Hiển thị URL API đang sử dụng
         String apiUrl = RetrofitClient.getBaseUrl();
@@ -125,6 +152,14 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Register.class);
                 startActivity(intent);
+            }
+        });
+        
+        // Xử lý đăng nhập bằng Google
+        btnGG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performGoogleSignIn();
             }
         });
     }
@@ -310,5 +345,97 @@ public class Login extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+    
+    /**
+     * Thực hiện đăng nhập bằng Google
+     */
+    private void performGoogleSignIn() {
+        Intent signInIntent = googleSignInHelper.getSignInIntent();
+        googleSignInLauncher.launch(signInIntent);
+    }
+    
+    /**
+     * Xử lý kết quả Google Sign-In
+     */
+    private void handleGoogleSignInResult(Intent data) {
+        GoogleSignInAccount account = googleSignInHelper.handleSignInResult(data);
+        
+        if (account != null) {
+            String idToken = account.getIdToken();
+            String email = account.getEmail();
+            String name = account.getDisplayName();
+            
+            android.util.Log.d("GOOGLE_SIGNIN", "Email: " + email);
+            android.util.Log.d("GOOGLE_SIGNIN", "Name: " + name);
+            
+            if (idToken != null) {
+                loginWithGoogleToken(idToken);
+            } else {
+                Toast.makeText(this, "Không lấy được ID Token từ Google", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Đăng nhập Google thất bại", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    /**
+     * Gửi ID Token lên backend để xác thực
+     */
+    private void loginWithGoogleToken(String idToken) {
+        // Disable button
+        btnGG.setEnabled(false);
+        btnGG.setText("Đang đăng nhập...");
+        
+        GoogleLoginRequest request = new GoogleLoginRequest(idToken);
+        Call<GoogleLoginResponse> call = RetrofitClient.getApiService().googleLogin(request);
+        
+        call.enqueue(new Callback<GoogleLoginResponse>() {
+            @Override
+            public void onResponse(Call<GoogleLoginResponse> call, Response<GoogleLoginResponse> response) {
+                btnGG.setEnabled(true);
+                btnGG.setText("Google");
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    GoogleLoginResponse loginResponse = response.body();
+                    
+                    if (loginResponse.isSuccess()) {
+                        // Lưu session với thông tin từ Google
+                        sessionManager.createLoginSession(
+                            loginResponse.getMaNguoiDung(),
+                            loginResponse.getTenDangNhap(),
+                            loginResponse.getHoTen(),
+                            loginResponse.getEmail(),
+                            loginResponse.getVaiTro()
+                        );
+                        
+                        // Lưu thêm thông tin Google
+                        sessionManager.saveAvatarUrl(loginResponse.getAvatarUrl());
+                        sessionManager.saveLoginMethod("GOOGLE");
+                        
+                        // Hiển thị thông báo
+                        String message = loginResponse.isNewUser() 
+                            ? "Chào mừng bạn đến với LocalCooking!" 
+                            : "Chào mừng trở lại, " + loginResponse.getHoTen();
+                        Toast.makeText(Login.this, message, Toast.LENGTH_SHORT).show();
+                        
+                        // Chuyển sang màn hình Home
+                        navigateToHome();
+                    } else {
+                        Toast.makeText(Login.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Login.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<GoogleLoginResponse> call, Throwable t) {
+                btnGG.setEnabled(true);
+                btnGG.setText("Google");
+                Toast.makeText(Login.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                android.util.Log.e("GOOGLE_LOGIN_ERROR", "Error: " + t.getMessage(), t);
+            }
+        });
     }
 }

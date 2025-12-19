@@ -5,6 +5,8 @@ import com.example.localcooking_v3t.model.ChangePasswordResponse;
 import com.example.localcooking_v3t.model.ChangePasswordWithOtpRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
+import com.example.localcooking_v3t.model.GoogleLoginRequest;
+import com.example.localcooking_v3t.model.GoogleLoginResponse;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
 import com.example.localcooking_v3t.model.LopHoc;
@@ -53,4 +55,7 @@ public interface ApiService {
     @POST("api/nguoidung/change-password/verify")
     Call<ChangePasswordResponse> changePasswordWithOtp(@Body ChangePasswordWithOtpRequest request);
 
+    // Đăng nhập bằng Google
+    @POST("api/nguoidung/google-login")
+    Call<GoogleLoginResponse> googleLogin(@Body GoogleLoginRequest request);
 }

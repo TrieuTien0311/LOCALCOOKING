@@ -47,4 +47,14 @@ public class NguoiDung {
     
     @Column(name = "lanCapNhatCuoi")
     private LocalDateTime lanCapNhatCuoi = LocalDateTime.now();
+    
+    // Google Sign-In fields
+    @Column(name = "googleId", unique = true)
+    private String googleId;
+    
+    @Column(name = "loginMethod", length = 20)
+    private String loginMethod = "EMAIL"; // EMAIL | GOOGLE
+    
+    @Column(name = "avatarUrl")
+    private String avatarUrl;
 }

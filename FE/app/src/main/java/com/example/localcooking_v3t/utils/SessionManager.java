@@ -11,6 +11,8 @@ public class SessionManager {
     private static final String KEY_HO_TEN = "hoTen";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_VAI_TRO = "vaiTro";
+    private static final String KEY_AVATAR_URL = "avatarUrl";
+    private static final String KEY_LOGIN_METHOD = "loginMethod";
     
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -54,6 +56,24 @@ public class SessionManager {
     
     public String getVaiTro() {
         return prefs.getString(KEY_VAI_TRO, null);
+    }
+    
+    public void saveAvatarUrl(String avatarUrl) {
+        editor.putString(KEY_AVATAR_URL, avatarUrl);
+        editor.apply();
+    }
+    
+    public String getAvatarUrl() {
+        return prefs.getString(KEY_AVATAR_URL, null);
+    }
+    
+    public void saveLoginMethod(String loginMethod) {
+        editor.putString(KEY_LOGIN_METHOD, loginMethod);
+        editor.apply();
+    }
+    
+    public String getLoginMethod() {
+        return prefs.getString(KEY_LOGIN_METHOD, "EMAIL");
     }
     
     public void logout() {

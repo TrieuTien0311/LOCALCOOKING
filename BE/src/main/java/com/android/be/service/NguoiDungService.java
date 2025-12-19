@@ -19,6 +19,7 @@ public class NguoiDungService {
     private final NguoiDungRepository nguoiDungRepository;
     private final OtpService otpService;
     private final EmailService emailService;
+    private final GoogleAuthService googleAuthService;
     
     public List<NguoiDung> getAllNguoiDung() {
         return nguoiDungRepository.findAll();
@@ -226,5 +227,91 @@ public class NguoiDungService {
         response.put("message", "Đổi mật khẩu thành công");
         
         return response;
+    }
+    
+    // Đăng nhập bằng Google
+    public GoogleLoginResponse loginWithGoogle(String idToken) {
+        try {
+            // Verify token với Google
+            com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload payload = 
+                googleAuthService.verifyToken(idToken);
+            
+            if (payload == null) {
+                return new GoogleLoginResponse(
+                    false, "Token không hợp lệ", 
+                    null, null, null, null, null, null, false
+                );
+            }
+            
+            String email = payload.getEmail();
+            String googleId = payload.getSubject();
+            String name = (String) payload.get("name");
+            String avatarUrl = (String) payload.get("picture");
+            
+            // Tìm user theo email
+            Optional<NguoiDung> nguoiDungOpt = nguoiDungRepository.findByEmail(email);
+            
+            boolean isNewUser = false;
+            NguoiDung nguoiDung;
+            
+            if (nguoiDungOpt.isPresent()) {
+                // User đã tồn tại
+                nguoiDung = nguoiDungOpt.get();
+                
+                // Kiểm tra trạng thái
+                if (!"HoatDong".equals(nguoiDung.getTrangThai())) {
+                    return new GoogleLoginResponse(
+                        false, "Tài khoản đã bị khóa",
+                        null, null, null, null, null, null, false
+                    );
+                }
+                
+                // Cập nhật thông tin Google nếu chưa có
+                if (nguoiDung.getGoogleId() == null) {
+                    nguoiDung.setGoogleId(googleId);
+                    nguoiDung.setLoginMethod("GOOGLE");
+                }
+                if (nguoiDung.getAvatarUrl() == null) {
+                    nguoiDung.setAvatarUrl(avatarUrl);
+                }
+                nguoiDung.setLanCapNhatCuoi(LocalDateTime.now());
+                nguoiDungRepository.save(nguoiDung);
+                
+            } else {
+                // Tạo user mới
+                isNewUser = true;
+                nguoiDung = new NguoiDung();
+                nguoiDung.setEmail(email);
+                nguoiDung.setGoogleId(googleId);
+                nguoiDung.setHoTen(name);
+                nguoiDung.setTenDangNhap(email.split("@")[0]); // Lấy phần trước @ làm username
+                nguoiDung.setAvatarUrl(avatarUrl);
+                nguoiDung.setLoginMethod("GOOGLE");
+                nguoiDung.setVaiTro("HocVien");
+                nguoiDung.setTrangThai("HoatDong");
+                nguoiDung.setNgayTao(LocalDateTime.now());
+                nguoiDung.setLanCapNhatCuoi(LocalDateTime.now());
+                nguoiDungRepository.save(nguoiDung);
+            }
+            
+            return new GoogleLoginResponse(
+                true,
+                "Đăng nhập thành công",
+                nguoiDung.getMaNguoiDung(),
+                nguoiDung.getTenDangNhap(),
+                nguoiDung.getHoTen(),
+                nguoiDung.getEmail(),
+                nguoiDung.getVaiTro(),
+                nguoiDung.getAvatarUrl(),
+                isNewUser
+            );
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new GoogleLoginResponse(
+                false, "Lỗi xác thực: " + e.getMessage(),
+                null, null, null, null, null, null, false
+            );
+        }
     }
 }

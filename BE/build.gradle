@@ -38,6 +38,9 @@ dependencies {
 	
 	// Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
+	// Google API Client for token verification
+	implementation 'com.google.api-client:google-api-client:2.2.0'
 }
 
 tasks.named('test') {
