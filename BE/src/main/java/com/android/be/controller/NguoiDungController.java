@@ -86,14 +86,13 @@ public class NguoiDungController {
             ));
         }
     }
-<<<<<<< HEAD
-    
+
     // API đăng nhập bằng Google
     @PostMapping("/google-login")
     public ResponseEntity<GoogleLoginResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
         GoogleLoginResponse response = nguoiDungService.loginWithGoogle(request.getIdToken());
         return ResponseEntity.ok(response);
-=======
+    }
 
     // API cập nhật thông tin cá nhân
     @PostMapping("/update-profile")
@@ -133,6 +132,5 @@ public class NguoiDungController {
                     "message", e.getMessage()
             ));
         }
->>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
     }
 }

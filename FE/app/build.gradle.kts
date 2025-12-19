@@ -59,11 +59,8 @@ dependencies {
     // OkHttp for logging
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-<<<<<<< HEAD
-    
+
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.0.0")
-=======
 
->>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
 }

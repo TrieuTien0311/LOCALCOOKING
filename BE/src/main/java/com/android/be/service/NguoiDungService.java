@@ -228,7 +228,6 @@ public class NguoiDungService {
         
         return response;
     }
-<<<<<<< HEAD
     
     // Đăng nhập bằng Google
     public GoogleLoginResponse loginWithGoogle(String idToken) {
@@ -314,7 +313,7 @@ public class NguoiDungService {
                 null, null, null, null, null, null, false
             );
         }
-=======
+    }
 
     // Cập nhật thông tin cá nhân
     public UpdateProfileResponse updateProfile(UpdateProfileRequest request) throws Exception {
@@ -364,6 +363,5 @@ public class NguoiDungService {
                 nguoiDung.getSoDienThoai(),
                 nguoiDung.getDiaChi()
         );
->>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
     }
 }

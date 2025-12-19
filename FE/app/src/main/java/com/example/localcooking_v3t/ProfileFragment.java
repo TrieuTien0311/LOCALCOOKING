@@ -15,10 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.localcooking_v3t.utils.SessionManager;
+import com.example.localcooking_v3t.helper.GoogleSignInHelper;
 
 public class ProfileFragment extends Fragment {
 
     private SessionManager sessionManager;
+    private GoogleSignInHelper googleSignInHelper;
     private TextView tvUserName;
     private TextView tvUserEmail;
     private Button btnLogout;
@@ -31,6 +33,10 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(requireContext());
+        
+        // Khởi tạo GoogleSignInHelper với Web Client ID
+        String WEB_CLIENT_ID = "954091456874-iji1kkmljees7803o33p78gl34pl90ek.apps.googleusercontent.com";
+        googleSignInHelper = new GoogleSignInHelper(requireContext(), WEB_CLIENT_ID);
     }
 
     @Nullable
@@ -129,6 +135,12 @@ public class ProfileFragment extends Fragment {
      */
     private void performLogout() {
         if (sessionManager.isLoggedIn()) {
+            // Kiểm tra nếu đăng nhập bằng Google thì sign out khỏi Google
+            String loginMethod = sessionManager.getLoginMethod();
+            if ("GOOGLE".equals(loginMethod)) {
+                googleSignInHelper.signOut();
+            }
+            
             // Xóa session
             sessionManager.logout();
 

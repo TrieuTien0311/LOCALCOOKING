@@ -351,6 +351,9 @@ public class Login extends AppCompatActivity {
      * Thực hiện đăng nhập bằng Google
      */
     private void performGoogleSignIn() {
+        // Sign out trước để luôn hiển thị màn hình chọn tài khoản
+        googleSignInHelper.signOut();
+        
         Intent signInIntent = googleSignInHelper.getSignInIntent();
         googleSignInLauncher.launch(signInIntent);
     }

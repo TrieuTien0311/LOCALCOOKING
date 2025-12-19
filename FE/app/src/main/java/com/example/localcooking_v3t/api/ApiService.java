@@ -6,12 +6,9 @@ import com.example.localcooking_v3t.model.ChangePasswordWithOtpRequest;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
-<<<<<<< HEAD
 import com.example.localcooking_v3t.model.GoogleLoginRequest;
 import com.example.localcooking_v3t.model.GoogleLoginResponse;
-=======
 import com.example.localcooking_v3t.model.HinhAnhMonAn;
->>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
 import com.example.localcooking_v3t.model.LopHoc;
@@ -63,11 +60,9 @@ public interface ApiService {
     @POST("api/nguoidung/change-password/verify")
     Call<ChangePasswordResponse> changePasswordWithOtp(@Body ChangePasswordWithOtpRequest request);
 
-<<<<<<< HEAD
     // Đăng nhập bằng Google
     @POST("api/nguoidung/google-login")
     Call<GoogleLoginResponse> googleLogin(@Body GoogleLoginRequest request);
-=======
     // Cập nhật thông tin cá nhân
     @POST("api/nguoidung/update-profile")
     Call<UpdateProfileResponse> updateProfile(@Body UpdateProfileRequest request);
@@ -87,5 +82,4 @@ public interface ApiService {
     @GET("api/hinhanh-monan/monan/{maMonAn}")
     Call<List<HinhAnhMonAn>> getHinhAnhMonAn(@retrofit2.http.Path("maMonAn") Integer maMonAn);
 
->>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
 }
