@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -21,8 +23,17 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.ResetPasswordRequest;
+import com.example.localcooking_v3t.model.ResetPasswordResponse;
+import com.example.localcooking_v3t.model.VerifyOtpRequest;
+import com.example.localcooking_v3t.model.VerifyOtpResponse;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OtpVerification extends AppCompatActivity {
 
@@ -33,11 +44,19 @@ public class OtpVerification extends AppCompatActivity {
     private TextInputEditText idMatKhauMoi, idXacNhanMatKhau;
     private Button btnXacNhan;
 
+    private String email;
+    private String resetToken;
+    private boolean isPasswordVisible1 = false;
+    private boolean isPasswordVisible2 = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_otp_verification);
+
+        // Lấy email từ Intent
+        email = getIntent().getStringExtra("email");
 
         // Cấu hình EdgeToEdge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -47,13 +66,9 @@ public class OtpVerification extends AppCompatActivity {
         });
 
         setupStatusBar();
-
-        // Ánh xạ View
         initViews();
-
-        // Thiết lập Auto nhảy ô
         setupOTPInputs();
-
+        setupPasswordToggles();
         setupListeners();
     }
 
@@ -86,21 +101,153 @@ public class OtpVerification extends AppCompatActivity {
         btnXacNhan = findViewById(R.id.btnXacNhan);
     }
 
+    private void setupPasswordToggles() {
+        // Toggle cho Mật khẩu mới
+        idMatKhauMoi.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (idMatKhauMoi.getRight() - idMatKhauMoi.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (isPasswordVisible1) {
+                        idMatKhauMoi.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        idMatKhauMoi.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye_hide_tt, 0);
+                        isPasswordVisible1 = false;
+                    } else {
+                        idMatKhauMoi.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        idMatKhauMoi.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye, 0);
+                        isPasswordVisible1 = true;
+                    }
+                    idMatKhauMoi.setSelection(idMatKhauMoi.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+        
+        // Toggle cho Xác nhận mật khẩu
+        idXacNhanMatKhau.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (idXacNhanMatKhau.getRight() - idXacNhanMatKhau.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (isPasswordVisible2) {
+                        idXacNhanMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        idXacNhanMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye_hide_tt, 0);
+                        isPasswordVisible2 = false;
+                    } else {
+                        idXacNhanMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        idXacNhanMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye, 0);
+                        isPasswordVisible2 = true;
+                    }
+                    idXacNhanMatKhau.setSelection(idXacNhanMatKhau.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
     private void setupListeners() {
         View.OnClickListener backListener = v -> finish();
         btnBack.setOnClickListener(backListener);
         tvBack.setOnClickListener(backListener);
 
-        btnXacNhan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(OtpVerification.this, Login.class);
-                startActivity(intent);
+        btnXacNhan.setOnClickListener(v -> {
+            if (resetToken == null) {
+                // Chưa xác thực OTP -> Xác thực OTP trước
+                verifyOtp();
+            } else {
+                // Đã có resetToken -> Đặt mật khẩu mới
+                resetPassword();
             }
         });
     }
 
-    // Hàm hỗ trợ lấy chuỗi OTP từ 6 ô
+    private void verifyOtp() {
+        String otp = getOTPCode();
+
+        if (otp.length() != 6) {
+            Toast.makeText(this, "Vui lòng nhập đủ 6 số OTP", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        btnXacNhan.setEnabled(false);
+        btnXacNhan.setText("Đang xác thực...");
+
+        VerifyOtpRequest request = new VerifyOtpRequest(email, otp);
+        RetrofitClient.getApiService().verifyResetOtp(request).enqueue(new Callback<VerifyOtpResponse>() {
+            @Override
+            public void onResponse(Call<VerifyOtpResponse> call, Response<VerifyOtpResponse> response) {
+                btnXacNhan.setEnabled(true);
+                btnXacNhan.setText("Xác nhận");
+
+                if (response.isSuccessful() && response.body() != null) {
+                    resetToken = response.body().getResetToken();
+                    Toast.makeText(OtpVerification.this, "OTP hợp lệ! Vui lòng nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
+                    // Hiển thị phần nhập mật khẩu mới
+                    tilMatKhauMoi.setVisibility(View.VISIBLE);
+                    tilXacNhanMatKhau.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(OtpVerification.this, "OTP không đúng hoặc đã hết hạn", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VerifyOtpResponse> call, Throwable t) {
+                btnXacNhan.setEnabled(true);
+                btnXacNhan.setText("Xác nhận");
+                Toast.makeText(OtpVerification.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void resetPassword() {
+        String newPassword = idMatKhauMoi.getText().toString().trim();
+        String confirmPassword = idXacNhanMatKhau.getText().toString().trim();
+
+        if (newPassword.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (newPassword.length() < 6) {
+            Toast.makeText(this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        btnXacNhan.setEnabled(false);
+        btnXacNhan.setText("Đang xử lý...");
+
+        ResetPasswordRequest request = new ResetPasswordRequest(resetToken, newPassword);
+        RetrofitClient.getApiService().resetPassword(request).enqueue(new Callback<ResetPasswordResponse>() {
+            @Override
+            public void onResponse(Call<ResetPasswordResponse> call, Response<ResetPasswordResponse> response) {
+                btnXacNhan.setEnabled(true);
+                btnXacNhan.setText("Xác nhận");
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(OtpVerification.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                    // Chuyển về màn hình đăng nhập
+                    Intent intent = new Intent(OtpVerification.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(OtpVerification.this, "Đổi mật khẩu thất bại", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResetPasswordResponse> call, Throwable t) {
+                btnXacNhan.setEnabled(true);
+                btnXacNhan.setText("Xác nhận");
+                Toast.makeText(OtpVerification.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private String getOTPCode() {
         return otpBox1.getText().toString() +
                 otpBox2.getText().toString() +
@@ -110,38 +257,30 @@ public class OtpVerification extends AppCompatActivity {
                 otpBox6.getText().toString();
     }
 
-    // Hàm xử lý logic tự động chuyển ô khi nhập số
     private void setupOTPInputs() {
-        otpBox1.addTextChangedListener(new GenericTextWatcher(otpBox1, otpBox2));
-        otpBox2.addTextChangedListener(new GenericTextWatcher(otpBox2, otpBox3));
-        otpBox3.addTextChangedListener(new GenericTextWatcher(otpBox3, otpBox4));
-        otpBox4.addTextChangedListener(new GenericTextWatcher(otpBox4, otpBox5));
-        otpBox5.addTextChangedListener(new GenericTextWatcher(otpBox5, otpBox6));
-        otpBox6.addTextChangedListener(new GenericTextWatcher(otpBox6, null));
-    }
+        EditText[] otpBoxes = {otpBox1, otpBox2, otpBox3, otpBox4, otpBox5, otpBox6};
+        
+        for (int i = 0; i < otpBoxes.length; i++) {
+            final int index = i;
+            otpBoxes[i].addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-    // Class hỗ trợ theo dõi nhập liệu để chuyển focus
-    private class GenericTextWatcher implements TextWatcher {
-        private final View currentView;
-        private final View nextView;
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Khi nhập 1 ký tự, chuyển sang ô tiếp theo
+                    if (s.length() == 1 && index < otpBoxes.length - 1) {
+                        otpBoxes[index + 1].requestFocus();
+                    } 
+                    // Khi xóa (backspace), quay về ô trước đó
+                    else if (s.length() == 0 && index > 0) {
+                        otpBoxes[index - 1].requestFocus();
+                    }
+                }
 
-        public GenericTextWatcher(View currentView, View nextView) {
-            this.currentView = currentView;
-            this.nextView = nextView;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String text = s.toString();
-            if (text.length() == 1 && nextView != null) {
-                nextView.requestFocus();
-            }
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
         }
     }
 }

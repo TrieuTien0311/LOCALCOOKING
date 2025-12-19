@@ -17,14 +17,8 @@ public class DanhMucMonAn {
     @Column(name = "maDanhMuc")
     private Integer maDanhMuc;
     
-    @Column(name = "maLopHoc", nullable = false)
-    private Integer maLopHoc;
-    
     @Column(name = "tenDanhMuc", nullable = false, length = 100)
     private String tenDanhMuc; // Món khai vị, Món chính, Món tráng miệng
-    
-    @Column(name = "thoiGian", length = 50)
-    private String thoiGian; // 14:00 - 15:00
     
     @Column(name = "iconDanhMuc")
     private String iconDanhMuc;

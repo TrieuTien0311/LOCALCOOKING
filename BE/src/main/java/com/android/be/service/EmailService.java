@@ -7,19 +7,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public void sendOtpEmail(String toEmail, String otp) throws MessagingException {
+    public void sendOtpEmail(String toEmail, String otp) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-       helper.setFrom("LOCALFOOD");
+       helper.setFrom("nguyenthu2018dn@gmail.com", "LOCAL COOKING");
 helper.setTo(toEmail);
-helper.setSubject("Mã xác thực tài khoản Local Food"); 
+helper.setSubject("Mã xác thực tài khoản Local Cooking"); 
 
 String htmlContent = """
     <!DOCTYPE html>
@@ -34,7 +36,7 @@ String htmlContent = """
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
             
             <div style="background-color: #ff6b35; padding: 30px 0; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 1px;">LOCAL FOOD</h1>
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 1px;">LOCAL COOKING</h1>
             </div>
             
             <div style="padding: 40px 30px; color: #333333;">

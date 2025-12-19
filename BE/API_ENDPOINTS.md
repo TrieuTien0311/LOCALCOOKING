@@ -12,6 +12,10 @@ http://localhost:8080/api
 - **PUT** `/nguoidung/{id}` - Cập nhật người dùng
 - **DELETE** `/nguoidung/{id}` - Xóa người dùng
 - **POST** `/nguoidung/login` - Đăng nhập
+- **POST** `/nguoidung/register` - Đăng ký
+- **POST** `/nguoidung/change-password/send-otp` - Gửi OTP để đổi mật khẩu
+- **POST** `/nguoidung/change-password/verify` - Xác thực OTP và đổi mật khẩu
+- **POST** `/nguoidung/login` - Đăng nhập
 - **POST** `/nguoidung/register` - Đăng ký tài khoản mới
 
 ## 2. Giáo Viên (GiaoVien)
@@ -45,9 +49,16 @@ http://localhost:8080/api
 ## 6. Món Ăn (MonAn)
 - **GET** `/monan` - Lấy tất cả món ăn
 - **GET** `/monan/{id}` - Lấy món ăn theo ID
+- **GET** `/monan/lophoc/{maLopHoc}` - Lấy món ăn theo lớp học
+- **GET** `/monan/danhmuc/{maDanhMuc}` - Lấy món ăn theo danh mục
 - **POST** `/monan` - Tạo món ăn mới
 - **PUT** `/monan/{id}` - Cập nhật món ăn
 - **DELETE** `/monan/{id}` - Xóa món ăn
+
+## 6.1. Hình Ảnh Món Ăn (HinhAnhMonAn)
+- **GET** `/hinhanh-monan/monan/{maMonAn}` - Lấy tất cả hình ảnh của món ăn (slideshow)
+- **POST** `/hinhanh-monan` - Tạo hình ảnh món ăn mới
+- **DELETE** `/hinhanh-monan/{maHinhAnh}` - Xóa hình ảnh món ăn
 
 ## 7. Hình Ảnh Lớp Học (HinhAnhLopHoc)
 - **GET** `/hinhanhlophoc` - Lấy tất cả hình ảnh lớp học
@@ -164,11 +175,53 @@ http://localhost:8080/api
 }
 ```
 
+### Đổi Mật Khẩu - Bước 1: Gửi OTP
+**POST** `/api/nguoidung/change-password/send-otp`
+```json
+{
+  "email": "user@example.com",
+  "matKhauHienTai": "password123",
+  "matKhauMoi": "newpassword456",
+  "xacNhanMatKhauMoi": "newpassword456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Mã OTP đã được gửi đến email user@example.com",
+  "email": "user@example.com"
+}
+```
+
+### Đổi Mật Khẩu - Bước 2: Xác Thực OTP và Đổi Mật Khẩu
+**POST** `/api/nguoidung/change-password/verify`
+```json
+{
+  "email": "user@example.com",
+  "matKhauHienTai": "password123",
+  "matKhauMoi": "newpassword456",
+  "xacNhanMatKhauMoi": "newpassword456",
+  "otp": "123456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Đổi mật khẩu thành công"
+}
+```
+
 ### Tạo Lớp Học
 ```json
 {
   "tenLopHoc": "Nấu ăn Việt Nam cơ bản",
   "moTa": "Học nấu các món ăn Việt Nam truyền thống",
+  "gioiThieu": "Trải nghiệm nấu các món ăn đường phố nổi tiếng nhất Hà Nội",
+  "giaTriSauBuoiHoc": "• Nắm vững kỹ thuật nấu phở Hà Nội chính gốc\n• Hiểu về văn hóa ẩm thực phố cổ\n• Tự tin làm bún chả và chả cá Lã Vọng",
   "maGiaoVien": 1,
   "soLuongToiDa": 20,
   "giaTien": 500000,
@@ -177,6 +230,26 @@ http://localhost:8080/api
   "ngayDienRa": "2024-01-15",
   "gioBatDau": "14:00:00",
   "gioKetThuc": "17:00:00"
+}
+```
+
+### Tạo Món Ăn
+```json
+{
+  "maLopHoc": 1,
+  "maDanhMuc": 2,
+  "tenMon": "Phở bò Hà Nội",
+  "gioiThieu": "Món phở truyền thống với nước dùng trong, thơm, thịt bò mềm",
+  "nguyenLieu": "Bánh phở, thịt bò, xương bò, hành, gừng, gia vị"
+}
+```
+
+### Tạo Hình Ảnh Món Ăn
+```json
+{
+  "maMonAn": 1,
+  "duongDan": "phobo_1.png",
+  "thuTu": 1
 }
 ```
 

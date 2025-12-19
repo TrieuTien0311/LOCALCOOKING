@@ -12,8 +12,17 @@ public class LopHocDTO {
     private Integer maLopHoc;
     private String tenLop;
     private String moTa;
+    private String gioiThieu;
+    private String giaTriSauBuoiHoc;
     private String thoiGian;
-    private String ngay;
+    
+    // Lịch trình lặp lại
+    private String loaiLich;  // 'HangNgay', 'HangTuan', 'MotLan'
+    private String ngayBatDau;
+    private String ngayKetThuc;
+    private String cacNgayTrongTuan;  // '2,3,4,5,6'
+    
+    private String ngay;  // Deprecated - dùng ngayBatDau thay thế
     private String diaDiem;
     private String gia;
     private Float danhGia;

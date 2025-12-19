@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MonAnDTO {
     private Integer maMonAn;
+    private Integer maLopHoc;
+    private Integer maDanhMuc;
     private String tenMon;
     private String gioiThieu;
     private String nguyenLieu;
-    private String hinhAnh;
 }
