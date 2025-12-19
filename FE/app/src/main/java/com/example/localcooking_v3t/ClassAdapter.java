@@ -98,7 +98,22 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         holder.txtNgay.setText("Ngày: " + ngayHienThi);
         
         holder.txtDiaDiem.setText("Địa điểm: " + lopHoc.getDiaDiem());
-        holder.txtGia.setText(lopHoc.getGia());
+        
+        // Xử lý hiển thị giá với ưu đãi
+        if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
+            // Có ưu đãi: hiển thị giá gốc bị gạch và giá sau giảm
+            holder.txtGiaGoc.setVisibility(View.VISIBLE);
+            holder.txtGiaGoc.setText(lopHoc.getGia());
+            holder.txtGiaGoc.setPaintFlags(holder.txtGiaGoc.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+            
+            // Tính giá sau giảm 10%
+            String giaSauGiam = calculateDiscountPrice(lopHoc.getGia(), 10);
+            holder.txtGia.setText(giaSauGiam);
+        } else {
+            // Không có ưu đãi: chỉ hiển thị giá gốc
+            holder.txtGiaGoc.setVisibility(View.GONE);
+            holder.txtGia.setText(lopHoc.getGia());
+        }
         
         // Hiển thị đánh giá
         if (lopHoc.getDanhGia() != null && lopHoc.getSoDanhGia() != null) {
@@ -188,6 +203,30 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
     }
     
     /**
+     * Tính giá sau khi giảm phần trăm
+     */
+    private String calculateDiscountPrice(String originalPrice, int discountPercent) {
+        if (originalPrice == null || originalPrice.isEmpty()) {
+            return originalPrice;
+        }
+        
+        try {
+            // Loại bỏ ký tự không phải số (đ, ₫, dấu chấm, dấu phẩy)
+            String priceStr = originalPrice.replaceAll("[^0-9]", "");
+            double price = Double.parseDouble(priceStr);
+            
+            // Tính giá sau giảm
+            double discountedPrice = price * (100 - discountPercent) / 100;
+            
+            // Format lại với dấu chấm phân cách hàng nghìn
+            java.text.DecimalFormat formatter = new java.text.DecimalFormat("#,###");
+            return formatter.format(discountedPrice).replace(",", ".") + "đ";
+        } catch (Exception e) {
+            return originalPrice;
+        }
+    }
+    
+    /**
      * Bắt đầu countdown timer đếm ngược về 00:00
      */
     private void startCountdownTimer(ClassViewHolder holder) {
@@ -226,7 +265,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         LinearLayout layoutBanner, footer;
         ImageView imgMonAn, imgFavorite;
         TextView txtTenLop, txtMoTa, txtThoiGian, txtNgay, txtDiaDiem;
-        TextView txtGia, txtDanhGia, txtSoDanhGia, txtSuat, txtKetThuc;
+        TextView txtGia, txtGiaGoc, txtDanhGia, txtSoDanhGia, txtSuat, txtKetThuc;
         MaterialButton btnDatLich;
         View overlayDim;
         TextView txtDaDienRa;
@@ -245,6 +284,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             txtNgay = itemView.findViewById(R.id.txtNgay);
             txtDiaDiem = itemView.findViewById(R.id.txtDiaDiem);
             txtGia = itemView.findViewById(R.id.txtGia);
+            txtGiaGoc = itemView.findViewById(R.id.txtGiaGoc);
             txtDanhGia = itemView.findViewById(R.id.txtDanhGia);
             txtSoDanhGia = itemView.findViewById(R.id.txtSoDanhGia);
             txtSuat = itemView.findViewById(R.id.txtSuat);

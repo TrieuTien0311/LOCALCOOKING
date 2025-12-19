@@ -105,16 +105,34 @@
                                 android:src="@drawable/hue" />
                         </androidx.cardview.widget.CardView>
 
-                        <TextView
-                            android:id="@+id/txtGia"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="10dp"
-                            android:text="715.000đ"
-                            android:textColor="#D32F2F"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <!-- Giá gốc (bị gạch ngang khi có ưu đãi) -->
+                            <TextView
+                                android:id="@+id/txtGiaGoc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="715.000đ"
+                                android:textColor="#999999"
+                                android:textSize="12sp"
+                                android:visibility="gone" />
+
+                            <!-- Giá sau giảm (hiển thị khi có ưu đãi) hoặc giá gốc (khi không có ưu đãi) -->
+                            <TextView
+                                android:id="@+id/txtGia"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="715.000đ"
+                                android:textColor="#D32F2F"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <!-- Thông tin lớp học -->

@@ -39,15 +39,27 @@ public class ProfileFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        
+
         // Ánh xạ view
         tvUserName = view.findViewById(R.id.textView2);
         tvUserEmail = view.findViewById(R.id.textView38);
         btnLogout = view.findViewById(R.id.button4);
-        
+
         // Hiển thị thông tin người dùng
         loadUserInfo();
-        
+
+        // Xử lý click vào "Thông tin cá nhân"
+        View infoLayout = view.findViewById(R.id.cDThongTin);
+        infoLayout.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                navigateToLogin();
+            }
+        });
+
         // Xử lý click vào "Đổi mật khẩu"
         View changePasswordLayout = view.findViewById(R.id.cDMatKhau);
         changePasswordLayout.setOnClickListener(v -> {
@@ -59,22 +71,29 @@ public class ProfileFragment extends Fragment {
                 navigateToLogin();
             }
         });
-        
+
+        // Xử lý click vào "Trợ giúp và hỗ trợ"
+        View helpLayout = view.findViewById(R.id.cDTroGiup);
+        helpLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), HelpActivity.class);
+            startActivity(intent);
+        });
+
         // Xử lý nút "Đăng xuất"
         btnLogout.setOnClickListener(v -> {
             performLogout();
         });
-        
+
         return view;
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
         // Cập nhật lại thông tin khi quay lại fragment
         loadUserInfo();
     }
-    
+
     /**
      * Load thông tin người dùng từ session
      */
@@ -82,21 +101,21 @@ public class ProfileFragment extends Fragment {
         if (sessionManager.isLoggedIn()) {
             String tenDangNhap = sessionManager.getTenDangNhap();
             String email = sessionManager.getEmail();
-            
+
             // Hiển thị tên đăng nhập (luôn có giá trị)
             if (tenDangNhap != null && !tenDangNhap.isEmpty()) {
                 tvUserName.setText(tenDangNhap);
             } else {
                 tvUserName.setText("Người dùng");
             }
-            
+
             // Hiển thị email
             if (email != null && !email.isEmpty()) {
                 tvUserEmail.setText(email);
             } else {
                 tvUserEmail.setText("Chưa có email");
             }
-            
+
             btnLogout.setText("Đăng xuất");
         } else {
             tvUserName.setText("Khách");
@@ -104,7 +123,7 @@ public class ProfileFragment extends Fragment {
             btnLogout.setText("Đăng nhập");
         }
     }
-    
+
     /**
      * Thực hiện đăng xuất
      */
@@ -112,12 +131,12 @@ public class ProfileFragment extends Fragment {
         if (sessionManager.isLoggedIn()) {
             // Xóa session
             sessionManager.logout();
-            
+
             Toast.makeText(requireContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
-            
+
             // Reload lại fragment để cập nhật UI
             loadUserInfo();
-            
+
             // Chuyển về HomeFragment
             if (getActivity() instanceof Header) {
                 ((Header) getActivity()).navigateToHome();
@@ -127,10 +146,7 @@ public class ProfileFragment extends Fragment {
             navigateToLogin();
         }
     }
-    
-    /**
-     * Chuyển đến trang đăng nhập
-     */
+
     private void navigateToLogin() {
         Intent intent = new Intent(getActivity(), Login.class);
         startActivity(intent);

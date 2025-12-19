@@ -8,19 +8,18 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    
+
     // ===== CẤU HÌNH IP =====
     // IP máy tính khi dùng Hotspot: 192.168.137.1
     // (Từ ipconfig: Wireless LAN adapter Local Area Connection* 10)
-    private static final String IP_MAY_TINH = "10.0.2.2";
-    
+    private static final String IP_MAY_TINH = "192.168.137.1";
+
     // Tự động chọn URL dựa trên môi trường
-    private static final String BASE_URL = isEmulator() 
-            ? "http://1:8080/"           // Máy ảo
+    private static final String BASE_URL = isEmulator()
+            ? "http://10.0.2.2:8080/"           // Máy ảo
             : "http://" + IP_MAY_TINH + ":8080/"; // Điện thoại thật
-    
     private static Retrofit retrofit = null;
-    
+
     /**
      * Phát hiện có phải máy ảo không
      */
@@ -34,17 +33,17 @@ public class RetrofitClient {
                 || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || "google_sdk".equals(Build.PRODUCT);
     }
-    
+
     public static Retrofit getClient() {
         if (retrofit == null) {
             // Thêm logging interceptor để debug
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            
+
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(loggingInterceptor)
                     .build();
-            
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(client)
@@ -53,11 +52,11 @@ public class RetrofitClient {
         }
         return retrofit;
     }
-    
+
     public static ApiService getApiService() {
         return getClient().create(ApiService.class);
     }
-    
+
     /**
      * Lấy BASE_URL hiện tại (để debug)
      */

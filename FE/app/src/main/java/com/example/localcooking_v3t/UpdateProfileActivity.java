@@ -7,6 +7,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -36,7 +37,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private SessionManager sessionManager;
 
     // Views
-    private ImageButton btnBack;
+    private ImageView btnBack;
     private EditText edtFullName, edtPhone, edtEmail;
     private TextView tvBirthday, tvCountryCode;
     private LinearLayout layoutBirthday;
@@ -58,9 +59,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         // Khởi tạo SessionManager
         sessionManager = new SessionManager(this);
 
-        // Khởi tạo calendar và date formatter
-        calendar = Calendar.getInstance();
-        dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
 
         // Ánh xạ views
         initViews();
@@ -89,9 +88,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         edtFullName = findViewById(R.id.edtFullName);
         edtPhone = findViewById(R.id.edtPhone);
         edtEmail = findViewById(R.id.edtEmail);
-        tvBirthday = findViewById(R.id.tvBirthday);
         tvCountryCode = findViewById(R.id.tvCountryCode);
-        layoutBirthday = findViewById(R.id.layoutBirthday);
         rgGender = findViewById(R.id.rgGender);
         rbMale = findViewById(R.id.rbMale);
         rbFemale = findViewById(R.id.rbFemale);
@@ -102,9 +99,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private void setupListeners() {
         // Nút back
         btnBack.setOnClickListener(v -> finish());
-
-        // Chọn ngày sinh
-        layoutBirthday.setOnClickListener(v -> showDatePicker());
 
         // Nút lưu
         btnSave.setOnClickListener(v -> saveUserProfile());
@@ -167,26 +161,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void showDatePicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, month);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    tvBirthday.setText(dateFormatter.format(calendar.getTime()));
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
 
-        Calendar maxDate = Calendar.getInstance();
-        maxDate.add(Calendar.YEAR, -13);
-        datePickerDialog.getDatePicker().setMaxDate(maxDate.getTimeInMillis());
-
-        datePickerDialog.show();
-    }
 
     private void saveUserProfile() {
         String fullName = edtFullName.getText().toString().trim();
