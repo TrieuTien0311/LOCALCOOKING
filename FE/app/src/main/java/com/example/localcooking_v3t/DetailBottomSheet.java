@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.localcooking_v3t.model.LopHoc;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -28,10 +29,10 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
     private ViewPager2 viewPager;
     private MaterialButton btnDatLich, btnFav, btnShare;
 
-    private Class lopHoc; // Dữ liệu lớp học
+    private LopHoc lopHoc; // Dữ liệu lớp học
 
     // Constructor nhận dữ liệu lớp học
-    public static DetailBottomSheet newInstance(Class lopHoc) {
+    public static DetailBottomSheet newInstance(LopHoc lopHoc) {
         DetailBottomSheet sheet = new DetailBottomSheet();
         Bundle args = new Bundle();
         sheet.setArguments(args);
@@ -118,7 +119,7 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
                 intent.putExtra("danhGia", lopHoc.getDanhGia());
                 intent.putExtra("soDanhGia", lopHoc.getSoDanhGia());
                 intent.putExtra("hinhAnh", lopHoc.getHinhAnh());
-                intent.putExtra("coUuDai", lopHoc.isCoUuDai());
+                intent.putExtra("coUuDai", lopHoc.getCoUuDai());
                 intent.putExtra("thoiGianKetThuc", lopHoc.getThoiGianKetThuc());
                 intent.putExtra("suat", lopHoc.getSuat());
 
@@ -130,10 +131,10 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         btnFav.setOnClickListener(v -> {
             if (lopHoc != null) {
                 // Toggle trạng thái yêu thích
-                lopHoc.setFavorite(!lopHoc.isFavorite());
+                lopHoc.setFavorite(!lopHoc.getIsFavorite());
 
                 // Cập nhật icon
-                if (lopHoc.isFavorite()) {
+                if (lopHoc.getIsFavorite()) {
                     btnFav.setIconResource(R.drawable.ic_heartredfilled);
                     Toast.makeText(getContext(), "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
                 } else {

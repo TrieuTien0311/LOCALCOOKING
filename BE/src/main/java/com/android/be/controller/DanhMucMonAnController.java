@@ -44,4 +44,9 @@ public class DanhMucMonAnController {
         danhMucMonAnService.deleteDanhMucMonAn(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/lophoc/{maLopHoc}")
+    public ResponseEntity<List<com.android.be.dto.DanhMucMonAnDTO>> getDanhMucMonAnByLopHoc(@PathVariable Integer maLopHoc) {
+        return ResponseEntity.ok(danhMucMonAnService.getDanhMucMonAnByLopHoc(maLopHoc));
+    }
 }

@@ -7,14 +7,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.localcooking_v3t.model.MonAn;
+
 import java.util.List;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
-    private List<Food> danhSachMon;
+    private List<MonAn> danhSachMon;
     private int currentPosition = 0;
 
-    public FoodAdapter(List<Food> danhSachMon) {
+    public FoodAdapter(List<MonAn> danhSachMon) {
         this.danhSachMon = danhSachMon;
     }
 
@@ -28,12 +31,14 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
-        Food food = danhSachMon.get(position);
+        MonAn monAn = danhSachMon.get(position);
 
-        holder.txtFood.setText(food.getTenMon());
-        holder.txtGioiThieu.setText(food.getGioiThieu());
-        holder.txtNguyenLieu.setText(food.getNguyenLieu());
-        holder.imgMonAn.setImageResource(food.getHinhAnh());
+        holder.txtFood.setText(monAn.getTenMon());
+        holder.txtGioiThieu.setText(monAn.getGioiThieu() != null ? monAn.getGioiThieu() : "");
+        holder.txtNguyenLieu.setText(monAn.getNguyenLieu() != null ? monAn.getNguyenLieu() : "");
+        
+        // Sử dụng placeholder image vì chưa có hình ảnh từ API
+        holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
 
         // Xử lý nút Previous
         holder.btnPre.setOnClickListener(v -> {

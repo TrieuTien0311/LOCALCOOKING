@@ -228,6 +228,7 @@ public class NguoiDungService {
         
         return response;
     }
+<<<<<<< HEAD
     
     // Đăng nhập bằng Google
     public GoogleLoginResponse loginWithGoogle(String idToken) {
@@ -313,5 +314,56 @@ public class NguoiDungService {
                 null, null, null, null, null, null, false
             );
         }
+=======
+
+    // Cập nhật thông tin cá nhân
+    public UpdateProfileResponse updateProfile(UpdateProfileRequest request) throws Exception {
+        // Validate input
+        if (request.getMaNguoiDung() == null) {
+            throw new Exception("Mã người dùng không được để trống");
+        }
+
+        // Tìm người dùng
+        Optional<NguoiDung> nguoiDungOpt = nguoiDungRepository.findById(request.getMaNguoiDung());
+        if (nguoiDungOpt.isEmpty()) {
+            throw new Exception("Không tìm thấy người dùng");
+        }
+
+        NguoiDung nguoiDung = nguoiDungOpt.get();
+
+        // Kiểm tra email mới có bị trùng không (nếu thay đổi email)
+        if (request.getEmail() != null && !request.getEmail().equals(nguoiDung.getEmail())) {
+            Optional<NguoiDung> existingEmail = nguoiDungRepository.findByEmail(request.getEmail());
+            if (existingEmail.isPresent()) {
+                throw new Exception("Email đã được sử dụng bởi tài khoản khác");
+            }
+        }
+
+        // Cập nhật thông tin
+        if (request.getHoTen() != null && !request.getHoTen().isBlank()) {
+            nguoiDung.setHoTen(request.getHoTen());
+        }
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            nguoiDung.setEmail(request.getEmail());
+        }
+        if (request.getSoDienThoai() != null) {
+            nguoiDung.setSoDienThoai(request.getSoDienThoai());
+        }
+        if (request.getDiaChi() != null) {
+            nguoiDung.setDiaChi(request.getDiaChi());
+        }
+
+        nguoiDung.setLanCapNhatCuoi(LocalDateTime.now());
+        nguoiDungRepository.save(nguoiDung);
+
+        return new UpdateProfileResponse(
+                true,
+                "Cập nhật thông tin thành công",
+                nguoiDung.getHoTen(),
+                nguoiDung.getEmail(),
+                nguoiDung.getSoDienThoai(),
+                nguoiDung.getDiaChi()
+        );
+>>>>>>> 25ddb0f808b13e6cc28d9cf10d8dad8f6fb26466
     }
 }

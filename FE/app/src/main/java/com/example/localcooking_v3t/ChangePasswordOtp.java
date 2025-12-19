@@ -133,6 +133,12 @@ public class ChangePasswordOtp extends AppCompatActivity {
             email, matKhauHienTai, matKhauMoi, xacNhanMatKhauMoi, otp
         );
         
+        // Debug log
+        android.util.Log.d("CHANGE_PASSWORD_OTP", "=== REQUEST DEBUG ===");
+        android.util.Log.d("CHANGE_PASSWORD_OTP", "Email: " + email);
+        android.util.Log.d("CHANGE_PASSWORD_OTP", "OTP: " + otp);
+        android.util.Log.d("CHANGE_PASSWORD_OTP", "API URL: " + RetrofitClient.getBaseUrl() + "api/nguoidung/change-password/verify");
+        
         Call<ChangePasswordResponse> call = apiService.changePasswordWithOtp(request);
         call.enqueue(new Callback<ChangePasswordResponse>() {
             @Override
@@ -140,8 +146,15 @@ public class ChangePasswordOtp extends AppCompatActivity {
                 btnXacNhan.setEnabled(true);
                 btnXacNhan.setText("Xác nhận");
                 
+                // Debug log
+                android.util.Log.d("CHANGE_PASSWORD_OTP", "Response code: " + response.code());
+                android.util.Log.d("CHANGE_PASSWORD_OTP", "Response message: " + response.message());
+                
                 if (response.isSuccessful() && response.body() != null) {
                     ChangePasswordResponse result = response.body();
+                    android.util.Log.d("CHANGE_PASSWORD_OTP", "Success: " + result.isSuccess());
+                    android.util.Log.d("CHANGE_PASSWORD_OTP", "Message: " + result.getMessage());
+                    
                     if (result.isSuccess()) {
                         Toast.makeText(ChangePasswordOtp.this, "Đổi mật khẩu thành công!", Toast.LENGTH_LONG).show();
                         
@@ -151,10 +164,46 @@ public class ChangePasswordOtp extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(ChangePasswordOtp.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Hiển thị thông báo lỗi từ server
+                        String errorMsg = "Lỗi: " + result.getMessage();
+                        Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                        android.util.Log.e("CHANGE_PASSWORD_OTP", errorMsg);
                     }
                 } else {
-                    Toast.makeText(ChangePasswordOtp.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                    // Response không successful hoặc body null
+                    android.util.Log.e("CHANGE_PASSWORD_OTP", "Response code: " + response.code());
+                    
+                    // Thử parse error body
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBodyString = response.errorBody().string();
+                            android.util.Log.e("CHANGE_PASSWORD_OTP", "Error body: " + errorBodyString);
+                            
+                            // Parse JSON error response
+                            try {
+                                com.google.gson.Gson gson = new com.google.gson.Gson();
+                                ChangePasswordResponse errorResponse = gson.fromJson(errorBodyString, ChangePasswordResponse.class);
+                                
+                                if (errorResponse != null && errorResponse.getMessage() != null) {
+                                    String errorMsg = "Lỗi xác thực: " + errorResponse.getMessage();
+                                    Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                                } else {
+                                    String errorMsg = "Lỗi " + response.code() + ": " + errorBodyString;
+                                    Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception parseError) {
+                                String errorMsg = "Lỗi " + response.code() + ": " + errorBodyString;
+                                Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            String errorMsg = "Lỗi " + response.code() + ": " + response.message();
+                            Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("CHANGE_PASSWORD_OTP", "Error reading error body", e);
+                        String errorMsg = "Lỗi không xác định (Code: " + response.code() + ")";
+                        Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
@@ -162,7 +211,23 @@ public class ChangePasswordOtp extends AppCompatActivity {
             public void onFailure(Call<ChangePasswordResponse> call, Throwable t) {
                 btnXacNhan.setEnabled(true);
                 btnXacNhan.setText("Xác nhận");
-                Toast.makeText(ChangePasswordOtp.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                
+                // Debug log
+                android.util.Log.e("CHANGE_PASSWORD_OTP", "onFailure: " + t.getMessage(), t);
+                
+                // Phân loại lỗi kết nối
+                String errorMsg;
+                if (t instanceof java.net.UnknownHostException) {
+                    errorMsg = "Lỗi kết nối: Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.";
+                } else if (t instanceof java.net.SocketTimeoutException) {
+                    errorMsg = "Lỗi kết nối: Timeout. Server không phản hồi.";
+                } else if (t instanceof java.net.ConnectException) {
+                    errorMsg = "Lỗi kết nối: Không thể kết nối đến server. Vui lòng kiểm tra backend đã chạy chưa.";
+                } else {
+                    errorMsg = "Lỗi kết nối: " + t.getMessage();
+                }
+                
+                Toast.makeText(ChangePasswordOtp.this, errorMsg, Toast.LENGTH_LONG).show();
             }
         });
     }

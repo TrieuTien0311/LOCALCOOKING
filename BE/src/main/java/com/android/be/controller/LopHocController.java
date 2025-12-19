@@ -45,4 +45,19 @@ public class LopHocController {
         lopHocService.deleteLopHoc(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<LopHocDTO>> searchLopHocByDiaDiem(
+            @RequestParam String diaDiem,
+            @RequestParam(required = false) String ngayTimKiem) {
+        
+        if (ngayTimKiem != null && !ngayTimKiem.isEmpty()) {
+            // Tìm kiếm theo địa điểm và ngày cụ thể
+            java.time.LocalDate date = java.time.LocalDate.parse(ngayTimKiem);
+            return ResponseEntity.ok(lopHocService.searchLopHocByDiaDiemAndDate(diaDiem, date));
+        } else {
+            // Chỉ tìm kiếm theo địa điểm (lấy các lớp còn hiệu lực)
+            return ResponseEntity.ok(lopHocService.searchLopHocByDiaDiem(diaDiem));
+        }
+    }
 }

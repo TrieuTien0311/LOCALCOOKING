@@ -223,7 +223,7 @@ public class ChangePassword extends AppCompatActivity {
                     android.util.Log.d("CHANGE_PASSWORD", "Message: " + result.getMessage());
                     
                     if (result.isSuccess()) {
-                        Toast.makeText(ChangePassword.this, result.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChangePassword.this, "✓ " + result.getMessage(), Toast.LENGTH_LONG).show();
                         
                         // Chuyển sang trang OTP để xác thực
                         Intent intent = new Intent(ChangePassword.this, ChangePasswordOtp.class);
@@ -233,7 +233,10 @@ public class ChangePassword extends AppCompatActivity {
                         intent.putExtra("xacNhanMatKhauMoi", confirmPassword);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(ChangePassword.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Hiển thị thông báo lỗi từ server
+                        String errorMsg = "✗ Lỗi: " + result.getMessage();
+                        Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
+                        android.util.Log.e("CHANGE_PASSWORD", errorMsg);
                     }
                 } else {
                     // Response không successful hoặc body null
@@ -251,19 +254,24 @@ public class ChangePassword extends AppCompatActivity {
                                 ChangePasswordResponse errorResponse = gson.fromJson(errorBodyString, ChangePasswordResponse.class);
                                 
                                 if (errorResponse != null && errorResponse.getMessage() != null) {
-                                    Toast.makeText(ChangePassword.this, errorResponse.getMessage(), Toast.LENGTH_LONG).show();
+                                    String errorMsg = "✗ Lỗi: " + errorResponse.getMessage();
+                                    Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(ChangePassword.this, "Lỗi " + response.code() + ": " + errorBodyString, Toast.LENGTH_LONG).show();
+                                    String errorMsg = "✗ Lỗi " + response.code() + ": " + errorBodyString;
+                                    Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (Exception parseError) {
-                                Toast.makeText(ChangePassword.this, "Lỗi " + response.code() + ": " + errorBodyString, Toast.LENGTH_LONG).show();
+                                String errorMsg = "✗ Lỗi " + response.code() + ": " + errorBodyString;
+                                Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(ChangePassword.this, "Lỗi " + response.code() + ": " + response.message(), Toast.LENGTH_SHORT).show();
+                            String errorMsg = "✗ Lỗi " + response.code() + ": " + response.message();
+                            Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
                         android.util.Log.e("CHANGE_PASSWORD", "Error reading error body", e);
-                        Toast.makeText(ChangePassword.this, "Lỗi " + response.code(), Toast.LENGTH_SHORT).show();
+                        String errorMsg = "✗ Lỗi không xác định (Code: " + response.code() + ")";
+                        Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -276,7 +284,18 @@ public class ChangePassword extends AppCompatActivity {
                 // Debug log
                 android.util.Log.e("CHANGE_PASSWORD", "onFailure: " + t.getMessage(), t);
                 
-                String errorMsg = "Lỗi kết nối: " + t.getMessage();
+                // Phân loại lỗi kết nối
+                String errorMsg;
+                if (t instanceof java.net.UnknownHostException) {
+                    errorMsg = "Lỗi kết nối: Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.";
+                } else if (t instanceof java.net.SocketTimeoutException) {
+                    errorMsg = "Lỗi kết nối: Timeout. Server không phản hồi.";
+                } else if (t instanceof java.net.ConnectException) {
+                    errorMsg = "Lỗi kết nối: Không thể kết nối đến server. Vui lòng kiểm tra backend đã chạy chưa.";
+                } else {
+                    errorMsg = "Lỗi kết nối: " + t.getMessage();
+                }
+                
                 Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
             }
         });

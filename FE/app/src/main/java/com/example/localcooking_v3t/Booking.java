@@ -14,6 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.localcooking_v3t.model.LopHoc;
+
 public class Booking extends AppCompatActivity {
 
     // === TextViews ===
@@ -40,7 +42,7 @@ public class Booking extends AppCompatActivity {
     private double giaSo;
 
     // === Dữ liệu lớp học ===
-    private Class lopHoc;
+    private LopHoc lopHoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +110,8 @@ public class Booking extends AppCompatActivity {
     }
 
     private void nhanDuLieuTuIntent() {
-        // === NHẬN TOÀN BỘ OBJECT CLASS ===
-        lopHoc = getIntent().getParcelableExtra("lopHoc");
+        // === NHẬN TOÀN BỘ OBJECT LOPHOC ===
+        lopHoc = (LopHoc) getIntent().getSerializableExtra("lopHoc");
 
         if (lopHoc != null) {
             // === Hiển thị dữ liệu cơ bản ===
@@ -124,12 +126,12 @@ public class Booking extends AppCompatActivity {
             txtSoLuongDat.setText(String.valueOf(soLuongDat));
 
             // === Hình ảnh ===
-            if (lopHoc.getHinhAnh() != 0) {
-                imMonAn.setImageResource(lopHoc.getHinhAnh());
+            if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
+                imMonAn.setImageResource(lopHoc.getHinhAnhResId(this));
             }
 
             // === Xử lý ưu đãi ===
-            if (lopHoc.isCoUuDai()) {
+            if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
                 if (txtGiaCu != null) {
                     txtGiaCu.setVisibility(View.VISIBLE);
                     double giaCu = lopHoc.getGiaSo() / 0.79; // Giả sử giảm 21%
@@ -163,7 +165,7 @@ public class Booking extends AppCompatActivity {
 
     private void updateFavoriteIcon() {
         if (icFav != null && lopHoc != null) {
-            if (lopHoc.isFavorite()) {
+            if (lopHoc.getIsFavorite()) {
                 icFav.setImageResource(R.drawable.ic_heartredfilled);
                 icFav.setColorFilter(null);
             } else {
@@ -216,11 +218,11 @@ public class Booking extends AppCompatActivity {
         if (icFav != null && lopHoc != null) {
             icFav.setOnClickListener(v -> {
                 // Toggle favorite
-                lopHoc.setFavorite(!lopHoc.isFavorite());
+                lopHoc.setFavorite(!lopHoc.getIsFavorite());
                 updateFavoriteIcon();
 
                 // Có thể thông báo cho database hoặc SharedPreferences
-                android.util.Log.d("Booking", "Favorite toggled: " + lopHoc.isFavorite());
+                android.util.Log.d("Booking", "Favorite toggled: " + lopHoc.getIsFavorite());
             });
         }
 
@@ -276,9 +278,7 @@ public class Booking extends AppCompatActivity {
     }
 
     // === Helper methods để debug ===
-    public Class getLopHoc() {
-        return lopHoc;
-    }
+
 
     public int getSoLuongDat() {
         return soLuongDat;

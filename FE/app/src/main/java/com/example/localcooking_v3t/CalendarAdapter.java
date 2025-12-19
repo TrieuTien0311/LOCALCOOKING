@@ -95,35 +95,48 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MonthV
                         selectedDate.get(Calendar.DAY_OF_MONTH) == day.getDay();
             }
 
-            if (isSelected) {
+            // Kiểm tra nếu là ngày trong quá khứ
+            if (day.isPast()) {
+                // Ngày quá khứ: màu xám mờ và không thể click
+                tvDay.setTextColor(Color.parseColor("#CCCCCC"));
+                tvDay.setBackground(null);
+                tvDay.setAlpha(0.5f);
+                frameDay.setClickable(false);
+                frameDay.setEnabled(false);
+            } else if (isSelected) {
                 // Selected day style
-                // Đảm bảo bạn đã có file drawable/selected_day_bg.xml (hình tròn cam)
                 tvDay.setBackgroundResource(R.drawable.selected_day_bg);
                 tvDay.setTextColor(Color.WHITE);
+                tvDay.setAlpha(1.0f);
             } else if (day.isSunday()) {
                 // Sunday style
                 tvDay.setTextColor(Color.parseColor("#E74C3C"));
                 tvDay.setBackground(null);
+                tvDay.setAlpha(1.0f);
             } else {
                 // Normal day style
                 tvDay.setTextColor(Color.parseColor("#000000"));
                 tvDay.setBackground(null);
+                tvDay.setAlpha(1.0f);
             }
 
-            // Click listener
-            frameDay.setOnClickListener(v -> {
-                Calendar cal = Calendar.getInstance();
-                cal.set(day.getYear(), day.getMonth(), day.getDay());
-                selectedDate = cal;
-                if (onDateSelectedListener != null) {
-                    onDateSelectedListener.onDateSelected(day);
-                }
-                notifyDataSetChanged();
-            });
+            // Click listener - chỉ cho phép click nếu không phải ngày quá khứ
+            if (!day.isPast()) {
+                frameDay.setOnClickListener(v -> {
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(day.getYear(), day.getMonth(), day.getDay());
+                    selectedDate = cal;
+                    if (onDateSelectedListener != null) {
+                        onDateSelectedListener.onDateSelected(day);
+                    }
+                    notifyDataSetChanged();
+                });
+            }
         } else {
             // Days from other months
             tvDay.setText(String.valueOf(day.getDay()));
             tvDay.setTextColor(Color.parseColor("#CCCCCC"));
+            tvDay.setAlpha(0.5f);
             frameDay.setClickable(false);
         }
 

@@ -28,7 +28,7 @@
             android:paddingBottom="19dp"
             android:text="Trang chủ"
             android:textColor="#6A3B1A"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
     </FrameLayout>
 
