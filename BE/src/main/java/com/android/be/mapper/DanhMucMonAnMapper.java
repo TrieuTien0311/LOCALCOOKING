@@ -20,7 +20,6 @@ public class DanhMucMonAnMapper {
         DanhMucMonAnDTO dto = new DanhMucMonAnDTO();
         dto.setMaDanhMuc(danhMuc.getMaDanhMuc());
         dto.setTenDanhMuc(danhMuc.getTenDanhMuc());
-        dto.setThoiGian(danhMuc.getThoiGian());
         dto.setIconDanhMuc(danhMuc.getIconDanhMuc());
         dto.setThuTu(danhMuc.getThuTu());
         dto.setDanhSachMon(new ArrayList<>());

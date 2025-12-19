@@ -121,21 +121,14 @@
                         android:visibility="gone">
 
                         <TextView
-                            android:id="@+id/textView46"
+                            android:id="@+id/txtLichSuKinhNghiem"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Bếp trưởng – Nhà hàng Cung Đình Huế (2008–2020): Xây dựng thực đơn, chuẩn hóa món cung đình, đào tạo đội bếp."
                             android:textAlignment="gravity"
-                            android:textColor="#454545" />
+                            android:textColor="#454545"
+                            android:visibility="visible" />
 
-                        <TextView
-                            android:id="@+id/textView48"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="3dp"
-                            android:text="Giám sát bếp – Resort Alba Wellness (2004–2008): Thiết kế thực đơn món Huế cho khách du lịch."
-                            android:textAlignment="gravity"
-                            android:textColor="#454545" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -151,7 +144,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView49"
+                android:id="@+id/txtGioiThieu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -200,16 +193,7 @@
                 android:paddingBottom="15dp">
 
                 <TextView
-                    android:id="@+id/textView57"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kỹ năng nấu ăn"
-                    android:textColor="#747474"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView58"
+                    android:id="@+id/txtGiaTriBuoiHoc"
                     android:layout_width="310dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -220,68 +204,6 @@
                     android:textColor="#454545"
                     android:textSize="13sp" />
 
-                <TextView
-                    android:id="@+id/textView71"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hiểu biết văn hoá"
-                    android:textColor="#747474"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView72"
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:justificationMode="inter_word"
-                    android:text="Khám phá câu chuyện đằng sau mỗi món ăn,  hiểu rõ hơn về văn hóa ẩm thực cung đình và dân gian Huế qua từng hương vị."
-                    android:textColor="#454545"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/textView73"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Kết nối cộng đồng"
-                    android:textColor="#747474"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView74"
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:justificationMode="inter_word"
-                    android:text="Gặp gỡ những người cùng đam mê ẩm thực,  chia sẻ kinh nghiệm và tạo dựng mối quan hệ  mới qua hoạt động nấu ăn cùng nhau."
-                    android:textColor="#454545"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/textView75"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Giữ gìn truyền thống"
-                    android:textColor="#747474"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView76"
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:justificationMode="inter_word"
-                    android:text="Góp phần bảo tồn và lan tỏa các công thức nấu  ăn truyền thống, không để những tinh hoa ẩm  thực của tổ tiên bị mai một."
-                    android:textColor="#454545"
-                    android:textSize="13sp" />
             </LinearLayout>
 
         </LinearLayout>

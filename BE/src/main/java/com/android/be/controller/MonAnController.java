@@ -44,4 +44,14 @@ public class MonAnController {
         monAnService.deleteMonAn(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/lophoc/{maLopHoc}")
+    public ResponseEntity<List<MonAn>> getMonAnByLopHoc(@PathVariable Integer maLopHoc) {
+        return ResponseEntity.ok(monAnService.getMonAnByLopHoc(maLopHoc));
+    }
+    
+    @GetMapping("/danhmuc/{maDanhMuc}")
+    public ResponseEntity<List<MonAn>> getMonAnByDanhMuc(@PathVariable Integer maDanhMuc) {
+        return ResponseEntity.ok(monAnService.getMonAnByDanhMuc(maDanhMuc));
+    }
 }

@@ -11,7 +11,6 @@ import java.util.List;
 public class DanhMucMonAnDTO {
     private Integer maDanhMuc;
     private String tenDanhMuc;
-    private String thoiGian;
     private String iconDanhMuc;
     private Integer thuTu;
     private List<MonAnDTO> danhSachMon;
