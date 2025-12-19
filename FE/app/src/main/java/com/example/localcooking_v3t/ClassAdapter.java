@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Calendar;
@@ -20,17 +20,17 @@ import java.util.List;
 
 public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHolder> {
     
-    private List<LopHoc> lopHocList;
+    private List<KhoaHoc> lopHocList;
     private OnItemClickListener listener;
     private String selectedDate; // Ngày được chọn từ calendar
     
     public interface OnItemClickListener {
-        void onDatLichClick(LopHoc lopHoc);
-        void onChiTietClick(LopHoc lopHoc);
-        void onFavoriteClick(LopHoc lopHoc);
+        void onDatLichClick(KhoaHoc lopHoc);
+        void onChiTietClick(KhoaHoc lopHoc);
+        void onFavoriteClick(KhoaHoc lopHoc);
     }
     
-    public ClassAdapter(List<LopHoc> lopHocList, String selectedDate) {
+    public ClassAdapter(List<KhoaHoc> lopHocList, String selectedDate) {
         this.lopHocList = lopHocList;
         this.selectedDate = selectedDate;
     }
@@ -39,7 +39,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         this.listener = listener;
     }
     
-    public void updateData(List<LopHoc> newData) {
+    public void updateData(List<KhoaHoc> newData) {
         this.lopHocList = newData;
         notifyDataSetChanged();
     }
@@ -56,13 +56,17 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
 
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
-        LopHoc lopHoc = lopHocList.get(position);
+        KhoaHoc lopHoc = lopHocList.get(position);
         
         // Hủy timer cũ nếu có
         if (holder.countDownTimer != null) {
             holder.countDownTimer.cancel();
         }
         
+        // Mặc định ẩn overlay và text "Đã diễn ra"
+        holder.overlayDim.setVisibility(View.GONE);
+        holder.txtDaDienRa.setVisibility(View.GONE);
+
         // Hiển thị banner ưu đãi và điều chỉnh marginTop của cardView
         if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
             // Có ưu đãi: hiển thị banner và set marginTop = -15dp
@@ -70,7 +74,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
             params.topMargin = (int) (-15 * holder.itemView.getContext().getResources().getDisplayMetrics().density);
             holder.cardView.setLayoutParams(params);
-            
+            holder.overlayDim.setVisibility(View.GONE);
+            holder.txtDaDienRa.setVisibility(View.GONE);
             // Bắt đầu countdown timer
             startCountdownTimer(holder);
         } else {
@@ -79,6 +84,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
             params.topMargin = 0;
             holder.cardView.setLayoutParams(params);
+            holder.overlayDim.setVisibility(View.GONE);
+            holder.txtDaDienRa.setVisibility(View.GONE);
         }
         
         // Hiển thị thông tin lớp học

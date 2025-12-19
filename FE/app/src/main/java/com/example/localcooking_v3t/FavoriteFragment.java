@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -144,41 +144,55 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void setupFavoriteData() {
-        List<LopHoc> favoriteList = new ArrayList<>();
+        List<KhoaHoc> favoriteList = new ArrayList<>();
 
         // TODO: Load from API instead of hardcoded data
-        LopHoc lopChuaDienRa = new LopHoc();
-        lopChuaDienRa.setTenLop("Ẩm thực địa phương Huế");
+        KhoaHoc lopChuaDienRa = new KhoaHoc();
+        lopChuaDienRa.setTenKhoaHoc("Ẩm thực địa phương Huế");
         lopChuaDienRa.setMoTa("Khám phá tinh hoa ẩm thực cung đình với hương vị đặc trưng vị Huế");
-        lopChuaDienRa.setThoiGian("14:00 - 17:00");
-        lopChuaDienRa.setNgay("02/10/2025");
-        lopChuaDienRa.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
-        lopChuaDienRa.setGia("715.000₫");
-        lopChuaDienRa.setDanhGia(4.9f);
-        lopChuaDienRa.setSoDanhGia(211);
+        lopChuaDienRa.setGiaTien(715000.0);
+        lopChuaDienRa.setSaoTrungBinh(4.9f);
+        lopChuaDienRa.setSoLuongDanhGia(211);
         lopChuaDienRa.setHinhAnh("hue.png");
         lopChuaDienRa.setCoUuDai(true);
-        lopChuaDienRa.setThoiGianKetThuc("23:30:00");
-        lopChuaDienRa.setSuat(8);
         lopChuaDienRa.setDaDienRa(false);
         lopChuaDienRa.setIsFavorite(true);
+        
+        // Tạo lịch trình cho lớp chưa diễn ra
+        List<com.example.localcooking_v3t.model.LichTrinhLopHoc> lichTrinh1 = new ArrayList<>();
+        com.example.localcooking_v3t.model.LichTrinhLopHoc lt1 = new com.example.localcooking_v3t.model.LichTrinhLopHoc();
+        lt1.setGioBatDau("14:00:00");
+        lt1.setGioKetThuc("17:00:00");
+        lt1.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
+        lt1.setSoLuongToiDa(20);
+        lt1.setSoChoConTrong(8);
+        lichTrinh1.add(lt1);
+        lopChuaDienRa.setLichTrinhList(lichTrinh1);
+        
         favoriteList.add(lopChuaDienRa);
 
-        LopHoc lopDaDienRa = new LopHoc();
-        lopDaDienRa.setTenLop("Ẩm thực địa phương Sài Gòn");
+        KhoaHoc lopDaDienRa = new KhoaHoc();
+        lopDaDienRa.setTenKhoaHoc("Ẩm thực địa phương Sài Gòn");
         lopDaDienRa.setMoTa("Hành trình khám phá phố phường qua những món ăn đường phố nổi tiếng");
-        lopDaDienRa.setThoiGian("09:00 - 13:00");
-        lopDaDienRa.setNgay("15/08/2025");
-        lopDaDienRa.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
-        lopDaDienRa.setGia("750.000₫");
-        lopDaDienRa.setDanhGia(4.6f);
-        lopDaDienRa.setSoDanhGia(89);
+        lopDaDienRa.setGiaTien(750000.0);
+        lopDaDienRa.setSaoTrungBinh(4.6f);
+        lopDaDienRa.setSoLuongDanhGia(89);
         lopDaDienRa.setHinhAnh("hue.png");
         lopDaDienRa.setCoUuDai(false);
-        lopDaDienRa.setThoiGianKetThuc("23:30:00");
-        lopDaDienRa.setSuat(0);
         lopDaDienRa.setDaDienRa(true);
         lopDaDienRa.setIsFavorite(true);
+        
+        // Tạo lịch trình cho lớp đã diễn ra
+        List<com.example.localcooking_v3t.model.LichTrinhLopHoc> lichTrinh2 = new ArrayList<>();
+        com.example.localcooking_v3t.model.LichTrinhLopHoc lt2 = new com.example.localcooking_v3t.model.LichTrinhLopHoc();
+        lt2.setGioBatDau("09:00:00");
+        lt2.setGioKetThuc("13:00:00");
+        lt2.setDiaDiem("23 Lê Duẩn - Đà Nẵng");
+        lt2.setSoLuongToiDa(20);
+        lt2.setSoChoConTrong(0);
+        lichTrinh2.add(lt2);
+        lopDaDienRa.setLichTrinhList(lichTrinh2);
+        
         favoriteList.add(lopDaDienRa);
 
         if (favoriteList.isEmpty()) {
@@ -192,12 +206,12 @@ public class FavoriteFragment extends Fragment {
             recyclerViewFavorite.setAdapter(adapter);
 
             adapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
-                @Override public void onDatLichClick(LopHoc lopHoc) { }
-                @Override public void onChiTietClick(LopHoc lopHoc) {
+                @Override public void onDatLichClick(KhoaHoc lopHoc) { }
+                @Override public void onChiTietClick(KhoaHoc lopHoc) {
                     DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(lopHoc);
                     bottomSheet.show(getChildFragmentManager(), "DetailBottomSheet");
                 }
-                @Override public void onFavoriteClick(LopHoc lopHoc) { }
+                @Override public void onFavoriteClick(KhoaHoc lopHoc) { }
             });
         }
     }

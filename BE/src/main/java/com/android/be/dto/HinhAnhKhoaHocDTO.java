@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonAnDTO {
-    private Integer maMonAn;
+public class HinhAnhKhoaHocDTO {
+    private Integer maHinhAnh;
     private Integer maKhoaHoc;
-    private Integer maDanhMuc;
-    private String tenMon;
-    private String gioiThieu;
-    private String nguyenLieu;
+    private String duongDan;
+    private Integer thuTu;
 }

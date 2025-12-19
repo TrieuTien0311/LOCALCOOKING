@@ -31,7 +31,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -220,14 +220,25 @@ public class HomeFragment extends Fragment {
     
     /**
      * Load 4 lớp học phổ biến từ 4 địa phương khác nhau
+     * Sử dụng API mới: /api/khoahoc (trả về KhoaHocDTO)
      */
     private void loadPopularClasses() {
-        RetrofitClient.getApiService().getAllLopHoc().enqueue(new Callback<List<LopHoc>>() {
+        RetrofitClient.getApiService().getAllKhoaHoc().enqueue(new Callback<List<KhoaHoc>>() {
             @Override
-            public void onResponse(Call<List<LopHoc>> call, Response<List<LopHoc>> response) {
+            public void onResponse(Call<List<KhoaHoc>> call, Response<List<KhoaHoc>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<LopHoc> allClasses = response.body();
-                    List<LopHoc> popularClasses = selectPopularClasses(allClasses);
+                    List<KhoaHoc> allClasses = response.body();
+                    Log.d(TAG, "Loaded " + allClasses.size() + " classes from API");
+                    
+                    // Log chi tiết để debug
+                    for (KhoaHoc kh : allClasses) {
+                        Log.d(TAG, "KhoaHoc: " + kh.getTenKhoaHoc() + 
+                              ", Gia: " + kh.getGiaTien() + 
+                              ", UuDai: " + kh.getCoUuDai() +
+                              ", LichTrinh: " + (kh.getLichTrinhList() != null ? kh.getLichTrinhList().size() : 0));
+                    }
+                    
+                    List<KhoaHoc> popularClasses = selectPopularClasses(allClasses);
                     displayPopularClasses(popularClasses);
                 } else {
                     Log.e(TAG, "Failed to load classes: " + response.code());
@@ -236,7 +247,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<LopHoc>> call, Throwable t) {
+            public void onFailure(Call<List<KhoaHoc>> call, Throwable t) {
                 Log.e(TAG, "Error loading classes", t);
                 Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -246,34 +257,45 @@ public class HomeFragment extends Fragment {
     /**
      * Chọn 4 lớp học từ 4 địa phương khác nhau (2 có ưu đãi, 2 không có)
      */
-    private List<LopHoc> selectPopularClasses(List<LopHoc> allClasses) {
-        Map<String, List<LopHoc>> classByLocation = new HashMap<>();
+    private List<KhoaHoc> selectPopularClasses(List<KhoaHoc> allClasses) {
+        Map<String, List<KhoaHoc>> classByLocation = new HashMap<>();
         String[] locations = {"Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"};
         
-        // Nhóm lớp học theo địa phương
-        for (LopHoc lopHoc : allClasses) {
-            String diaPhuong = lopHoc.getDiaPhuong();
-            if (!diaPhuong.isEmpty()) {
-                if (!classByLocation.containsKey(diaPhuong)) {
-                    classByLocation.put(diaPhuong, new ArrayList<>());
+        // Nhóm lớp học theo địa phương (từ lịch trình)
+        for (KhoaHoc khoaHoc : allClasses) {
+            if (khoaHoc.getLichTrinhList() != null && !khoaHoc.getLichTrinhList().isEmpty()) {
+                // Lấy địa phương từ lịch trình đầu tiên
+                String diaDiem = khoaHoc.getLichTrinhList().get(0).getDiaDiem();
+                if (diaDiem != null) {
+                    String diaPhuong = "";
+                    if (diaDiem.contains("Hà Nội")) diaPhuong = "Hà Nội";
+                    else if (diaDiem.contains("Huế")) diaPhuong = "Huế";
+                    else if (diaDiem.contains("Đà Nẵng")) diaPhuong = "Đà Nẵng";
+                    else if (diaDiem.contains("Cần Thơ")) diaPhuong = "Cần Thơ";
+                    
+                    if (!diaPhuong.isEmpty()) {
+                        if (!classByLocation.containsKey(diaPhuong)) {
+                            classByLocation.put(diaPhuong, new ArrayList<>());
+                        }
+                        classByLocation.get(diaPhuong).add(khoaHoc);
+                    }
                 }
-                classByLocation.get(diaPhuong).add(lopHoc);
             }
         }
         
-        List<LopHoc> result = new ArrayList<>();
-        List<LopHoc> withDiscount = new ArrayList<>();
-        List<LopHoc> withoutDiscount = new ArrayList<>();
+        List<KhoaHoc> result = new ArrayList<>();
+        List<KhoaHoc> withDiscount = new ArrayList<>();
+        List<KhoaHoc> withoutDiscount = new ArrayList<>();
         
         // Chọn lớp từ mỗi địa phương
         for (String location : locations) {
             if (classByLocation.containsKey(location)) {
-                List<LopHoc> classes = classByLocation.get(location);
-                for (LopHoc lopHoc : classes) {
-                    if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
-                        withDiscount.add(lopHoc);
+                List<KhoaHoc> classes = classByLocation.get(location);
+                for (KhoaHoc khoaHoc : classes) {
+                    if (khoaHoc.getCoUuDai() != null && khoaHoc.getCoUuDai()) {
+                        withDiscount.add(khoaHoc);
                     } else {
-                        withoutDiscount.add(lopHoc);
+                        withoutDiscount.add(khoaHoc);
                     }
                 }
             }
@@ -291,9 +313,9 @@ public class HomeFragment extends Fragment {
         
         // Nếu không đủ, bổ sung từ danh sách còn lại
         if (result.size() < 4) {
-            for (LopHoc lopHoc : allClasses) {
-                if (!result.contains(lopHoc)) {
-                    result.add(lopHoc);
+            for (KhoaHoc khoaHoc : allClasses) {
+                if (!result.contains(khoaHoc)) {
+                    result.add(khoaHoc);
                     if (result.size() >= 4) break;
                 }
             }
@@ -305,13 +327,13 @@ public class HomeFragment extends Fragment {
     /**
      * Hiển thị 4 lớp học phổ biến
      */
-    private void displayPopularClasses(List<LopHoc> classes) {
+    private void displayPopularClasses(List<KhoaHoc> classes) {
         if (layoutPopularClasses == null || classes.isEmpty()) return;
         
         layoutPopularClasses.removeAllViews();
         
         for (int i = 0; i < Math.min(classes.size(), 4); i++) {
-            LopHoc lopHoc = classes.get(i);
+            KhoaHoc lopHoc = classes.get(i);
             View classCard = createClassCard(lopHoc, i + 1);
             layoutPopularClasses.addView(classCard);
         }
@@ -320,7 +342,7 @@ public class HomeFragment extends Fragment {
     /**
      * Tạo CardView cho lớp học với bố cục cân đối
      */
-    private View createClassCard(LopHoc lopHoc, int index) {
+    private View createClassCard(KhoaHoc khoaHoc, int index) {
         float density = getResources().getDisplayMetrics().density;
         
         // Tạo CardView với chiều cao cố định và margin để hiển thị đổ bóng
@@ -337,7 +359,7 @@ public class HomeFragment extends Fragment {
         cardView.setCardElevation(4 * density);
         cardView.setUseCompatPadding(true);  // Quan trọng: để hiển thị đổ bóng đầy đủ
         cardView.setId(View.generateViewId());
-        cardView.setTag("Lop" + lopHoc.getMaLopHoc());
+        cardView.setTag("KhoaHoc" + khoaHoc.getMaKhoaHoc());
         
         // LinearLayout bên trong
         LinearLayout innerLayout = new LinearLayout(requireContext());
@@ -355,14 +377,14 @@ public class HomeFragment extends Fragment {
                 (int) (120 * density)
         ));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageResource(R.drawable.lophocphobien);
+        imageView.setImageResource(khoaHoc.getHinhAnhResId(requireContext()));
         innerLayout.addView(imageView);
         
-        // TextView tên lớp
+        // TextView tên khóa học
         TextView tvName = new TextView(requireContext());
         int padding = (int) (8 * density);
         tvName.setPadding(padding, padding, padding, (int) (4 * density));
-        tvName.setText(lopHoc.getTenLop());
+        tvName.setText(khoaHoc.getTenKhoaHoc());
         tvName.setTextColor(Color.BLACK);
         tvName.setTextSize(12);
         tvName.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -376,18 +398,20 @@ public class HomeFragment extends Fragment {
         priceLayout.setOrientation(LinearLayout.VERTICAL);
         priceLayout.setPadding(padding, 0, padding, padding);
         
-        if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
+        if (khoaHoc.getCoUuDai() != null && khoaHoc.getCoUuDai()) {
             // Giá gốc (gạch ngang)
             TextView tvOriginalPrice = new TextView(requireContext());
-            tvOriginalPrice.setText(lopHoc.getGia());
+            tvOriginalPrice.setText(khoaHoc.getGiaFormatted());
             tvOriginalPrice.setTextColor(Color.GRAY);
             tvOriginalPrice.setTextSize(11);
             tvOriginalPrice.setPaintFlags(tvOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             priceLayout.addView(tvOriginalPrice);
             
-            // Giá sau giảm
+            // Giá sau giảm (giảm 10%)
             TextView tvDiscountPrice = new TextView(requireContext());
-            tvDiscountPrice.setText(lopHoc.getGiaSauGiam() + " (-10%)");
+            double giaSauGiam = khoaHoc.getGiaTien() * 0.9;
+            String giaSauGiamText = String.format(Locale.getDefault(), "%,.0fđ (-10%%)", giaSauGiam).replace(",", ".");
+            tvDiscountPrice.setText(giaSauGiamText);
             tvDiscountPrice.setTextColor(Color.parseColor("#E74C3C"));
             tvDiscountPrice.setTextSize(13);
             tvDiscountPrice.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -401,7 +425,7 @@ public class HomeFragment extends Fragment {
             
             // Giá bình thường
             TextView tvPrice = new TextView(requireContext());
-            tvPrice.setText(lopHoc.getGia());
+            tvPrice.setText(khoaHoc.getGiaFormatted());
             tvPrice.setTextColor(Color.parseColor("#E74C3C"));
             tvPrice.setTextSize(13);
             tvPrice.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -413,7 +437,7 @@ public class HomeFragment extends Fragment {
         
         // Click listener
         cardView.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Lớp: " + lopHoc.getTenLop(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Khóa học: " + khoaHoc.getTenKhoaHoc(), Toast.LENGTH_SHORT).show();
         });
         
         return cardView;

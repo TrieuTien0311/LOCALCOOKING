@@ -45,9 +45,9 @@ public class MonAnController {
         return ResponseEntity.noContent().build();
     }
     
-    @GetMapping("/lophoc/{maLopHoc}")
-    public ResponseEntity<List<MonAn>> getMonAnByLopHoc(@PathVariable Integer maLopHoc) {
-        return ResponseEntity.ok(monAnService.getMonAnByLopHoc(maLopHoc));
+    @GetMapping("/khoahoc/{maKhoaHoc}")
+    public ResponseEntity<List<MonAn>> getMonAnByKhoaHoc(@PathVariable Integer maKhoaHoc) {
+        return ResponseEntity.ok(monAnService.getMonAnByKhoaHoc(maKhoaHoc));
     }
     
     @GetMapping("/danhmuc/{maDanhMuc}")

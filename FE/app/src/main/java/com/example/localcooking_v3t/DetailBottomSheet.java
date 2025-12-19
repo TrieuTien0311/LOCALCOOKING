@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -29,10 +29,10 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
     private ViewPager2 viewPager;
     private MaterialButton btnDatLich, btnFav, btnShare;
 
-    private LopHoc lopHoc; // Dữ liệu lớp học
+    private KhoaHoc lopHoc; // Dữ liệu lớp học
 
     // Constructor nhận dữ liệu lớp học
-    public static DetailBottomSheet newInstance(LopHoc lopHoc) {
+    public static DetailBottomSheet newInstance(KhoaHoc lopHoc) {
         DetailBottomSheet sheet = new DetailBottomSheet();
         Bundle args = new Bundle();
         sheet.setArguments(args);
@@ -71,7 +71,24 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         // Hiển thị dữ liệu lớp học nếu có
         if (lopHoc != null) {
             tvTenLop.setText(lopHoc.getTenLop());
-            tvThoiGian.setText(lopHoc.getThoiGian() + ", " + lopHoc.getNgay());
+            
+            // Lấy thời gian và ngày
+            String thoiGian = lopHoc.getThoiGian();
+            String ngay = lopHoc.getNgayBatDau(); // Sử dụng ngày bắt đầu
+            
+            // Format ngày từ "2025-01-01" sang "01/01/2025"
+            if (ngay != null && !ngay.isEmpty()) {
+                try {
+                    String[] parts = ngay.split("-");
+                    if (parts.length == 3) {
+                        ngay = parts[2] + "/" + parts[1] + "/" + parts[0];
+                    }
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+            
+            tvThoiGian.setText(thoiGian + ", " + ngay);
         }
 
         // Xử lý sự kiện đóng
@@ -112,15 +129,29 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
                 intent.putExtra("tenLop", lopHoc.getTenLop());
                 intent.putExtra("moTa", lopHoc.getMoTa());
                 intent.putExtra("thoiGian", lopHoc.getThoiGian());
-                intent.putExtra("ngay", lopHoc.getNgay());
+                
+                // Format ngày
+                String ngay = lopHoc.getNgayBatDau();
+                if (ngay != null && !ngay.isEmpty()) {
+                    try {
+                        String[] parts = ngay.split("-");
+                        if (parts.length == 3) {
+                            ngay = parts[2] + "/" + parts[1] + "/" + parts[0];
+                        }
+                    } catch (Exception e) {
+                        // Ignore
+                    }
+                }
+                intent.putExtra("ngay", ngay);
+                
                 intent.putExtra("diaDiem", lopHoc.getDiaDiem());
                 intent.putExtra("gia", lopHoc.getGia());
-                intent.putExtra("giaSo", lopHoc.getGiaSo());
+                intent.putExtra("giaSo", lopHoc.getGiaTien());
                 intent.putExtra("danhGia", lopHoc.getDanhGia());
                 intent.putExtra("soDanhGia", lopHoc.getSoDanhGia());
                 intent.putExtra("hinhAnh", lopHoc.getHinhAnh());
                 intent.putExtra("coUuDai", lopHoc.getCoUuDai());
-                intent.putExtra("thoiGianKetThuc", lopHoc.getThoiGianKetThuc());
+                intent.putExtra("thoiGianKetThuc", "23:59:59"); // Mặc định
                 intent.putExtra("suat", lopHoc.getSuat());
 
                 startActivity(intent);
@@ -131,10 +162,11 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         btnFav.setOnClickListener(v -> {
             if (lopHoc != null) {
                 // Toggle trạng thái yêu thích
-                lopHoc.setFavorite(!lopHoc.getIsFavorite());
+                Boolean currentFavorite = lopHoc.getIsFavorite();
+                lopHoc.setIsFavorite(currentFavorite == null ? true : !currentFavorite);
 
                 // Cập nhật icon
-                if (lopHoc.getIsFavorite()) {
+                if (lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()) {
                     btnFav.setIconResource(R.drawable.ic_heartredfilled);
                     Toast.makeText(getContext(), "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
                 } else {

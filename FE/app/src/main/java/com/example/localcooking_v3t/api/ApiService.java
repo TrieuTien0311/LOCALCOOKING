@@ -8,10 +8,12 @@ import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
 import com.example.localcooking_v3t.model.GoogleLoginRequest;
 import com.example.localcooking_v3t.model.GoogleLoginResponse;
+import com.example.localcooking_v3t.model.HinhAnhKhoaHoc;
 import com.example.localcooking_v3t.model.HinhAnhMonAn;
+import com.example.localcooking_v3t.model.LichTrinhLopHoc;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 import com.example.localcooking_v3t.model.ProfileResponse;
 import com.example.localcooking_v3t.model.RegisterRequest;
 import com.example.localcooking_v3t.model.RegisterResponse;
@@ -49,8 +51,6 @@ public interface ApiService {
     Call<ResetPasswordResponse> resetPassword(@Body ResetPasswordRequest request);
 
 
-    @GET("api/lophoc")
-    Call<List<LopHoc>> getAllLopHoc();
 
     // Đổi mật khẩu - Bước 1: Gửi OTP
     @POST("api/nguoidung/change-password/send-otp")
@@ -70,16 +70,38 @@ public interface ApiService {
     // Lấy thông tin profile
     @GET("api/nguoidung/profile/{id}")
     Call<ProfileResponse> getProfile(@retrofit2.http.Path("id") Integer id);
-    @GET("api/danhmucmonan/lophoc/{maLopHoc}")
-    Call<List<DanhMucMonAn>> getDanhMucMonAnByLopHoc(@retrofit2.http.Path("maLopHoc") Integer maLopHoc);
 
-    @GET("api/lophoc/search")
-    Call<List<LopHoc>> searchLopHocByDiaDiem(
+    // Lấy tất cả khóa học
+    @GET("api/khoahoc")
+    Call<List<KhoaHoc>> getAllKhoaHoc();
+    @GET("api/danhmucmonan/khoahoc/{maKhoaHoc}")
+    Call<List<DanhMucMonAn>> getDanhMucMonAnByKhoaHoc(@retrofit2.http.Path("maKhoaHoc") Integer maKhoaHoc);
+    // Lấy khóa học theo ID
+    @GET("api/khoahoc/{id}")
+    Call<KhoaHoc> getKhoaHocById(@retrofit2.http.Path("id") Integer id);
+
+    @GET("api/khoahoc/search")
+    Call<List<KhoaHoc>> searchKhoaHoc(
             @retrofit2.http.Query("diaDiem") String diaDiem,
             @retrofit2.http.Query("ngayTimKiem") String ngayTimKiem
     );
+    // Lấy hình ảnh khóa học
+    @GET("api/hinhanh-khoahoc/khoahoc/{maKhoaHoc}")
+    Call<List<HinhAnhKhoaHoc>> getHinhAnhKhoaHoc(@retrofit2.http.Path("maKhoaHoc") Integer maKhoaHoc);
 
     @GET("api/hinhanh-monan/monan/{maMonAn}")
     Call<List<HinhAnhMonAn>> getHinhAnhMonAn(@retrofit2.http.Path("maMonAn") Integer maMonAn);
+    @GET("api/lichtrinh")
+    Call<List<LichTrinhLopHoc>> getAllLichTrinh();
+    @GET("api/lichtrinh/{id}")
+    Call<LichTrinhLopHoc> getLichTrinhById(@retrofit2.http.Path("id") Integer id);
+    // Lấy lịch trình theo khóa học
+    @GET("api/lichtrinh/khoahoc/{maKhoaHoc}")
+    Call<List<LichTrinhLopHoc>> getLichTrinhByKhoaHoc(@retrofit2.http.Path("maKhoaHoc") Integer maKhoaHoc);
+
+    // Tìm lịch trình theo địa điểm
+    @GET("api/lichtrinh/search")
+    Call<List<LichTrinhLopHoc>> searchLichTrinhByDiaDiem(@retrofit2.http.Query("diaDiem") String diaDiem);
+
 
 }

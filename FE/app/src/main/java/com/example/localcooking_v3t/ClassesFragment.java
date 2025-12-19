@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,8 @@ public class ClassesFragment extends Fragment {
     
     private RecyclerView recyclerViewLopHoc;
     private ClassAdapter classAdapter;
-    private List<LopHoc> danhSachLopHoc = new ArrayList<>();
-    private List<LopHoc> danhSachGoc = new ArrayList<>(); // Lưu danh sách gốc để lọc
+    private List<KhoaHoc> danhSachLopHoc = new ArrayList<>();
+    private List<KhoaHoc> danhSachGoc = new ArrayList<>(); // Lưu danh sách gốc để lọc
     
     private String destination;
     private String date;
@@ -74,19 +74,19 @@ public class ClassesFragment extends Fragment {
         // Xử lý sự kiện click
         classAdapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
             @Override
-            public void onDatLichClick(LopHoc lopHoc) {
+            public void onDatLichClick(KhoaHoc lopHoc) {
                 Toast.makeText(requireContext(), "Đặt lịch: " + lopHoc.getTenLop(), Toast.LENGTH_SHORT).show();
                 // TODO: Chuyển sang màn hình đặt lịch
             }
 
             @Override
-            public void onChiTietClick(LopHoc lopHoc) {
+            public void onChiTietClick(KhoaHoc lopHoc) {
                 Toast.makeText(requireContext(), "Chi tiết: " + lopHoc.getTenLop(), Toast.LENGTH_SHORT).show();
                 // TODO: Hiển thị bottom sheet chi tiết
             }
 
             @Override
-            public void onFavoriteClick(LopHoc lopHoc) {
+            public void onFavoriteClick(KhoaHoc lopHoc) {
                 Toast.makeText(requireContext(), 
                     (lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()) ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", 
                     Toast.LENGTH_SHORT).show();
@@ -99,43 +99,47 @@ public class ClassesFragment extends Fragment {
         // Chuyển đổi date từ format "T2, 20/12/2024" sang "2024-12-20"
         String ngayTimKiem = convertDateFormat(date);
         
+        Log.d(TAG, "Loading classes for: " + destination + " on " + ngayTimKiem);
+        
         if (ngayTimKiem != null && !ngayTimKiem.isEmpty()) {
-            // Gọi API với địa điểm và ngày
-            RetrofitClient.getApiService().searchLopHocByDiaDiem(destination, ngayTimKiem)
-                .enqueue(new Callback<List<LopHoc>>() {
+            // Gọi API mới với địa điểm và ngày (sử dụng stored procedure)
+            RetrofitClient.getApiService().searchKhoaHoc(destination, ngayTimKiem)
+                .enqueue(new Callback<List<KhoaHoc>>() {
                     @Override
-                    public void onResponse(Call<List<LopHoc>> call, Response<List<LopHoc>> response) {
+                    public void onResponse(Call<List<KhoaHoc>> call, Response<List<KhoaHoc>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onFailure(Call<List<LopHoc>> call, Throwable t) {
+                    public void onFailure(Call<List<KhoaHoc>> call, Throwable t) {
                         handleError(t);
                     }
                 });
         } else {
             // Nếu không có ngày, chỉ lọc theo địa điểm
-            RetrofitClient.getApiService().searchLopHocByDiaDiem(destination, null)
-                .enqueue(new Callback<List<LopHoc>>() {
+            RetrofitClient.getApiService().searchKhoaHoc(destination, null)
+                .enqueue(new Callback<List<KhoaHoc>>() {
                     @Override
-                    public void onResponse(Call<List<LopHoc>> call, Response<List<LopHoc>> response) {
+                    public void onResponse(Call<List<KhoaHoc>> call, Response<List<KhoaHoc>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onFailure(Call<List<LopHoc>> call, Throwable t) {
+                    public void onFailure(Call<List<KhoaHoc>> call, Throwable t) {
                         handleError(t);
                     }
                 });
         }
     }
     
-    private void handleResponse(Response<List<LopHoc>> response) {
+    private void handleResponse(Response<List<KhoaHoc>> response) {
         if (response.isSuccessful() && response.body() != null) {
-            List<LopHoc> filteredClasses = response.body();
+            List<KhoaHoc> filteredClasses = response.body();
             
-            // Đánh dấu các lớp đã diễn ra (trong quá khứ)
-            markPastClasses(filteredClasses);
+            // Đặt tất cả lớp học là chưa diễn ra (không hiển thị overlay)
+            for (KhoaHoc khoaHoc : filteredClasses) {
+                khoaHoc.setDaDienRa(false);
+            }
             
             // Lưu danh sách gốc để lọc sau này
             danhSachGoc.clear();
@@ -189,33 +193,6 @@ public class ClassesFragment extends Fragment {
         }
     }
     
-    /**
-     * Đánh dấu các lớp học đã diễn ra (trong quá khứ)
-     */
-    private void markPastClasses(List<LopHoc> classes) {
-        try {
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-            java.util.Date today = new java.util.Date();
-            
-            for (LopHoc lopHoc : classes) {
-                if (lopHoc.getNgayBatDau() != null) {
-                    try {
-                        java.util.Date classDate = sdf.parse(lopHoc.getNgayBatDau());
-                        if (classDate != null && classDate.before(today)) {
-                            lopHoc.setDaDienRa(true);
-                        } else {
-                            lopHoc.setDaDienRa(false);
-                        }
-                    } catch (Exception e) {
-                        lopHoc.setDaDienRa(false);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error marking past classes", e);
-        }
-    }
-    
 
     
     /**
@@ -254,7 +231,7 @@ public class ClassesFragment extends Fragment {
      * Sắp xếp danh sách theo loại
      */
     private void sapXepDanhSach(int loaiSapXep) {
-        List<LopHoc> sortedList = new ArrayList<>(danhSachLopHoc);
+        List<KhoaHoc> sortedList = new ArrayList<>(danhSachLopHoc);
         
         switch (loaiSapXep) {
             case ArrangeBottomSheet.GIO_BAT_DAU_SOM_NHAT:
@@ -286,12 +263,20 @@ public class ClassesFragment extends Fragment {
                 
             case ArrangeBottomSheet.GIA_GIAM_DAN:
                 // Sắp xếp theo giá giảm dần
-                sortedList.sort((a, b) -> Double.compare(b.getGiaSo(), a.getGiaSo()));
+                sortedList.sort((a, b) -> {
+                    Double priceA = a.getGiaTien() != null ? a.getGiaTien() : 0.0;
+                    Double priceB = b.getGiaTien() != null ? b.getGiaTien() : 0.0;
+                    return Double.compare(priceB, priceA);
+                });
                 break;
                 
             case ArrangeBottomSheet.GIA_TANG_DAN:
                 // Sắp xếp theo giá tăng dần
-                sortedList.sort((a, b) -> Double.compare(a.getGiaSo(), b.getGiaSo()));
+                sortedList.sort((a, b) -> {
+                    Double priceA = a.getGiaTien() != null ? a.getGiaTien() : 0.0;
+                    Double priceB = b.getGiaTien() != null ? b.getGiaTien() : 0.0;
+                    return Double.compare(priceA, priceB);
+                });
                 break;
                 
             default:
@@ -310,9 +295,9 @@ public class ClassesFragment extends Fragment {
      * Lọc theo thời gian
      */
     private void locTheoThoiGian(int startHour, int startMinute, int endHour, int endMinute, int sortType) {
-        List<LopHoc> filtered = new ArrayList<>();
+        List<KhoaHoc> filtered = new ArrayList<>();
         
-        for (LopHoc lopHoc : danhSachGoc) {
+        for (KhoaHoc lopHoc : danhSachGoc) {
             if (lopHoc.getThoiGian() != null) {
                 String[] times = lopHoc.getThoiGian().split(" - ");
                 if (times.length > 0) {
@@ -359,20 +344,28 @@ public class ClassesFragment extends Fragment {
      * Lọc theo giá
      */
     private void locTheoGia(int minCost, int maxCost, int sortType) {
-        List<LopHoc> filtered = new ArrayList<>();
+        List<KhoaHoc> filtered = new ArrayList<>();
         
-        for (LopHoc lopHoc : danhSachGoc) {
-            double gia = lopHoc.getGiaSo();
-            if (gia >= minCost && gia <= maxCost) {
+        for (KhoaHoc lopHoc : danhSachGoc) {
+            Double gia = lopHoc.getGiaTien();
+            if (gia != null && gia >= minCost && gia <= maxCost) {
                 filtered.add(lopHoc);
             }
         }
         
         // Áp dụng sắp xếp nếu có
         if (sortType == 1) {
-            filtered.sort((a, b) -> Double.compare(b.getGiaSo(), a.getGiaSo()));
+            filtered.sort((a, b) -> {
+                Double priceA = a.getGiaTien() != null ? a.getGiaTien() : 0.0;
+                Double priceB = b.getGiaTien() != null ? b.getGiaTien() : 0.0;
+                return Double.compare(priceB, priceA);
+            });
         } else if (sortType == 2) {
-            filtered.sort((a, b) -> Double.compare(a.getGiaSo(), b.getGiaSo()));
+            filtered.sort((a, b) -> {
+                Double priceA = a.getGiaTien() != null ? a.getGiaTien() : 0.0;
+                Double priceB = b.getGiaTien() != null ? b.getGiaTien() : 0.0;
+                return Double.compare(priceA, priceB);
+            });
         }
         
         danhSachLopHoc.clear();

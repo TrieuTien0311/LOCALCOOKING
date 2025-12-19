@@ -17,8 +17,8 @@ public class MonAn {
     @Column(name = "maMonAn")
     private Integer maMonAn;
     
-    @Column(name = "maLopHoc", nullable = false)
-    private Integer maLopHoc;
+    @Column(name = "maKhoaHoc", nullable = false)
+    private Integer maKhoaHoc;
     
     @Column(name = "maDanhMuc", nullable = false)
     private Integer maDanhMuc;

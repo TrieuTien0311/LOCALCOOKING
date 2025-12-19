@@ -40,7 +40,7 @@ public class DanhMucMonAnService {
         danhMucMonAnRepository.deleteById(id);
     }
     
-    public List<DanhMucMonAnDTO> getDanhMucMonAnByLopHoc(Integer maLopHoc) {
+    public List<DanhMucMonAnDTO> getDanhMucMonAnByKhoaHoc(Integer maKhoaHoc) {
         List<DanhMucMonAn> danhMucList = danhMucMonAnRepository.findAll();
         
         return danhMucList.stream().map(danhMuc -> {
@@ -50,12 +50,12 @@ public class DanhMucMonAnService {
             dto.setIconDanhMuc(danhMuc.getIconDanhMuc());
             dto.setThuTu(danhMuc.getThuTu());
             
-            // Lấy danh sách món ăn theo lớp học và danh mục
-            List<MonAn> monAnList = monAnRepository.findByMaLopHocAndMaDanhMuc(maLopHoc, danhMuc.getMaDanhMuc());
+            // Lấy danh sách món ăn theo khóa học và danh mục
+            List<MonAn> monAnList = monAnRepository.findByMaKhoaHocAndMaDanhMuc(maKhoaHoc, danhMuc.getMaDanhMuc());
             List<MonAnDTO> monAnDTOList = monAnList.stream().map(monAn -> {
                 MonAnDTO monAnDTO = new MonAnDTO();
                 monAnDTO.setMaMonAn(monAn.getMaMonAn());
-                monAnDTO.setMaLopHoc(monAn.getMaLopHoc());
+                monAnDTO.setMaKhoaHoc(monAn.getMaKhoaHoc());
                 monAnDTO.setMaDanhMuc(monAn.getMaDanhMuc());
                 monAnDTO.setTenMon(monAn.getTenMon());
                 monAnDTO.setGioiThieu(monAn.getGioiThieu());

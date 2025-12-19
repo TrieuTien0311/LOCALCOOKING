@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import com.example.localcooking_v3t.api.ApiService;
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 
 import java.util.List;
 
@@ -33,13 +33,13 @@ public class DetailDescriptionFragment extends Fragment {
     private boolean isExpanded = false;
     private RecyclerView rcvCategories;
     private CategoryAdapter categoryAdapter;
-    private LopHoc lopHoc;
+    private KhoaHoc lopHoc;
 
     public DetailDescriptionFragment() {
         // Required empty public constructor
     }
 
-    public static DetailDescriptionFragment newInstance(LopHoc lopHoc) {
+    public static DetailDescriptionFragment newInstance(KhoaHoc lopHoc) {
         DetailDescriptionFragment fragment = new DetailDescriptionFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -47,7 +47,7 @@ public class DetailDescriptionFragment extends Fragment {
         return fragment;
     }
     
-    public void setLopHoc(LopHoc lopHoc) {
+    public void setLopHoc(KhoaHoc lopHoc) {
         this.lopHoc = lopHoc;
     }
 
@@ -88,14 +88,14 @@ public class DetailDescriptionFragment extends Fragment {
         rcvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Gọi API để lấy danh mục món ăn theo lớp học
-        if (lopHoc != null && lopHoc.getMaLopHoc() != null) {
-            loadDanhMucMonAn(lopHoc.getMaLopHoc());
+        if (lopHoc != null && lopHoc.getMaKhoaHoc() != null) {
+            loadDanhMucMonAn(lopHoc.getMaKhoaHoc());
         }
     }
 
     private void loadDanhMucMonAn(Integer maLopHoc) {
         ApiService apiService = RetrofitClient.getApiService();
-        Call<List<DanhMucMonAn>> call = apiService.getDanhMucMonAnByLopHoc(maLopHoc);
+        Call<List<DanhMucMonAn>> call = apiService.getDanhMucMonAnByKhoaHoc(maLopHoc);
 
         call.enqueue(new Callback<List<DanhMucMonAn>>() {
             @Override

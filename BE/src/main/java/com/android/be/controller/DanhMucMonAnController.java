@@ -45,8 +45,8 @@ public class DanhMucMonAnController {
         return ResponseEntity.noContent().build();
     }
     
-    @GetMapping("/lophoc/{maLopHoc}")
-    public ResponseEntity<List<com.android.be.dto.DanhMucMonAnDTO>> getDanhMucMonAnByLopHoc(@PathVariable Integer maLopHoc) {
-        return ResponseEntity.ok(danhMucMonAnService.getDanhMucMonAnByLopHoc(maLopHoc));
+    @GetMapping("/khoahoc/{maKhoaHoc}")
+    public ResponseEntity<List<com.android.be.dto.DanhMucMonAnDTO>> getDanhMucMonAnByKhoaHoc(@PathVariable Integer maKhoaHoc) {
+        return ResponseEntity.ok(danhMucMonAnService.getDanhMucMonAnByKhoaHoc(maKhoaHoc));
     }
 }

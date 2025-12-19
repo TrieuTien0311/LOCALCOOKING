@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface MonAnRepository extends JpaRepository<MonAn, Integer> {
-    List<MonAn> findByMaLopHoc(Integer maLopHoc);
+    List<MonAn> findByMaKhoaHoc(Integer maKhoaHoc);
     List<MonAn> findByMaDanhMuc(Integer maDanhMuc);
-    List<MonAn> findByMaLopHocAndMaDanhMuc(Integer maLopHoc, Integer maDanhMuc);
+    List<MonAn> findByMaKhoaHocAndMaDanhMuc(Integer maKhoaHoc, Integer maDanhMuc);
 }

@@ -20,7 +20,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.KhoaHoc;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -39,7 +39,7 @@ public class Payment extends AppCompatActivity {
     private View mainLayout;
 
     // Dữ liệu nhận được
-    private LopHoc lopHoc;
+    private KhoaHoc lopHoc;
     private int soLuongDat = 1;
     private double tongTien = 0;
 
@@ -57,7 +57,7 @@ public class Payment extends AppCompatActivity {
 
         initViews();
         nhanDuLieuTuIntent();
-        capNhatGiaoDien();
+     
         xuLySuKien();
         setupClearFocusOnTouch();
     }
@@ -102,42 +102,6 @@ public class Payment extends AppCompatActivity {
         }
     }
 
-    private void capNhatGiaoDien() {
-        if (lopHoc == null) return;
-
-        // Hiển thị thông tin lớp học
-        txtTenLop.setText(lopHoc.getTenLop());
-        txtGiaTien.setText(lopHoc.getGia());
-        txtSoLuongDat.setText("SL: " + soLuongDat + " người");
-        txtThoiGian.setText("Thời gian: " + lopHoc.getThoiGian());
-        txtNgay.setText("Ngày: " + lopHoc.getNgay());
-        txtDiaDiem.setText("Địa điểm: " + lopHoc.getDiaDiem());
-
-        if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
-            imgMonAn.setImageResource(lopHoc.getHinhAnhResId(this));
-        }
-
-        // Tính toán tiền
-        double giaGoc = lopHoc.getGiaSo();
-        double tongGoc = giaGoc * soLuongDat;
-        double giamGia = (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) ? tongGoc * 0.21 : 0; // Giả sử giảm 21%
-        double thanhToan = tongGoc - giamGia;
-
-        // Cập nhật các TextView tiền
-        txtTongTien.setText(formatTien(tongGoc) + "₫");
-        txtTongTien_CTiet.setText(formatTien(tongGoc) + "₫");
-        txtTongThanhToan.setText(formatTien(thanhToan) + "₫");
-        txtTienGiam.setText("-" + formatTien(giamGia) + "₫");
-
-        // Cập nhật tổng ở bottom
-        TextView txtTotalAmount = findViewById(R.id.txtTotalAmount);
-        TextView txtVAT = findViewById(R.id.txtVAT);
-        if (txtTotalAmount != null) txtTotalAmount.setText(formatTien(thanhToan) + "₫");
-        if (txtVAT != null && giamGia > 0) {
-            txtVAT.setText("Tiết kiệm " + formatTien(giamGia) + "₫");
-            txtVAT.setVisibility(View.VISIBLE);
-        }
-    }
 
     private void xuLySuKien() {
         btnBack.setOnClickListener(v -> finish());
