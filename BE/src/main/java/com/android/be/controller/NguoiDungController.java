@@ -86,4 +86,44 @@ public class NguoiDungController {
             ));
         }
     }
+
+    // API cập nhật thông tin cá nhân
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request) {
+        try {
+            UpdateProfileResponse response = nguoiDungService.updateProfile(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    // API lấy thông tin profile theo maNguoiDung
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getProfile(@PathVariable Integer id) {
+        try {
+            return nguoiDungService.getNguoiDungById(id)
+                    .map(user -> ResponseEntity.ok(Map.of(
+                            "success", true,
+                            "maNguoiDung", user.getMaNguoiDung(),
+                            "tenDangNhap", user.getTenDangNhap(),
+                            "hoTen", user.getHoTen() != null ? user.getHoTen() : "",
+                            "email", user.getEmail(),
+                            "soDienThoai", user.getSoDienThoai() != null ? user.getSoDienThoai() : "",
+                            "diaChi", user.getDiaChi() != null ? user.getDiaChi() : ""
+                    )))
+                    .orElse(ResponseEntity.badRequest().body(Map.of(
+                            "success", false,
+                            "message", "Không tìm thấy người dùng"
+                    )));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
 }
