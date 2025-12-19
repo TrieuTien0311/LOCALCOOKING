@@ -8,10 +8,13 @@ import com.example.localcooking_v3t.model.ForgotPasswordResponse;
 import com.example.localcooking_v3t.model.LoginRequest;
 import com.example.localcooking_v3t.model.LoginResponse;
 import com.example.localcooking_v3t.model.LopHoc;
+import com.example.localcooking_v3t.model.ProfileResponse;
 import com.example.localcooking_v3t.model.RegisterRequest;
 import com.example.localcooking_v3t.model.RegisterResponse;
 import com.example.localcooking_v3t.model.ResetPasswordRequest;
 import com.example.localcooking_v3t.model.ResetPasswordResponse;
+import com.example.localcooking_v3t.model.UpdateProfileRequest;
+import com.example.localcooking_v3t.model.UpdateProfileResponse;
 import com.example.localcooking_v3t.model.VerifyOtpRequest;
 import com.example.localcooking_v3t.model.VerifyOtpResponse;
 
@@ -53,4 +56,11 @@ public interface ApiService {
     @POST("api/nguoidung/change-password/verify")
     Call<ChangePasswordResponse> changePasswordWithOtp(@Body ChangePasswordWithOtpRequest request);
 
+    // Cập nhật thông tin cá nhân
+    @POST("api/nguoidung/update-profile")
+    Call<UpdateProfileResponse> updateProfile(@Body UpdateProfileRequest request);
+
+    // Lấy thông tin profile
+    @GET("api/nguoidung/profile/{id}")
+    Call<ProfileResponse> getProfile(@retrofit2.http.Path("id") Integer id);
 }
