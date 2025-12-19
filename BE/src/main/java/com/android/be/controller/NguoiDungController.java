@@ -1,9 +1,6 @@
 package com.android.be.controller;
 
-import com.android.be.dto.LoginRequest;
-import com.android.be.dto.LoginResponse;
-import com.android.be.dto.RegisterRequest;
-import com.android.be.dto.RegisterResponse;
+import com.android.be.dto.*;
 import com.android.be.model.NguoiDung;
 import com.android.be.service.NguoiDungService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/nguoidung")
@@ -59,5 +57,73 @@ public class NguoiDungController {
     public ResponseEntity<Void> deleteNguoiDung(@PathVariable Integer id) {
         nguoiDungService.deleteNguoiDung(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    // API gửi OTP để đổi mật khẩu
+    @PostMapping("/change-password/send-otp")
+    public ResponseEntity<?> sendOtpForChangePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            Map<String, Object> response = nguoiDungService.sendOtpForChangePassword(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        }
+    }
+    
+    // API đổi mật khẩu với OTP
+    @PostMapping("/change-password/verify")
+    public ResponseEntity<?> changePasswordWithOtp(@RequestBody ChangePasswordWithOtpRequest request) {
+        try {
+            Map<String, Object> response = nguoiDungService.changePasswordWithOtp(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    // API cập nhật thông tin cá nhân
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request) {
+        try {
+            UpdateProfileResponse response = nguoiDungService.updateProfile(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    // API lấy thông tin profile theo maNguoiDung
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getProfile(@PathVariable Integer id) {
+        try {
+            return nguoiDungService.getNguoiDungById(id)
+                    .map(user -> ResponseEntity.ok(Map.of(
+                            "success", true,
+                            "maNguoiDung", user.getMaNguoiDung(),
+                            "tenDangNhap", user.getTenDangNhap(),
+                            "hoTen", user.getHoTen() != null ? user.getHoTen() : "",
+                            "email", user.getEmail(),
+                            "soDienThoai", user.getSoDienThoai() != null ? user.getSoDienThoai() : "",
+                            "diaChi", user.getDiaChi() != null ? user.getDiaChi() : ""
+                    )))
+                    .orElse(ResponseEntity.badRequest().body(Map.of(
+                            "success", false,
+                            "message", "Không tìm thấy người dùng"
+                    )));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
     }
 }

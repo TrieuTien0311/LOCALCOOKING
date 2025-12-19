@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -44,6 +46,8 @@ public class OtpVerification extends AppCompatActivity {
 
     private String email;
     private String resetToken;
+    private boolean isPasswordVisible1 = false;
+    private boolean isPasswordVisible2 = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,7 @@ public class OtpVerification extends AppCompatActivity {
         setupStatusBar();
         initViews();
         setupOTPInputs();
+        setupPasswordToggles();
         setupListeners();
     }
 
@@ -94,6 +99,50 @@ public class OtpVerification extends AppCompatActivity {
         tilXacNhanMatKhau = findViewById(R.id.tilXacNhanMatKhau);
         idXacNhanMatKhau = findViewById(R.id.idXacNhanMatKhau);
         btnXacNhan = findViewById(R.id.btnXacNhan);
+    }
+
+    private void setupPasswordToggles() {
+        // Toggle cho Mật khẩu mới
+        idMatKhauMoi.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (idMatKhauMoi.getRight() - idMatKhauMoi.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (isPasswordVisible1) {
+                        idMatKhauMoi.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        idMatKhauMoi.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye_hide_tt, 0);
+                        isPasswordVisible1 = false;
+                    } else {
+                        idMatKhauMoi.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        idMatKhauMoi.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye, 0);
+                        isPasswordVisible1 = true;
+                    }
+                    idMatKhauMoi.setSelection(idMatKhauMoi.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+        
+        // Toggle cho Xác nhận mật khẩu
+        idXacNhanMatKhau.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (idXacNhanMatKhau.getRight() - idXacNhanMatKhau.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (isPasswordVisible2) {
+                        idXacNhanMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        idXacNhanMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye_hide_tt, 0);
+                        isPasswordVisible2 = false;
+                    } else {
+                        idXacNhanMatKhau.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        idXacNhanMatKhau.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_eye, 0);
+                        isPasswordVisible2 = true;
+                    }
+                    idXacNhanMatKhau.setSelection(idXacNhanMatKhau.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     private void setupListeners() {
@@ -209,35 +258,29 @@ public class OtpVerification extends AppCompatActivity {
     }
 
     private void setupOTPInputs() {
-        otpBox1.addTextChangedListener(new GenericTextWatcher(otpBox1, otpBox2));
-        otpBox2.addTextChangedListener(new GenericTextWatcher(otpBox2, otpBox3));
-        otpBox3.addTextChangedListener(new GenericTextWatcher(otpBox3, otpBox4));
-        otpBox4.addTextChangedListener(new GenericTextWatcher(otpBox4, otpBox5));
-        otpBox5.addTextChangedListener(new GenericTextWatcher(otpBox5, otpBox6));
-        otpBox6.addTextChangedListener(new GenericTextWatcher(otpBox6, null));
-    }
+        EditText[] otpBoxes = {otpBox1, otpBox2, otpBox3, otpBox4, otpBox5, otpBox6};
+        
+        for (int i = 0; i < otpBoxes.length; i++) {
+            final int index = i;
+            otpBoxes[i].addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-    private class GenericTextWatcher implements TextWatcher {
-        private final View currentView;
-        private final View nextView;
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Khi nhập 1 ký tự, chuyển sang ô tiếp theo
+                    if (s.length() == 1 && index < otpBoxes.length - 1) {
+                        otpBoxes[index + 1].requestFocus();
+                    } 
+                    // Khi xóa (backspace), quay về ô trước đó
+                    else if (s.length() == 0 && index > 0) {
+                        otpBoxes[index - 1].requestFocus();
+                    }
+                }
 
-        public GenericTextWatcher(View currentView, View nextView) {
-            this.currentView = currentView;
-            this.nextView = nextView;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String text = s.toString();
-            if (text.length() == 1 && nextView != null) {
-                nextView.requestFocus();
-            }
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
         }
     }
 }

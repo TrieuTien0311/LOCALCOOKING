@@ -60,4 +60,10 @@ public class SessionManager {
         editor.clear();
         editor.apply();
     }
+
+    public void updateUserInfo(String hoTen, String email) {
+        editor.putString(KEY_HO_TEN, hoTen);
+        editor.putString(KEY_EMAIL, email);
+        editor.apply();
+    }
 }

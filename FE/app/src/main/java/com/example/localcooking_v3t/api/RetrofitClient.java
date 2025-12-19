@@ -2,6 +2,8 @@ package com.example.localcooking_v3t.api;
 
 import android.os.Build;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -10,11 +12,11 @@ public class RetrofitClient {
     // ===== CẤU HÌNH IP =====
     // IP máy tính khi dùng Hotspot: 192.168.137.1
     // (Từ ipconfig: Wireless LAN adapter Local Area Connection* 10)
-    private static final String IP_MAY_TINH = "192.168.137.1";
+    private static final String IP_MAY_TINH = "10.0.2.2";
     
     // Tự động chọn URL dựa trên môi trường
     private static final String BASE_URL = isEmulator() 
-            ? "http://10.0.2.2:8080/"           // Máy ảo
+            ? "http://1:8080/"           // Máy ảo
             : "http://" + IP_MAY_TINH + ":8080/"; // Điện thoại thật
     
     private static Retrofit retrofit = null;
@@ -35,8 +37,17 @@ public class RetrofitClient {
     
     public static Retrofit getClient() {
         if (retrofit == null) {
+            // Thêm logging interceptor để debug
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .build();
+            
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
