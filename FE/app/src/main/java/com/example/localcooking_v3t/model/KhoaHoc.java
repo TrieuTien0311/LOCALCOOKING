@@ -204,10 +204,65 @@ public class KhoaHoc implements Serializable {
     }
     
     /**
-     * Lấy ngày bắt đầu - mặc định "2025-01-01"
+     * Lấy ngày bắt đầu từ lịch trình đầu tiên
+     * Format: "2025-01-15" (yyyy-MM-dd)
      */
     public String getNgayBatDau() {
-        return "2025-01-01";
+        if (lichTrinhList != null && !lichTrinhList.isEmpty()) {
+            LichTrinhLopHoc lichTrinh = lichTrinhList.get(0);
+            
+            // Lấy thứ đầu tiên trong tuần từ thuTrongTuan
+            String thuTrongTuan = lichTrinh.getThuTrongTuan();
+            if (thuTrongTuan != null && !thuTrongTuan.isEmpty()) {
+                // Parse thứ đầu tiên (VD: "2,3,4" -> lấy "2")
+                String[] days = thuTrongTuan.split(",");
+                if (days.length > 0) {
+                    String firstDay = days[0].trim();
+                    
+                    // Tính ngày gần nhất có thứ này
+                    return getNextDateForDay(firstDay);
+                }
+            }
+        }
+        
+        // Mặc định trả về ngày hiện tại
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(new java.util.Date());
+    }
+    
+    /**
+     * Tính ngày gần nhất có thứ được chỉ định
+     * @param dayStr Thứ trong tuần (2-7 cho T2-T7, CN hoặc 1 cho Chủ Nhật)
+     * @return Ngày dạng "yyyy-MM-dd"
+     */
+    private String getNextDateForDay(String dayStr) {
+        try {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            
+            // Chuyển đổi thứ từ string sang Calendar constant
+            int targetDay;
+            if ("CN".equalsIgnoreCase(dayStr) || "1".equals(dayStr)) {
+                targetDay = java.util.Calendar.SUNDAY;
+            } else {
+                int day = Integer.parseInt(dayStr);
+                // Chuyển từ 2-7 (T2-T7) sang Calendar.MONDAY-SATURDAY
+                targetDay = day == 7 ? java.util.Calendar.SATURDAY : day + 1;
+            }
+            
+            // Tìm ngày gần nhất có thứ này
+            int currentDay = cal.get(java.util.Calendar.DAY_OF_WEEK);
+            int daysToAdd = (targetDay - currentDay + 7) % 7;
+            if (daysToAdd == 0) daysToAdd = 0; // Nếu là hôm nay thì giữ nguyên
+            
+            cal.add(java.util.Calendar.DAY_OF_MONTH, daysToAdd);
+            
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(cal.getTime());
+        } catch (Exception e) {
+            // Nếu lỗi, trả về ngày hiện tại
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(new java.util.Date());
+        }
     }
     
     /**

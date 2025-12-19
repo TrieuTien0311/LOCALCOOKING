@@ -6,6 +6,7 @@ import com.example.localcooking_v3t.model.ChangePasswordWithOtpRequest;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
+import com.example.localcooking_v3t.model.GiaoVien;
 import com.example.localcooking_v3t.model.GoogleLoginRequest;
 import com.example.localcooking_v3t.model.GoogleLoginResponse;
 import com.example.localcooking_v3t.model.HinhAnhKhoaHoc;
@@ -103,5 +104,8 @@ public interface ApiService {
     @GET("api/lichtrinh/search")
     Call<List<LichTrinhLopHoc>> searchLichTrinhByDiaDiem(@retrofit2.http.Query("diaDiem") String diaDiem);
 
+    // Lấy thông tin giáo viên theo ID
+    @GET("api/giaovien/{id}")
+    Call<GiaoVien> getGiaoVienById(@retrofit2.http.Path("id") Integer id);
 
 }

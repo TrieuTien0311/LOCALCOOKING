@@ -81,8 +81,9 @@ public class ClassesFragment extends Fragment {
 
             @Override
             public void onChiTietClick(KhoaHoc lopHoc) {
-                Toast.makeText(requireContext(), "Chi tiết: " + lopHoc.getTenLop(), Toast.LENGTH_SHORT).show();
-                // TODO: Hiển thị bottom sheet chi tiết
+                // Mở bottom sheet chi tiết với ngày được chọn
+                DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(lopHoc, date);
+                bottomSheet.show(getChildFragmentManager(), "DetailBottomSheet");
             }
 
             @Override

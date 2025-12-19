@@ -159,11 +159,15 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             }
         });
         
-        holder.footer.setOnClickListener(v -> {
+        // Click vào footer hoặc constraintlayout để xem chi tiết
+        View.OnClickListener chiTietClickListener = v -> {
             if (listener != null) {
                 listener.onChiTietClick(lopHoc);
             }
-        });
+        };
+        
+        holder.footer.setOnClickListener(chiTietClickListener);
+        holder.khunggiua.setOnClickListener(chiTietClickListener);
         
         holder.imgFavorite.setOnClickListener(v -> {
             if (listener != null) {
@@ -269,7 +273,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
     }
     
     static class ClassViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout layoutBanner, footer;
+        LinearLayout layoutBanner, footer, khunggiua;
         ImageView imgMonAn, imgFavorite;
         TextView txtTenLop, txtMoTa, txtThoiGian, txtNgay, txtDiaDiem;
         TextView txtGia, txtGiaGoc, txtDanhGia, txtSoDanhGia, txtSuat, txtKetThuc;
@@ -283,6 +287,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             super(itemView);
             layoutBanner = itemView.findViewById(R.id.layoutBanner);
             footer = itemView.findViewById(R.id.footer);
+            khunggiua = itemView.findViewById(R.id.khunggiua);
             imgMonAn = itemView.findViewById(R.id.imgMonAn);
             imgFavorite = itemView.findViewById(R.id.imgFavorite);
             txtTenLop = itemView.findViewById(R.id.txtTenLop);

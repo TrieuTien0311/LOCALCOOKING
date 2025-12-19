@@ -10,12 +10,14 @@ import lombok.NoArgsConstructor;
 public class GiaoVienDTO {
     private Integer maGiaoVien;
     private Integer maNguoiDung;
-    private String hoTen;
-    private String email;
-    private String soDienThoai;
     private String chuyenMon;
     private String kinhNghiem;
     private String lichSuKinhNghiem;
     private String moTa;
     private String hinhAnh;
+    
+    // Thông tin từ NguoiDung
+    private String hoTen;
+    private String email;
+    private String soDienThoai;
 }

@@ -14,4 +14,5 @@ public class MonAnDTO {
     private String tenMon;
     private String gioiThieu;
     private String nguyenLieu;
+    private String hinhAnh;
 }

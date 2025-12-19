@@ -2,6 +2,7 @@ package com.example.localcooking_v3t;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import com.example.localcooking_v3t.api.ApiService;
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
+import com.example.localcooking_v3t.model.GiaoVien;
 import com.example.localcooking_v3t.model.KhoaHoc;
 
 import java.util.List;
@@ -27,9 +29,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailDescriptionFragment extends Fragment {
+    private static final String TAG = "DetailDescriptionFrag";
 
-    private ImageView btnDownTeacher;
+    private ImageView btnDownTeacher, imgGiaoVien;
     private LinearLayout txtAn;
+    private TextView txtTenGV, txtMoTaGV, txtLichSuKinhNghiem;
+    private TextView txtGioiThieu, txtGiaTriBuoiHoc;
     private boolean isExpanded = false;
     private RecyclerView rcvCategories;
     private CategoryAdapter categoryAdapter;
@@ -60,6 +65,12 @@ public class DetailDescriptionFragment extends Fragment {
         btnDownTeacher = view.findViewById(R.id.btnDownTeacher);
         txtAn = view.findViewById(R.id.txtAn);
         rcvCategories = view.findViewById(R.id.rcvCategories);
+        imgGiaoVien = view.findViewById(R.id.imgGiaoVien);
+        txtTenGV = view.findViewById(R.id.txtTenGV);
+        txtMoTaGV = view.findViewById(R.id.txtMoTaGV);
+        txtLichSuKinhNghiem = view.findViewById(R.id.txtLichSuKinhNghiem);
+        txtGioiThieu = view.findViewById(R.id.txtGioiThieu);
+        txtGiaTriBuoiHoc = view.findViewById(R.id.txtGiaTriBuoiHoc);
 
         // Xử lý sự kiện click expand/collapse thông tin giáo viên
         btnDownTeacher.setOnClickListener(new View.OnClickListener() {
@@ -87,10 +98,72 @@ public class DetailDescriptionFragment extends Fragment {
         // Setup RecyclerView
         rcvCategories.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Gọi API để lấy danh mục món ăn theo lớp học
-        if (lopHoc != null && lopHoc.getMaKhoaHoc() != null) {
-            loadDanhMucMonAn(lopHoc.getMaKhoaHoc());
+        // Hiển thị thông tin lớp học
+        if (lopHoc != null) {
+            displayLopHocInfo();
+            
+            // Gọi API để lấy danh mục món ăn
+            if (lopHoc.getMaKhoaHoc() != null) {
+                loadDanhMucMonAn(lopHoc.getMaKhoaHoc());
+            }
+            
+            // Gọi API để lấy thông tin giáo viên
+            loadGiaoVienInfo();
         }
+    }
+    
+    private void displayLopHocInfo() {
+        // Hiển thị giới thiệu
+        if (lopHoc.getGioiThieu() != null && !lopHoc.getGioiThieu().isEmpty()) {
+            txtGioiThieu.setText(lopHoc.getGioiThieu());
+        }
+        
+        // Hiển thị giá trị sau buổi học
+        if (lopHoc.getGiaTriSauBuoiHoc() != null && !lopHoc.getGiaTriSauBuoiHoc().isEmpty()) {
+            txtGiaTriBuoiHoc.setText(lopHoc.getGiaTriSauBuoiHoc());
+        }
+    }
+    
+    private void loadGiaoVienInfo() {
+        // Lấy maGiaoVien từ lịch trình đầu tiên
+        if (lopHoc.getLichTrinhList() != null && !lopHoc.getLichTrinhList().isEmpty()) {
+            Integer maGiaoVien = lopHoc.getLichTrinhList().get(0).getMaGiaoVien();
+            
+            if (maGiaoVien != null) {
+                RetrofitClient.getApiService().getGiaoVienById(maGiaoVien)
+                    .enqueue(new Callback<GiaoVien>() {
+                        @Override
+                        public void onResponse(Call<GiaoVien> call, Response<GiaoVien> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                displayGiaoVienInfo(response.body());
+                            } else {
+                                Log.e(TAG, "Failed to load teacher info: " + response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<GiaoVien> call, Throwable t) {
+                            Log.e(TAG, "Error loading teacher info", t);
+                        }
+                    });
+            }
+        }
+    }
+    
+    private void displayGiaoVienInfo(GiaoVien giaoVien) {
+        if (giaoVien.getHoTen() != null) {
+            txtTenGV.setText(giaoVien.getHoTen());
+        }
+        
+        if (giaoVien.getChuyenMon() != null) {
+            txtMoTaGV.setText(giaoVien.getChuyenMon());
+        }
+        
+        if (giaoVien.getLichSuKinhNghiem() != null) {
+            txtLichSuKinhNghiem.setText(giaoVien.getLichSuKinhNghiem());
+        }
+        
+        // TODO: Load hình ảnh giáo viên nếu có
     }
 
     private void loadDanhMucMonAn(Integer maLopHoc) {
@@ -107,16 +180,16 @@ public class DetailDescriptionFragment extends Fragment {
                     categoryAdapter = new CategoryAdapter(danhMucList);
                     rcvCategories.setAdapter(categoryAdapter);
                     
-                    Log.d("DetailDescription", "Loaded " + danhMucList.size() + " categories");
+                    Log.d(TAG, "Loaded " + danhMucList.size() + " categories");
                 } else {
-                    Log.e("DetailDescription", "Response not successful: " + response.code());
+                    Log.e(TAG, "Response not successful: " + response.code());
                     Toast.makeText(getContext(), "Không thể tải danh mục món ăn", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<DanhMucMonAn>> call, Throwable t) {
-                Log.e("DetailDescription", "API call failed: " + t.getMessage());
+                Log.e(TAG, "API call failed: " + t.getMessage());
                 Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

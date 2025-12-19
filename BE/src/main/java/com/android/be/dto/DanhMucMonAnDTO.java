@@ -3,6 +3,7 @@ package com.android.be.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data
@@ -13,5 +14,5 @@ public class DanhMucMonAnDTO {
     private String tenDanhMuc;
     private String iconDanhMuc;
     private Integer thuTu;
-    private List<MonAnDTO> danhSachMon;
+    private List<MonAnDTO> danhSachMon; // Danh sách món ăn trong danh mục
 }

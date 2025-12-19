@@ -17,12 +17,12 @@ public class DanhMucMonAn {
     @Column(name = "maDanhMuc")
     private Integer maDanhMuc;
     
-    @Column(name = "tenDanhMuc", nullable = false, length = 100)
-    private String tenDanhMuc; // Món khai vị, Món chính, Món tráng miệng
+    @Column(name = "tenDanhMuc", length = 100, nullable = false)
+    private String tenDanhMuc;
     
-    @Column(name = "iconDanhMuc")
+    @Column(name = "iconDanhMuc", length = 255)
     private String iconDanhMuc;
     
     @Column(name = "thuTu")
-    private Integer thuTu = 1;
+    private Integer thuTu;
 }

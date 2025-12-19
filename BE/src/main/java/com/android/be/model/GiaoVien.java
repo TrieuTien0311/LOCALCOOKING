@@ -17,7 +17,7 @@ public class GiaoVien {
     @Column(name = "maGiaoVien")
     private Integer maGiaoVien;
     
-    @Column(name = "maNguoiDung", unique = true, nullable = false)
+    @Column(name = "maNguoiDung")
     private Integer maNguoiDung;
     
     @Column(name = "chuyenMon", length = 200)
@@ -32,6 +32,6 @@ public class GiaoVien {
     @Column(name = "moTa", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
     
-    @Column(name = "hinhAnh")
+    @Column(name = "hinhAnh", length = 255)
     private String hinhAnh;
 }

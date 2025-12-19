@@ -35,8 +35,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         holder.txtDish.setText(danhMuc.getTenDanhMuc());
         
-        // Xử lý icon danh mục - có thể map từ tên hoặc iconDanhMuc
-        int iconResource = getIconResource(danhMuc.getTenDanhMuc());
+        // Xử lý icon danh mục - lấy từ iconDanhMuc field
+        int iconResource = getIconResource(danhMuc.getIconDanhMuc());
         holder.imgDish.setImageResource(iconResource);
 
         // Setup RecyclerView con cho món ăn
@@ -56,18 +56,26 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
     }
     
-    private int getIconResource(String tenDanhMuc) {
-        // Map tên danh mục với icon tương ứng
-        if (tenDanhMuc == null) return R.drawable.ic_main_dish_tt;
-        
-        if (tenDanhMuc.contains("khai vị") || tenDanhMuc.contains("Khai vị")) {
-            return R.drawable.ic_main_dish_tt; // Thay bằng icon phù hợp
-        } else if (tenDanhMuc.contains("chính") || tenDanhMuc.contains("Chính")) {
-            return R.drawable.ic_main_dish_tt;
-        } else if (tenDanhMuc.contains("tráng miệng") || tenDanhMuc.contains("Tráng miệng")) {
-            return R.drawable.ic_main_dish_tt; // Thay bằng icon phù hợp
+    private int getIconResource(String iconDanhMuc) {
+        // Map icon từ database với drawable resource
+        if (iconDanhMuc == null || iconDanhMuc.isEmpty()) {
+            return R.drawable.ic_main_dish_tt; // Icon mặc định
         }
-        return R.drawable.ic_main_dish_tt; // Icon mặc định
+        
+        // Loại bỏ extension (.png, .jpg)
+        String iconName = iconDanhMuc.replace(".png", "").replace(".jpg", "");
+        
+        // Map các icon từ database
+        switch (iconName) {
+            case "ic_appetizer":
+                return R.drawable.ic_appetizer_tt; // Icon món khai vị
+            case "ic_main_dish":
+                return R.drawable.ic_main_dish_tt; // Icon món chính
+            case "ic_dessert":
+                return R.drawable.ic_dessert_tt; // Icon món tráng miệng
+            default:
+                return R.drawable.ic_main_dish_tt; // Icon mặc định
+        }
     }
 
     @Override

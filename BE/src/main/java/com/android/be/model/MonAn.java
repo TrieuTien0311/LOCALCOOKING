@@ -17,13 +17,13 @@ public class MonAn {
     @Column(name = "maMonAn")
     private Integer maMonAn;
     
-    @Column(name = "maKhoaHoc", nullable = false)
+    @Column(name = "maKhoaHoc")
     private Integer maKhoaHoc;
     
-    @Column(name = "maDanhMuc", nullable = false)
+    @Column(name = "maDanhMuc")
     private Integer maDanhMuc;
     
-    @Column(name = "tenMon", nullable = false, length = 200)
+    @Column(name = "tenMon", length = 200)
     private String tenMon;
     
     @Column(name = "gioiThieu", columnDefinition = "NVARCHAR(MAX)")
@@ -31,4 +31,7 @@ public class MonAn {
     
     @Column(name = "nguyenLieu", columnDefinition = "NVARCHAR(MAX)")
     private String nguyenLieu;
+    
+    @Column(name = "hinhAnh", length = 255)
+    private String hinhAnh;
 }

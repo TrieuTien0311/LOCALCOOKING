@@ -30,6 +30,7 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
     private MaterialButton btnDatLich, btnFav, btnShare;
 
     private KhoaHoc lopHoc; // Dữ liệu lớp học
+    private String selectedDate; // Ngày được chọn từ calendar
 
     // Constructor nhận dữ liệu lớp học
     public static DetailBottomSheet newInstance(KhoaHoc lopHoc) {
@@ -37,6 +38,16 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         Bundle args = new Bundle();
         sheet.setArguments(args);
         sheet.lopHoc = lopHoc;
+        return sheet;
+    }
+    
+    // Constructor nhận dữ liệu lớp học và ngày được chọn
+    public static DetailBottomSheet newInstance(KhoaHoc lopHoc, String selectedDate) {
+        DetailBottomSheet sheet = new DetailBottomSheet();
+        Bundle args = new Bundle();
+        sheet.setArguments(args);
+        sheet.lopHoc = lopHoc;
+        sheet.selectedDate = selectedDate;
         return sheet;
     }
 
@@ -72,23 +83,46 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         if (lopHoc != null) {
             tvTenLop.setText(lopHoc.getTenLop());
             
-            // Lấy thời gian và ngày
+            // Lấy thời gian
             String thoiGian = lopHoc.getThoiGian();
-            String ngay = lopHoc.getNgayBatDau(); // Sử dụng ngày bắt đầu
             
-            // Format ngày từ "2025-01-01" sang "01/01/2025"
-            if (ngay != null && !ngay.isEmpty()) {
-                try {
-                    String[] parts = ngay.split("-");
-                    if (parts.length == 3) {
-                        ngay = parts[2] + "/" + parts[1] + "/" + parts[0];
+            // Sử dụng ngày được chọn từ calendar nếu có, nếu không thì tính từ lịch trình
+            String ngayFormatted = "";
+            if (selectedDate != null && !selectedDate.isEmpty()) {
+                // Ngày đã được format sẵn dạng "T4, 15/01/2025"
+                ngayFormatted = selectedDate;
+            } else {
+                // Tính ngày từ lịch trình
+                String ngayBatDau = lopHoc.getNgayBatDau(); // Format: "2025-01-15"
+                if (ngayBatDau != null && !ngayBatDau.isEmpty()) {
+                    try {
+                        String[] parts = ngayBatDau.split("-");
+                        if (parts.length == 3) {
+                            // Tính thứ trong tuần
+                            java.util.Calendar cal = java.util.Calendar.getInstance();
+                            cal.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                            
+                            int dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK);
+                            String thu = "";
+                            switch (dayOfWeek) {
+                                case java.util.Calendar.SUNDAY: thu = "CN"; break;
+                                case java.util.Calendar.MONDAY: thu = "T2"; break;
+                                case java.util.Calendar.TUESDAY: thu = "T3"; break;
+                                case java.util.Calendar.WEDNESDAY: thu = "T4"; break;
+                                case java.util.Calendar.THURSDAY: thu = "T5"; break;
+                                case java.util.Calendar.FRIDAY: thu = "T6"; break;
+                                case java.util.Calendar.SATURDAY: thu = "T7"; break;
+                            }
+                            
+                            ngayFormatted = thu + ", " + parts[2] + "/" + parts[1] + "/" + parts[0];
+                        }
+                    } catch (Exception e) {
+                        ngayFormatted = ngayBatDau;
                     }
-                } catch (Exception e) {
-                    // Ignore
                 }
             }
             
-            tvThoiGian.setText(thoiGian + ", " + ngay);
+            tvThoiGian.setText(thoiGian + " - " + ngayFormatted);
         }
 
         // Xử lý sự kiện đóng
