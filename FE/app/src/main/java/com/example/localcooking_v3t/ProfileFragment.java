@@ -48,6 +48,18 @@ public class ProfileFragment extends Fragment {
         // Hiển thị thông tin người dùng
         loadUserInfo();
         
+        // Xử lý click vào "Thông tin cá nhân"
+        View personalInfoLayout = view.findViewById(R.id.cDThongTin);
+        personalInfoLayout.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                navigateToLogin();
+            }
+        });
+
         // Xử lý click vào "Đổi mật khẩu"
         View changePasswordLayout = view.findViewById(R.id.cDMatKhau);
         changePasswordLayout.setOnClickListener(v -> {

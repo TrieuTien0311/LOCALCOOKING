@@ -341,9 +341,9 @@ INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, diaChi, 
 (N'admin', N'admin123', N'Quản Trị Viên', N'admin@localcooking.vn', N'0901234567', N'123 Nguyễn Huệ, Q1, TP.HCM', N'Admin', N'HoatDong'),
 (N'VanAn', N'gv123', N'Nguyễn Văn An', N'nguyenvanan@gmail.com', N'0912345678', N'456 Lê Lợi, Q1, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'ThiBinh', N'gv123', N'Trần Thị Bình', N'tranthibinh@gmail.com', N'0923456789', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
-(N'VanCuong', N'hv123', N'Lê Văn Cường', N'levancuong@gmail.com', N'0934567890', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
-(N'ThiDung', N'hv123', N'Phạm Thị Dung', N'phamthidung@gmail.com', N'0945678901', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
-(N'VanEm', N'hv123', N'Hoàng Văn Em', N'hoangvanem@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
+(N'ThaoVy', N'hv123', N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
+(N'TrieuTien', N'hv123', N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
+(N'ThiThuong', N'hv123', N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
 
 -- 2. GIÁO VIÊN
 INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa, hinhAnh) VALUES

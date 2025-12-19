@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-  
+    <!-- State khi được chọn -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <stroke
+                android:width="2dp"
+                android:color="#C97B63" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- State mặc định -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <stroke
+                android:width="1dp"
+                android:color="#E0E0E0" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
 </selector>
