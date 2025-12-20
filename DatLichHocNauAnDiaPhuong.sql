@@ -461,7 +461,7 @@ INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, gioiTinh
 INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa, hinhAnh) VALUES
 (2, 
  N'Ẩm thực Việt Nam truyền thống', 
- N'20 năm kinh nghiệm trong lĩnh vực ẩm thực Việt Nam, từng làm việc tại nhiều nhà hàng cao cấp và khách sạn 5 sao', 
+ N'20 năm kinh nghiệm', 
  N'• 2005-2008: Bếp phó tại Nhà hàng Cung Đình Huế, Huế - Chuyên về các món ăn cung đình truyền thống
 
 • 2008-2012: Bếp trưởng tại Khách sạn Saigon Morin, Huế - Phụ trách bộ phận ẩm thực Việt Nam, phục vụ khách quốc tế
@@ -474,10 +474,10 @@ INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa
 
 • 2020-nay: Chuyên gia ẩm thực độc lập, tổ chức các lớp dạy nấu ăn và tư vấn thực đơn cho nhà hàng',
  N'Chuyên gia về các món ăn Việt Nam cổ truyền, đặc biệt là món Huế và Hà Nội. Từng đạt giải Nhất cuộc thi "Vua đầu bếp Việt Nam 2016" hạng mục Ẩm thực truyền thống. Có kinh nghiệm đào tạo hơn 500 học viên về nghề bếp.', 
- N'giaovien1.jpg'),
+ N'giaovien2.jpg'),
 (3, 
  N'Bánh ngọt và tráng miệng', 
- N'10 năm kinh nghiệm làm bánh Pháp và bánh Âu, tốt nghiệp Le Cordon Bleu Paris với bằng Diplôme de Pâtisserie', 
+ N'10 năm kinh nghiệm', 
  N'• 2010-2013: Học viên tại Le Cordon Bleu Paris, Pháp - Tốt nghiệp loại Xuất sắc chuyên ngành Pâtisserie
 
 • 2013-2015: Pastry Chef tại Pâtisserie Ladurée, Paris - Chuyên làm macaron và các loại bánh Pháp cao cấp
@@ -490,7 +490,7 @@ INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa
 
 • 2021-nay: Giảng viên dạy làm bánh và tổ chức workshop, chia sẻ kiến thức về nghệ thuật làm bánh Pháp',
  N'Chuyên về bánh Pháp, bánh Âu và các món tráng miệng hiện đại. Từng đoạt huy chương Vàng tại cuộc thi "Pastry Chef of the Year 2018" khu vực Đông Nam Á. Đam mê sáng tạo các món bánh kết hợp hương vị Á - Âu.', 
- N'giaovien2.jpg');
+ N'giaovien1.png');
 
 -- 3. KHÓA HỌC (Nội dung lớp học)
 INSERT INTO KhoaHoc (tenKhoaHoc, moTa, gioiThieu, giaTriSauBuoiHoc, giaTien, hinhAnh, coUuDai) VALUES
@@ -759,3 +759,6 @@ INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, giamToiDa, soLu
 
 PRINT N'✓ Đã thực thi xong!';
 GO
+select * from GiaoVien
+select * from NguoiDung
+select * from DanhMucMonAn

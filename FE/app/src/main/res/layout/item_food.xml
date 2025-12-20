@@ -85,15 +85,15 @@
                     android:id="@+id/circle2"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
-                    android:layout_marginRight="8dp"
                     app:srcCompat="@drawable/ic_circle_tn"
                     app:tint="#DCA790" />
 
+                <!-- Giữ lại circle3, circle4, circle5 để tránh lỗi nhưng ẩn đi -->
                 <ImageView
                     android:id="@+id/circle3"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
-                    android:layout_marginRight="8dp"
+                    android:visibility="gone"
                     app:srcCompat="@drawable/ic_circle_tn"
                     app:tint="#DCA790" />
 
@@ -101,7 +101,7 @@
                     android:id="@+id/circle4"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
-                    android:layout_marginRight="8dp"
+                    android:visibility="gone"
                     app:srcCompat="@drawable/ic_circle_tn"
                     app:tint="#DCA790" />
 
@@ -109,6 +109,7 @@
                     android:id="@+id/circle5"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
+                    android:visibility="gone"
                     app:srcCompat="@drawable/ic_circle_tn"
                     app:tint="#DCA790" />
             </LinearLayout>

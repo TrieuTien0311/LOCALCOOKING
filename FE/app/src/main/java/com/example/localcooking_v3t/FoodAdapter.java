@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +9,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.localcooking_v3t.api.ApiService;
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.HinhAnhMonAn;
 import com.example.localcooking_v3t.model.MonAn;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
+    private static final String TAG = "FoodAdapter";
     private List<MonAn> danhSachMon;
-    private int currentPosition = 0;
+    private Map<Integer, List<HinhAnhMonAn>> hinhAnhMap = new HashMap<>();
+    private Map<Integer, Integer> currentImageIndexMap = new HashMap<>();
+    private ApiService apiService;
 
     public FoodAdapter(List<MonAn> danhSachMon) {
         this.danhSachMon = danhSachMon;
+        this.apiService = RetrofitClient.getApiService();
     }
 
     @NonNull
@@ -32,42 +48,121 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
         MonAn monAn = danhSachMon.get(position);
+        Integer maMonAn = monAn.getMaMonAn();
 
         holder.txtFood.setText(monAn.getTenMon());
         holder.txtGioiThieu.setText(monAn.getGioiThieu() != null ? monAn.getGioiThieu() : "");
         holder.txtNguyenLieu.setText(monAn.getNguyenLieu() != null ? monAn.getNguyenLieu() : "");
-        
-        // Sử dụng placeholder image vì chưa có hình ảnh từ API
-        holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
 
-        // Xử lý nút Previous
+        // Khởi tạo index cho món ăn này nếu chưa có
+        if (!currentImageIndexMap.containsKey(maMonAn)) {
+            currentImageIndexMap.put(maMonAn, 0);
+        }
+
+        // Load hình ảnh từ API nếu chưa có trong cache
+        if (!hinhAnhMap.containsKey(maMonAn)) {
+            loadHinhAnhMonAn(holder, monAn);
+        } else {
+            // Hiển thị hình ảnh từ cache
+            displayCurrentImage(holder, monAn);
+        }
+
+        // Xử lý nút Previous - chuyển ảnh trước
         holder.btnPre.setOnClickListener(v -> {
-            if (currentPosition > 0) {
-                currentPosition--;
-                notifyDataSetChanged();
+            List<HinhAnhMonAn> danhSachHinh = hinhAnhMap.get(maMonAn);
+            if (danhSachHinh != null && !danhSachHinh.isEmpty()) {
+                int currentIndex = currentImageIndexMap.get(maMonAn);
+                if (currentIndex > 0) {
+                    currentImageIndexMap.put(maMonAn, currentIndex - 1);
+                    displayCurrentImage(holder, monAn);
+                }
             }
         });
 
-        // Xử lý nút Next
+        // Xử lý nút Next - chuyển ảnh tiếp theo
         holder.btnNext.setOnClickListener(v -> {
-            if (currentPosition < danhSachMon.size() - 1) {
-                currentPosition++;
-                notifyDataSetChanged();
+            List<HinhAnhMonAn> danhSachHinh = hinhAnhMap.get(maMonAn);
+            if (danhSachHinh != null && !danhSachHinh.isEmpty()) {
+                int currentIndex = currentImageIndexMap.get(maMonAn);
+                if (currentIndex < danhSachHinh.size() - 1) {
+                    currentImageIndexMap.put(maMonAn, currentIndex + 1);
+                    displayCurrentImage(holder, monAn);
+                }
             }
         });
-
-        // Cập nhật các circle indicator
-        updateCircleIndicators(holder, position);
     }
 
-    private void updateCircleIndicators(FoodViewHolder holder, int position) {
+    private void loadHinhAnhMonAn(FoodViewHolder holder, MonAn monAn) {
+        Integer maMonAn = monAn.getMaMonAn();
+        
+        apiService.getHinhAnhMonAn(maMonAn).enqueue(new Callback<List<HinhAnhMonAn>>() {
+            @Override
+            public void onResponse(Call<List<HinhAnhMonAn>> call, Response<List<HinhAnhMonAn>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<HinhAnhMonAn> danhSachHinh = response.body();
+                    hinhAnhMap.put(maMonAn, danhSachHinh);
+                    currentImageIndexMap.put(maMonAn, 0);
+                    displayCurrentImage(holder, monAn);
+                } else {
+                    Log.e(TAG, "Lỗi load hình ảnh món ăn: " + response.code());
+                    holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
+                    updateCircleIndicators(holder, 0, 0);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<HinhAnhMonAn>> call, Throwable t) {
+                Log.e(TAG, "Lỗi kết nối API hình ảnh món ăn: " + t.getMessage());
+                holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
+                updateCircleIndicators(holder, 0, 0);
+            }
+        });
+    }
+
+    private void displayCurrentImage(FoodViewHolder holder, MonAn monAn) {
+        Integer maMonAn = monAn.getMaMonAn();
+        List<HinhAnhMonAn> danhSachHinh = hinhAnhMap.get(maMonAn);
+        
+        if (danhSachHinh != null && !danhSachHinh.isEmpty()) {
+            int currentIndex = currentImageIndexMap.get(maMonAn);
+            HinhAnhMonAn hinhAnh = danhSachHinh.get(currentIndex);
+            
+            // Chuyển đổi tên file thành resource ID
+            // Ví dụ: "nem_ran_ha_noi_1.jpg" -> "nem_ran_ha_noi_1"
+            String fileName = hinhAnh.getDuongDan();
+            String resourceName = fileName.replace(".jpg", "").replace(".png", "");
+            
+            // Lấy resource ID từ drawable
+            int resourceId = holder.itemView.getContext().getResources()
+                    .getIdentifier(resourceName, "drawable", holder.itemView.getContext().getPackageName());
+            
+            if (resourceId != 0) {
+                // Nếu tìm thấy resource, load từ drawable
+                holder.imgMonAn.setImageResource(resourceId);
+                Log.d(TAG, "Loaded image: " + resourceName + " (ID: " + resourceId + ")");
+            } else {
+                // Nếu không tìm thấy, dùng placeholder
+                Log.e(TAG, "Không tìm thấy drawable: " + resourceName);
+                holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
+            }
+            
+            // Cập nhật circle indicators
+            updateCircleIndicators(holder, currentIndex, danhSachHinh.size());
+        } else {
+            holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
+            updateCircleIndicators(holder, 0, 0);
+        }
+    }
+
+    private void updateCircleIndicators(FoodViewHolder holder, int currentIndex, int totalImages) {
         ImageView[] circles = {holder.circle1, holder.circle2, holder.circle3,
                 holder.circle4, holder.circle5};
 
+        // Vì mỗi món ăn có 2 hình ảnh, chỉ hiển thị 2 chấm tròn đầu tiên
         for (int i = 0; i < circles.length; i++) {
-            if (i < danhSachMon.size()) {
+            if (i < totalImages) {
                 circles[i].setVisibility(View.VISIBLE);
-                if (i == position) {
+                if (i == currentIndex) {
                     circles[i].setColorFilter(0xFFBA5632); // Màu active
                 } else {
                     circles[i].setColorFilter(0xFFDCA790); // Màu inactive

@@ -33,7 +33,7 @@ public class DetailDescriptionFragment extends Fragment {
 
     private ImageView btnDownTeacher, imgGiaoVien;
     private LinearLayout txtAn;
-    private TextView txtTenGV, txtMoTaGV, txtLichSuKinhNghiem;
+    private TextView txtTenGV, txtMoTaGV, txtKinhNghiem, txtLichSuKinhNghiem;
     private TextView txtGioiThieu, txtGiaTriBuoiHoc;
     private boolean isExpanded = false;
     private RecyclerView rcvCategories;
@@ -68,6 +68,7 @@ public class DetailDescriptionFragment extends Fragment {
         imgGiaoVien = view.findViewById(R.id.imgGiaoVien);
         txtTenGV = view.findViewById(R.id.txtTenGV);
         txtMoTaGV = view.findViewById(R.id.txtMoTaGV);
+        txtKinhNghiem = view.findViewById(R.id.txtKinhNghiem);
         txtLichSuKinhNghiem = view.findViewById(R.id.txtLichSuKinhNghiem);
         txtGioiThieu = view.findViewById(R.id.txtGioiThieu);
         txtGiaTriBuoiHoc = view.findViewById(R.id.txtGiaTriBuoiHoc);
@@ -159,11 +160,55 @@ public class DetailDescriptionFragment extends Fragment {
             txtMoTaGV.setText(giaoVien.getChuyenMon());
         }
         
+        // Hiển thị kinh nghiệm từ API
+        if (giaoVien.getKinhNghiem() != null && !giaoVien.getKinhNghiem().isEmpty()) {
+            txtKinhNghiem.setText(giaoVien.getKinhNghiem());
+        } else {
+            txtKinhNghiem.setText("Chưa có thông tin kinh nghiệm");
+        }
+        
         if (giaoVien.getLichSuKinhNghiem() != null) {
             txtLichSuKinhNghiem.setText(giaoVien.getLichSuKinhNghiem());
         }
         
-        // TODO: Load hình ảnh giáo viên nếu có
+        // Load hình ảnh giáo viên từ API
+        if (giaoVien.getHinhAnh() != null && !giaoVien.getHinhAnh().isEmpty()) {
+            loadGiaoVienImage(giaoVien.getHinhAnh());
+        } else {
+            // Sử dụng ảnh mặc định nếu không có
+            imgGiaoVien.setImageResource(R.drawable.giaovien1);
+        }
+    }
+    
+    /**
+     * Load hình ảnh giáo viên từ drawable resource
+     * @param hinhAnh Tên file ảnh (VD: "giaovien1.png" hoặc "giaovien1")
+     */
+    private void loadGiaoVienImage(String hinhAnh) {
+        if (getContext() == null) return;
+        
+        try {
+            // Loại bỏ extension nếu có
+            String imageName = hinhAnh.replace(".png", "").replace(".jpg", "").replace(".jpeg", "");
+            
+            // Lấy resource ID từ tên file
+            int resourceId = getContext().getResources().getIdentifier(
+                imageName, 
+                "drawable", 
+                getContext().getPackageName()
+            );
+            
+            if (resourceId != 0) {
+                imgGiaoVien.setImageResource(resourceId);
+            } else {
+                // Nếu không tìm thấy, dùng ảnh mặc định
+                Log.w(TAG, "Image not found: " + imageName + ", using default");
+                imgGiaoVien.setImageResource(R.drawable.giaovien1);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading teacher image", e);
+            imgGiaoVien.setImageResource(R.drawable.giaovien1);
+        }
     }
 
     private void loadDanhMucMonAn(Integer maLopHoc) {
