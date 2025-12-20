@@ -3,7 +3,11 @@ package com.example.localcooking_v3t.api;
 import com.example.localcooking_v3t.model.ChangePasswordRequest;
 import com.example.localcooking_v3t.model.ChangePasswordResponse;
 import com.example.localcooking_v3t.model.ChangePasswordWithOtpRequest;
+import com.example.localcooking_v3t.model.CheckSeatsResponse;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
+import com.example.localcooking_v3t.model.DatLich;
+import com.example.localcooking_v3t.model.DatLichRequest;
+import com.example.localcooking_v3t.model.DatLichResponse;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
 import com.example.localcooking_v3t.model.GiaoVien;
@@ -151,5 +155,29 @@ public interface ApiService {
     // Xóa tất cả thông báo đã đọc
     @DELETE("api/thongbao/user/{maNguoiNhan}/delete-read")
     Call<MessageResponse> deleteAllReadNotifications(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // ========== API ĐẶT LỊCH ==========
+
+    // Kiểm tra chỗ trống
+    @GET("api/lichtrinh/check-seats")
+    Call<CheckSeatsResponse> checkAvailableSeats(
+            @Query("maLichTrinh") Integer maLichTrinh,
+            @Query("ngayThamGia") String ngayThamGia
+    );
+
+    // Tạo đặt lịch mới
+    @POST("api/datlich")
+    Call<DatLichResponse> createDatLich(@Body DatLichRequest request);
+
+    // Lấy đặt lịch theo học viên
+    @GET("api/datlich/hocvien/{maHocVien}")
+    Call<List<DatLich>> getDatLichByHocVien(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy đặt lịch theo học viên và trạng thái
+    @GET("api/datlich/hocvien/{maHocVien}/trangthai/{trangThai}")
+    Call<List<DatLich>> getDatLichByHocVienAndTrangThai(
+            @Path("maHocVien") Integer maHocVien,
+            @Path("trangThai") String trangThai
+    );
 
 }

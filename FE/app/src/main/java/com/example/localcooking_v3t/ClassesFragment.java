@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,8 +76,15 @@ public class ClassesFragment extends Fragment {
         classAdapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
             @Override
             public void onDatLichClick(KhoaHoc lopHoc) {
-                Toast.makeText(requireContext(), "Đặt lịch: " + lopHoc.getTenLop(), Toast.LENGTH_SHORT).show();
-                // TODO: Chuyển sang màn hình đặt lịch
+                // Chuyển sang màn hình đặt lịch
+                Intent intent = new Intent(requireContext(), Booking.class);
+                intent.putExtra("khoaHocId", lopHoc.getMaKhoaHoc());
+                intent.putExtra("tenLop", lopHoc.getTenLop());
+                intent.putExtra("giaTien", lopHoc.getGiaTien());
+                intent.putExtra("diaDiem", lopHoc.getDiaDiem());
+                intent.putExtra("thoiGian", lopHoc.getThoiGian());
+                intent.putExtra("ngayHoc", date); // Truyền ngày đã chọn
+                startActivity(intent);
             }
 
             @Override

@@ -53,6 +53,18 @@ http://localhost:8080/api
 - **PUT** `/lichhoc/{id}` - Cập nhật lịch học
 - **DELETE** `/lichhoc/{id}` - Xóa lịch học
 
+## 6.1. Lịch Trình Lớp Học (LichTrinhLopHoc)
+- **GET** `/lichtrinh` - Lấy tất cả lịch trình
+- **GET** `/lichtrinh/{id}` - Lấy lịch trình theo ID
+- **GET** `/lichtrinh/khoahoc/{maKhoaHoc}` - Lấy lịch trình theo khóa học
+- **GET** `/lichtrinh/giaovien/{maGiaoVien}` - Lấy lịch trình theo giáo viên
+- **GET** `/lichtrinh/diadiem?diaDiem={diaDiem}` - Lấy lịch trình theo địa điểm
+- **GET** `/lichtrinh/active` - Lấy lịch trình đang hoạt động
+- **GET** `/lichtrinh/check-seats?maLichTrinh={maLichTrinh}&ngayThamGia={ngayThamGia}` - Kiểm tra chỗ trống
+- **POST** `/lichtrinh` - Tạo lịch trình mới
+- **PUT** `/lichtrinh/{id}` - Cập nhật lịch trình
+- **DELETE** `/lichtrinh/{id}` - Xóa lịch trình
+
 ## 7. Danh Mục Món Ăn (DanhMucMonAn)
 - **GET** `/danhmucmonan` - Lấy tất cả danh mục món ăn
 - **GET** `/danhmucmonan/{id}` - Lấy danh mục món ăn theo ID
@@ -83,8 +95,21 @@ http://localhost:8080/api
 - **DELETE** `/hinhanhlophoc/{id}` - Xóa hình ảnh lớp học
 
 ## 11. Đặt Lịch (DatLich)
+
+### Luồng đặt lịch mới:
+1. User tìm kiếm khóa học theo địa điểm và ngày: `GET /api/khoahoc/search`
+2. User chọn khóa học và nhấn "Đặt lịch"
+3. Lấy lịch trình của khóa học: `GET /api/lichtrinh/khoahoc/{maKhoaHoc}`
+4. User chọn lịch trình (thứ, giờ học)
+5. Kiểm tra chỗ trống: `GET /api/lichtrinh/check-seats`
+6. User điều chỉnh số người và xác nhận
+7. Tạo đặt lịch: `POST /api/datlich`
+
+### Endpoints:
 - **GET** `/datlich` - Lấy tất cả đặt lịch
 - **GET** `/datlich/{id}` - Lấy đặt lịch theo ID
+- **GET** `/datlich/hocvien/{maHocVien}` - Lấy đặt lịch theo học viên
+- **GET** `/datlich/hocvien/{maHocVien}/trangthai/{trangThai}` - Lấy đặt lịch theo học viên và trạng thái
 - **POST** `/datlich` - Tạo đặt lịch mới
 - **PUT** `/datlich/{id}` - Cập nhật đặt lịch
 - **DELETE** `/datlich/{id}` - Xóa đặt lịch

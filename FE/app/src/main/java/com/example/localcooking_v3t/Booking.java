@@ -33,7 +33,12 @@ public class Booking extends AppCompatActivity {
         });
 
         // Ánh xạ views
-
+        ImageView btnBack = findViewById(R.id.btnBack);
+        
+        // Xử lý nút Back - quay về trang danh sách khóa học
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
     }
 

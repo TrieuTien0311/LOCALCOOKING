@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,8 +22,11 @@ public class DatLich {
     @Column(name = "maHocVien", nullable = false)
     private Integer maHocVien;
     
-    @Column(name = "maLopHoc", nullable = false)
-    private Integer maLopHoc;
+    @Column(name = "maLichTrinh", nullable = false)
+    private Integer maLichTrinh;
+    
+    @Column(name = "ngayThamGia", nullable = false)
+    private LocalDate ngayThamGia;
     
     @Column(name = "soLuongNguoi")
     private Integer soLuongNguoi = 1;
@@ -47,4 +51,13 @@ public class DatLich {
     
     @Column(name = "ghiChu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
+    
+    // Relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maHocVien", insertable = false, updatable = false)
+    private NguoiDung hocVien;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maLichTrinh", insertable = false, updatable = false)
+    private LichTrinhLopHoc lichTrinh;
 }
