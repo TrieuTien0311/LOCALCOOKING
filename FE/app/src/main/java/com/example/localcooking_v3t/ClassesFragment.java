@@ -15,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.KhoaHoc;
+import com.example.localcooking_v3t.utils.SessionManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,11 +38,16 @@ public class ClassesFragment extends Fragment {
     private String date;
     
     private View btnSapXep, btnThoiGian, btnGiaCa;
+    private Integer maHocVien;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_classes, container, false);
+        
+        // Lấy mã học viên từ session
+        SessionManager sessionManager = new SessionManager(requireContext());
+        maHocVien = sessionManager.getMaNguoiDung();
         
         // Nhận dữ liệu từ Activity
         if (getActivity() != null && getActivity() instanceof Classes) {
@@ -88,10 +96,7 @@ public class ClassesFragment extends Fragment {
 
             @Override
             public void onFavoriteClick(KhoaHoc lopHoc) {
-                Toast.makeText(requireContext(), 
-                    (lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()) ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", 
-                    Toast.LENGTH_SHORT).show();
-                // TODO: Gọi API thêm/xóa yêu thích
+                toggleFavorite(lopHoc);
             }
         });
     }
@@ -137,18 +142,24 @@ public class ClassesFragment extends Fragment {
         if (response.isSuccessful() && response.body() != null) {
             List<KhoaHoc> filteredClasses = response.body();
             
+            // Lọc các lớp học chưa bắt đầu (trước 15 phút)
+            List<KhoaHoc> availableClasses = filterUpcomingClasses(filteredClasses);
+            
             // Đặt tất cả lớp học là chưa diễn ra (không hiển thị overlay)
-            for (KhoaHoc khoaHoc : filteredClasses) {
+            for (KhoaHoc khoaHoc : availableClasses) {
                 khoaHoc.setDaDienRa(false);
             }
             
             // Lưu danh sách gốc để lọc sau này
             danhSachGoc.clear();
-            danhSachGoc.addAll(filteredClasses);
+            danhSachGoc.addAll(availableClasses);
             
             // Cập nhật dữ liệu
             danhSachLopHoc.clear();
-            danhSachLopHoc.addAll(filteredClasses);
+            danhSachLopHoc.addAll(availableClasses);
+            
+            // Load trạng thái yêu thích cho từng khóa học
+            loadFavoriteStatus();
             
             classAdapter.updateData(danhSachLopHoc);
             
@@ -192,6 +203,76 @@ public class ClassesFragment extends Fragment {
             Log.e(TAG, "Error converting date format", e);
             return null;
         }
+    }
+    
+    /**
+     * Lọc các lớp học chưa bắt đầu (trước 15 phút)
+     * Chỉ hiển thị lớp nếu thời gian hiện tại chưa đến giờ bắt đầu - 15 phút
+     */
+    private List<KhoaHoc> filterUpcomingClasses(List<KhoaHoc> classes) {
+        List<KhoaHoc> upcomingClasses = new ArrayList<>();
+        
+        // Lấy thời gian hiện tại
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int currentHour = now.get(java.util.Calendar.HOUR_OF_DAY);
+        int currentMinute = now.get(java.util.Calendar.MINUTE);
+        int currentTotalMinutes = currentHour * 60 + currentMinute;
+        
+        // Lấy ngày hiện tại để so sánh
+        String todayDate = String.format("%04d-%02d-%02d", 
+            now.get(java.util.Calendar.YEAR),
+            now.get(java.util.Calendar.MONTH) + 1,
+            now.get(java.util.Calendar.DAY_OF_MONTH));
+        
+        String selectedDate = convertDateFormat(date);
+        
+        Log.d(TAG, "Current time: " + currentHour + ":" + currentMinute);
+        Log.d(TAG, "Today: " + todayDate + ", Selected: " + selectedDate);
+        
+        for (KhoaHoc lopHoc : classes) {
+            // Nếu ngày được chọn không phải hôm nay, hiển thị tất cả
+            if (selectedDate != null && !selectedDate.equals(todayDate)) {
+                upcomingClasses.add(lopHoc);
+                continue;
+            }
+            
+            // Nếu là hôm nay, kiểm tra thời gian
+            if (lopHoc.getThoiGian() != null) {
+                String[] times = lopHoc.getThoiGian().split(" - ");
+                if (times.length > 0) {
+                    try {
+                        String[] startParts = times[0].trim().split(":");
+                        if (startParts.length == 2) {
+                            int classHour = Integer.parseInt(startParts[0]);
+                            int classMinute = Integer.parseInt(startParts[1]);
+                            int classTotalMinutes = classHour * 60 + classMinute;
+                            
+                            // Chỉ hiển thị nếu thời gian hiện tại < (giờ bắt đầu - 15 phút)
+                            // Ví dụ: Lớp 14:00, chỉ hiển thị khi < 13:45
+                            int classStartMinus15 = classTotalMinutes - 15;
+                            
+                            if (currentTotalMinutes < classStartMinus15) {
+                                upcomingClasses.add(lopHoc);
+                                Log.d(TAG, "Added class: " + lopHoc.getTenLop() + " at " + lopHoc.getThoiGian());
+                            } else {
+                                Log.d(TAG, "Filtered out class: " + lopHoc.getTenLop() + " at " + lopHoc.getThoiGian() + 
+                                    " (current: " + currentTotalMinutes + ", start-15: " + classStartMinus15 + ")");
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "Error parsing time for class: " + lopHoc.getTenLop(), e);
+                        // Nếu không parse được thời gian, vẫn thêm vào để tránh mất dữ liệu
+                        upcomingClasses.add(lopHoc);
+                    }
+                }
+            } else {
+                // Nếu không có thời gian, vẫn thêm vào
+                upcomingClasses.add(lopHoc);
+            }
+        }
+        
+        Log.d(TAG, "Filtered: " + upcomingClasses.size() + " out of " + classes.size() + " classes");
+        return upcomingClasses;
     }
     
 
@@ -374,6 +455,75 @@ public class ClassesFragment extends Fragment {
         classAdapter.updateData(danhSachLopHoc);
         
         Toast.makeText(requireContext(), "Đã lọc " + filtered.size() + " lớp học", Toast.LENGTH_SHORT).show();
+    }
+    
+    /**
+     * Toggle yêu thích
+     */
+    private void toggleFavorite(KhoaHoc khoaHoc) {
+        if (maHocVien == null || maHocVien == -1) {
+            Toast.makeText(requireContext(), "Vui lòng đăng nhập để sử dụng chức năng này", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Map<String, Integer> request = new HashMap<>();
+        request.put("maHocVien", maHocVien);
+        request.put("maKhoaHoc", khoaHoc.getMaKhoaHoc());
+        
+        RetrofitClient.getApiService().toggleFavorite(request)
+            .enqueue(new Callback<Map<String, Object>>() {
+                @Override
+                public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Boolean isFavorite = (Boolean) response.body().get("isFavorite");
+                        String message = (String) response.body().get("message");
+                        
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                        
+                        // Cập nhật trạng thái yêu thích trong danh sách
+                        khoaHoc.setIsFavorite(isFavorite);
+                        classAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(requireContext(), "Không thể cập nhật yêu thích", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                    Log.e(TAG, "Error toggling favorite", t);
+                    Toast.makeText(requireContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                }
+            });
+    }
+    
+    /**
+     * Load trạng thái yêu thích cho tất cả khóa học trong danh sách
+     */
+    private void loadFavoriteStatus() {
+        if (maHocVien == null || maHocVien == -1) {
+            Log.d(TAG, "User not logged in, skip loading favorite status");
+            return;
+        }
+        
+        // Gọi API check favorite cho từng khóa học
+        for (KhoaHoc khoaHoc : danhSachLopHoc) {
+            RetrofitClient.getApiService().checkFavorite(maHocVien, khoaHoc.getMaKhoaHoc())
+                .enqueue(new Callback<Map<String, Boolean>>() {
+                    @Override
+                    public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Boolean isFavorite = response.body().get("isFavorite");
+                            khoaHoc.setIsFavorite(isFavorite != null && isFavorite);
+                            classAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
+                        Log.e(TAG, "Error checking favorite status for course " + khoaHoc.getMaKhoaHoc(), t);
+                    }
+                });
+        }
     }
     
 }

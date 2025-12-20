@@ -197,7 +197,6 @@ CREATE TABLE YeuThich (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc),
     CONSTRAINT UQ_YeuThich UNIQUE (maHocVien, maKhoaHoc)
 );
-
 -- 15. ƯU ĐÃI
 CREATE TABLE UuDai (
     maUuDai INT PRIMARY KEY IDENTITY(1,1),
@@ -553,22 +552,22 @@ INSERT INTO LichTrinhLopHoc (maKhoaHoc, maGiaoVien, thuTrongTuan, gioBatDau, gio
 (1, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 (2, 1, '2,4,6',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 18),
 (3, 2, '3,5,7',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 15),
-(4, 1, '7,1',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
+(4, 1, '7,CN',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 -- HUẾ
 (5, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
 (6, 2, '2,4,6',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
 (7, 1, '3,5,7',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 15),
-(8, 2, '7,1',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
+(8, 2, '7,CN',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
 -- ĐÀ NẴNG
 (9, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'78 Trần Phú, Đà Nẵng', 20),
 (10, 2, '2,4,6',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 18),
 (11, 1, '3,5,7',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 20),
-(12, 1, '7,1',           '14:00', '17:00', N'78 Trần Phú, Đà Nẵng', 18),
+(12, 1, '7,CN',           '14:00', '17:00', N'78 Trần Phú, Đà Nẵng', 18),
 -- CẦN THƠ
 (13, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'56 Mậu Thân, Cần Thơ', 20),
 (14, 2, '2,4,6',          '08:30', '11:30', N'56 Mậu Thân, Cần Thơ', 18),
 (15, 1, '3,5,7',          '08:30', '11:30', N'56 Mậu Thân, Cần Thơ', 20),
-(16, 2, '7,1',            '14:00', '17:00', N'56 Mậu Thân, Cần Thơ', 15);
+(16, 2, '7,CN',            '14:00', '17:00', N'56 Mậu Thân, Cần Thơ', 15);
 
 -- 5. DANH MỤC
 INSERT INTO DanhMucMonAn (tenDanhMuc, iconDanhMuc, thuTu) VALUES
@@ -756,9 +755,14 @@ INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, giamToiDa, soLu
 ('GIAM50K', N'Giảm 50k cho thành viên mới', N'Áp dụng cho đơn hàng từ 500k', 'SoTien', 50000, 50000, 100, '2025-01-01', '2025-12-31', 'uudai1.jpg'),
 ('GIAM10%', N'Giảm 10% mùa lễ hội', N'Giảm tối đa 100k', 'PhanTram', 10, 100000, 50, '2025-12-01', '2025-12-31', 'uudai2.jpg'),
 ('FREESHIP', N'Miễn phí tài liệu', N'Tặng bộ tài liệu công thức', 'SoTien', 0, 0, 200, '2025-01-01', '2025-06-30', 'uudai3.jpg');
+-- 11. YÊU THÍCH (Học viên lưu các khóa học yêu thích)
 
-PRINT N'✓ Đã thực thi xong!';
 GO
 select * from GiaoVien
 select * from NguoiDung
 select * from DanhMucMonAn
+select * from HinhAnhMonAn
+select * from KhoaHoc
+select * from LichTrinhLopHoc
+select * from YeuThich
+select * from DatLich

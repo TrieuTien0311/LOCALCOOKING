@@ -1,5 +1,6 @@
 package com.android.be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,10 +40,12 @@ public class LichTrinhLopHoc {
     private Boolean trangThai = true;
     
     // Relationships
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maKhoaHoc", insertable = false, updatable = false)
     private KhoaHoc khoaHoc;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maGiaoVien", insertable = false, updatable = false)
     private GiaoVien giaoVien;

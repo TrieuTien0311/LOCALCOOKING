@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "KhoaHoc")
@@ -46,6 +47,10 @@ public class KhoaHoc {
     
     @Column(columnDefinition = "DATETIME DEFAULT GETDATE()")
     private LocalDateTime ngayTao;
+    
+    // Danh sách lịch trình (không lưu trong DB, chỉ dùng để trả về API)
+    @Transient
+    private List<LichTrinhLopHoc> lichTrinhList;
     
     @PrePersist
     protected void onCreate() {

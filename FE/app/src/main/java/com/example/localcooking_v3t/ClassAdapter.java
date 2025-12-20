@@ -67,25 +67,30 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         holder.overlayDim.setVisibility(View.GONE);
         holder.txtDaDienRa.setVisibility(View.GONE);
 
+        // Kiểm tra xem lớp đã diễn ra chưa
+        boolean daDienRa = lopHoc.getDaDienRa() != null && lopHoc.getDaDienRa();
+        
+        // Kiểm tra xem ngày được chọn có phải hôm nay không
+        boolean isToday = isSelectedDateToday();
+        
         // Hiển thị banner ưu đãi và điều chỉnh marginTop của cardView
-        if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
-            // Có ưu đãi: hiển thị banner và set marginTop = -15dp
+        // CHÚ Ý: 
+        // - Chỉ hiển thị banner nếu có ưu đãi VÀ chưa diễn ra VÀ là hôm nay
+        // - Nếu không phải hôm nay thì ẩn banner ưu đãi
+        if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai() && !daDienRa && isToday) {
+            // Có ưu đãi VÀ chưa diễn ra VÀ là hôm nay: hiển thị banner và set marginTop = -15dp
             holder.layoutBanner.setVisibility(View.VISIBLE);
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
             params.topMargin = (int) (-15 * holder.itemView.getContext().getResources().getDisplayMetrics().density);
             holder.cardView.setLayoutParams(params);
-            holder.overlayDim.setVisibility(View.GONE);
-            holder.txtDaDienRa.setVisibility(View.GONE);
             // Bắt đầu countdown timer
             startCountdownTimer(holder);
         } else {
-            // Không có ưu đãi: ẩn banner và set marginTop = 0dp
+            // Không có ưu đãi HOẶC đã diễn ra HOẶC không phải hôm nay: ẩn banner và set marginTop = 0dp
             holder.layoutBanner.setVisibility(View.GONE);
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.cardView.getLayoutParams();
             params.topMargin = 0;
             holder.cardView.setLayoutParams(params);
-            holder.overlayDim.setVisibility(View.GONE);
-            holder.txtDaDienRa.setVisibility(View.GONE);
         }
         
         // Hiển thị thông tin lớp học
@@ -96,9 +101,15 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         // Hiển thị ngày được chọn từ calendar (nếu có), nếu không thì hiển thị ngày bắt đầu
         String ngayHienThi;
         if (selectedDate != null && !selectedDate.isEmpty()) {
-            // Lấy phần ngày từ selectedDate (format: "T4, 19/12/2024")
-            String[] parts = selectedDate.split(", ");
-            ngayHienThi = parts.length > 1 ? parts[1] : formatDate(lopHoc.getNgayBatDau());
+            // Kiểm tra format: "T4, 19/12/2024" hoặc "19/12/2024"
+            if (selectedDate.contains(", ")) {
+                // Format có thứ: "T4, 19/12/2024" -> lấy "19/12/2024"
+                String[] parts = selectedDate.split(", ");
+                ngayHienThi = parts.length > 1 ? parts[1] : selectedDate;
+            } else {
+                // Format không có thứ: "19/12/2024" -> dùng luôn
+                ngayHienThi = selectedDate;
+            }
         } else {
             ngayHienThi = formatDate(lopHoc.getNgayBatDau());
         }
@@ -234,6 +245,37 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             return formatter.format(discountedPrice).replace(",", ".") + "đ";
         } catch (Exception e) {
             return originalPrice;
+        }
+    }
+    
+    /**
+     * Kiểm tra xem ngày được chọn có phải hôm nay không
+     */
+    private boolean isSelectedDateToday() {
+        if (selectedDate == null || selectedDate.isEmpty()) {
+            return true; // Nếu không có ngày được chọn, coi như hôm nay
+        }
+        
+        try {
+            // Lấy ngày hôm nay
+            java.util.Calendar today = java.util.Calendar.getInstance();
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            String todayStr = sdf.format(today.getTime());
+            
+            // So sánh với selectedDate
+            // selectedDate có thể là "T4, 21/12/2024" hoặc "21/12/2024"
+            String dateToCompare = selectedDate;
+            if (selectedDate.contains(", ")) {
+                // Lấy phần ngày: "T4, 21/12/2024" -> "21/12/2024"
+                String[] parts = selectedDate.split(", ");
+                if (parts.length > 1) {
+                    dateToCompare = parts[1];
+                }
+            }
+            
+            return todayStr.equals(dateToCompare);
+        } catch (Exception e) {
+            return true; // Nếu lỗi, coi như hôm nay để hiển thị banner
         }
     }
     

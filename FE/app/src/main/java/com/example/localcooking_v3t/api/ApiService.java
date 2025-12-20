@@ -152,4 +152,21 @@ public interface ApiService {
     @DELETE("api/thongbao/user/{maNguoiNhan}/delete-read")
     Call<MessageResponse> deleteAllReadNotifications(@Path("maNguoiNhan") Integer maNguoiNhan);
 
+    // ========== API YÊU THÍCH ==========
+    
+    // Lấy danh sách khóa học yêu thích của học viên (trả về KhoaHoc đầy đủ)
+    @GET("api/yeuthich/hocvien/{maHocVien}/khoahoc")
+    Call<List<KhoaHoc>> getFavoritesByHocVien(@Path("maHocVien") Integer maHocVien);
+    
+    // Kiểm tra khóa học đã được yêu thích chưa
+    @GET("api/yeuthich/check")
+    Call<java.util.Map<String, Boolean>> checkFavorite(
+            @Query("maHocVien") Integer maHocVien,
+            @Query("maKhoaHoc") Integer maKhoaHoc
+    );
+    
+    // Toggle yêu thích (thêm/xóa)
+    @POST("api/yeuthich/toggle")
+    Call<java.util.Map<String, Object>> toggleFavorite(@Body java.util.Map<String, Integer> request);
+
 }
