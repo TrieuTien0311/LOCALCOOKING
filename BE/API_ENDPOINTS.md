@@ -106,9 +106,16 @@ http://localhost:8080/api
 ## 14. Thông Báo (ThongBao)
 - **GET** `/thongbao` - Lấy tất cả thông báo (trả về ThongBaoDTO)
 - **GET** `/thongbao/{id}` - Lấy thông báo theo ID (trả về ThongBaoDTO)
+- **GET** `/thongbao/user/{maNguoiNhan}` - Lấy tất cả thông báo của người dùng
+- **GET** `/thongbao/user/{maNguoiNhan}/unread` - Lấy thông báo chưa đọc của người dùng
+- **GET** `/thongbao/user/{maNguoiNhan}/unread-count` - Đếm số thông báo chưa đọc
+- **GET** `/thongbao/user/{maNguoiNhan}/type/{loaiThongBao}` - Lấy thông báo theo loại
 - **POST** `/thongbao` - Tạo thông báo mới
 - **PUT** `/thongbao/{id}` - Cập nhật thông báo
+- **PUT** `/thongbao/{id}/mark-read` - Đánh dấu thông báo đã đọc
+- **PUT** `/thongbao/user/{maNguoiNhan}/mark-all-read` - Đánh dấu tất cả đã đọc
 - **DELETE** `/thongbao/{id}` - Xóa thông báo
+- **DELETE** `/thongbao/user/{maNguoiNhan}/delete-read` - Xóa tất cả thông báo đã đọc
 
 ## 15. Ưu Đãi (UuDai)
 - **GET** `/uudai` - Lấy tất cả ưu đãi (trả về UuDaiDTO)

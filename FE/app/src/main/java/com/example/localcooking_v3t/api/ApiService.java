@@ -24,13 +24,20 @@ import com.example.localcooking_v3t.model.UpdateProfileRequest;
 import com.example.localcooking_v3t.model.UpdateProfileResponse;
 import com.example.localcooking_v3t.model.VerifyOtpRequest;
 import com.example.localcooking_v3t.model.VerifyOtpResponse;
+import com.example.localcooking_v3t.model.ThongBaoDTO;
+import com.example.localcooking_v3t.model.UnreadCountResponse;
+import com.example.localcooking_v3t.model.MessageResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     @POST("api/nguoidung/login")
@@ -107,5 +114,42 @@ public interface ApiService {
     // Lấy thông tin giáo viên theo ID
     @GET("api/giaovien/{id}")
     Call<GiaoVien> getGiaoVienById(@retrofit2.http.Path("id") Integer id);
+
+    // ========== API THÔNG BÁO ==========
+
+    // Lấy tất cả thông báo của người dùng
+    @GET("api/thongbao/user/{maNguoiNhan}")
+    Call<List<ThongBaoDTO>> getThongBaoByUser(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // Lấy thông báo chưa đọc
+    @GET("api/thongbao/user/{maNguoiNhan}/unread")
+    Call<List<ThongBaoDTO>> getUnreadThongBao(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // Đếm số thông báo chưa đọc
+    @GET("api/thongbao/user/{maNguoiNhan}/unread-count")
+    Call<UnreadCountResponse> getUnreadCount(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // Lấy thông báo theo loại
+    @GET("api/thongbao/user/{maNguoiNhan}/type/{loaiThongBao}")
+    Call<List<ThongBaoDTO>> getThongBaoByType(
+            @Path("maNguoiNhan") Integer maNguoiNhan,
+            @Path("loaiThongBao") String loaiThongBao
+    );
+
+    // Đánh dấu đã đọc
+    @PUT("api/thongbao/{id}/mark-read")
+    Call<ThongBaoDTO> markAsRead(@Path("id") Integer id);
+
+    // Đánh dấu tất cả đã đọc
+    @PUT("api/thongbao/user/{maNguoiNhan}/mark-all-read")
+    Call<MessageResponse> markAllAsRead(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // Xóa thông báo
+    @DELETE("api/thongbao/{id}")
+    Call<Void> deleteThongBao(@Path("id") Integer id);
+
+    // Xóa tất cả thông báo đã đọc
+    @DELETE("api/thongbao/user/{maNguoiNhan}/delete-read")
+    Call<MessageResponse> deleteAllReadNotifications(@Path("maNguoiNhan") Integer maNguoiNhan);
 
 }
