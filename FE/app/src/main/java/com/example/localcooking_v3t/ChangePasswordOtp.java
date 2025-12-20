@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +36,7 @@ public class ChangePasswordOtp extends AppCompatActivity {
     private EditText otpBox1, otpBox2, otpBox3, otpBox4, otpBox5, otpBox6;
     private Button btnXacNhan;
     private ApiService apiService;
+    private View mainLayout;
     
     private String email, matKhauHienTai, matKhauMoi, xacNhanMatKhauMoi;
 
@@ -47,11 +52,13 @@ public class ChangePasswordOtp extends AppCompatActivity {
         });
 
         initViews();
+        setupClearFocusOnTouch();
         setupOtpInputs();
         setupClickListeners();
     }
 
     private void initViews() {
+        mainLayout = findViewById(R.id.main);
         btnBack = findViewById(R.id.btnBack);
         tvBack = findViewById(R.id.tvBack);
         otpBox1 = findViewById(R.id.otpBox1);
@@ -71,6 +78,72 @@ public class ChangePasswordOtp extends AppCompatActivity {
         matKhauHienTai = intent.getStringExtra("matKhauHienTai");
         matKhauMoi = intent.getStringExtra("matKhauMoi");
         xacNhanMatKhauMoi = intent.getStringExtra("xacNhanMatKhauMoi");
+    }
+
+    /**
+     * Thiết lập clear focus khi chạm vào vùng ngoài EditText
+     */
+    private void setupClearFocusOnTouch() {
+        if (mainLayout != null) {
+            setupTouchListener(mainLayout);
+        }
+    }
+
+    /**
+     * Thiết lập touch listener đệ quy cho tất cả các view
+     */
+    private void setupTouchListener(View view) {
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    clearFocusFromEditTexts();
+                }
+                return false;
+            });
+        }
+
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                setupTouchListener(child);
+            }
+        }
+    }
+
+    /**
+     * Xóa focus khỏi tất cả EditText và ẩn bàn phím
+     */
+    private void clearFocusFromEditTexts() {
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
+        if (mainLayout != null) {
+            mainLayout.requestFocus();
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                float x = event.getRawX() + v.getLeft() - location[0];
+                float y = event.getRawY() + v.getTop() - location[1];
+
+                if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                    clearFocusFromEditTexts();
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
     private void setupOtpInputs() {
