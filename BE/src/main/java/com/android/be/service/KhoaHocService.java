@@ -5,11 +5,13 @@ import com.android.be.dto.KhoaHocDTO;
 import com.android.be.dto.LichTrinhLopHocDTO;
 import com.android.be.model.KhoaHoc;
 import com.android.be.model.LichTrinhLopHoc;
+import com.android.be.repository.DatLichRepository;
 import com.android.be.repository.KhoaHocRepository;
 import com.android.be.repository.LichTrinhLopHocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public class KhoaHocService {
     private final KhoaHocRepository khoaHocRepository;
     private final LichTrinhLopHocRepository lichTrinhRepository;
     private final DanhMucMonAnService danhMucMonAnService;
+    private final DatLichRepository datLichRepository;
     
     public List<KhoaHocDTO> getAllKhoaHoc() {
         return khoaHocRepository.findAll().stream()
@@ -166,6 +169,25 @@ public class KhoaHocService {
         dto.setDiaDiem(lichTrinh.getDiaDiem());
         dto.setSoLuongToiDa(lichTrinh.getSoLuongToiDa());
         dto.setTrangThai(lichTrinh.getTrangThai());
+        
+        // Tính số chỗ còn trống cho ngày mai (hoặc ngày gần nhất)
+        LocalDate ngayKiemTra = LocalDate.now().plusDays(1);
+        Integer soLuongDaDat = datLichRepository.countBookedSeats(lichTrinh.getMaLichTrinh(), ngayKiemTra);
+        Integer soLuongToiDa = lichTrinh.getSoLuongToiDa() != null ? lichTrinh.getSoLuongToiDa() : 0;
+        Integer conTrong = soLuongToiDa - soLuongDaDat;
+        
+        dto.setSoLuongHienTai(soLuongDaDat);
+        dto.setConTrong(conTrong);
+        
+        // Set trạng thái hiển thị
+        if (conTrong <= 0) {
+            dto.setTrangThaiHienThi("Hết chỗ");
+        } else if (conTrong <= 3) {
+            dto.setTrangThaiHienThi("Sắp hết chỗ");
+        } else {
+            dto.setTrangThaiHienThi("Còn chỗ");
+        }
+        
         return dto;
     }
 }

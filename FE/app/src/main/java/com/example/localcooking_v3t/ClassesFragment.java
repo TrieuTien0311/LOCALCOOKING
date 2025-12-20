@@ -78,12 +78,22 @@ public class ClassesFragment extends Fragment {
             public void onDatLichClick(KhoaHoc lopHoc) {
                 // Chuyển sang màn hình đặt lịch
                 Intent intent = new Intent(requireContext(), Booking.class);
-                intent.putExtra("khoaHocId", lopHoc.getMaKhoaHoc());
-                intent.putExtra("tenLop", lopHoc.getTenLop());
-                intent.putExtra("giaTien", lopHoc.getGiaTien());
+                intent.putExtra("maKhoaHoc", lopHoc.getMaKhoaHoc());
+                intent.putExtra("tenKhoaHoc", lopHoc.getTenLop());
+                intent.putExtra("giaTien", String.valueOf(lopHoc.getGiaTien()));
                 intent.putExtra("diaDiem", lopHoc.getDiaDiem());
                 intent.putExtra("thoiGian", lopHoc.getThoiGian());
-                intent.putExtra("ngayHoc", date); // Truyền ngày đã chọn
+                
+                // Truyền maLichTrinh từ lịch trình đầu tiên
+                if (lopHoc.getLichTrinhList() != null && !lopHoc.getLichTrinhList().isEmpty()) {
+                    intent.putExtra("maLichTrinh", lopHoc.getLichTrinhList().get(0).getMaLichTrinh());
+                    intent.putExtra("soLuongConLai", lopHoc.getLichTrinhList().get(0).getSoChoConTrong());
+                }
+                
+                // Chuyển đổi ngày từ "T2, 20/12/2024" sang "2024-12-20"
+                String ngayThamGia = convertDateToISO(date);
+                intent.putExtra("ngayThamGia", ngayThamGia);
+                
                 startActivity(intent);
             }
 
@@ -200,6 +210,13 @@ public class ClassesFragment extends Fragment {
             Log.e(TAG, "Error converting date format", e);
             return null;
         }
+    }
+    
+    /**
+     * Chuyển đổi ngày từ "T2, 20/12/2024" sang "2024-12-20" (ISO format)
+     */
+    private String convertDateToISO(String dateStr) {
+        return convertDateFormat(dateStr);
     }
     
 

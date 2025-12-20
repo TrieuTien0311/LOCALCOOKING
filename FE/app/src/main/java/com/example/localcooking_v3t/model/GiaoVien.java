@@ -104,4 +104,23 @@ public class GiaoVien implements Serializable {
     public void setSoDienThoai(String soDienThoai) {
         this.soDienThoai = soDienThoai;
     }
+    
+    /**
+     * Lấy resource ID của hình ảnh giáo viên
+     * @param context Android context
+     * @return Resource ID của hình ảnh, hoặc hình mặc định nếu không tìm thấy
+     */
+    public int getHinhAnhResId(android.content.Context context) {
+        if (hinhAnh == null || hinhAnh.isEmpty()) {
+            // Trả về hình mặc định
+            return context.getResources().getIdentifier("giaovien1", "drawable", context.getPackageName());
+        }
+        
+        // Loại bỏ extension
+        String name = hinhAnh.replace(".png", "").replace(".jpg", "");
+        
+        // Lấy resource ID
+        int resId = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+        return resId != 0 ? resId : context.getResources().getIdentifier("giaovien1", "drawable", context.getPackageName());
+    }
 }

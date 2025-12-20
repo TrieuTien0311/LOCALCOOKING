@@ -11,6 +11,7 @@ public class LichTrinhLopHoc {
     private Integer soLuongToiDa;
     private Boolean trangThai;
     private Integer soChoConTrong; // Số chỗ còn trống
+    private Integer conTrong; // Alias cho soChoConTrong (từ backend DTO)
     
     // Constructor
     public LichTrinhLopHoc() {}
@@ -43,8 +44,18 @@ public class LichTrinhLopHoc {
     public Boolean getTrangThai() { return trangThai; }
     public void setTrangThai(Boolean trangThai) { this.trangThai = trangThai; }
     
-    public Integer getSoChoConTrong() { return soChoConTrong; }
+    public Integer getSoChoConTrong() { 
+        // Ưu tiên lấy từ conTrong (từ backend DTO), nếu không có thì lấy soChoConTrong
+        return conTrong != null ? conTrong : soChoConTrong; 
+    }
     public void setSoChoConTrong(Integer soChoConTrong) { this.soChoConTrong = soChoConTrong; }
+    
+    public Integer getConTrong() { return conTrong; }
+    public void setConTrong(Integer conTrong) { 
+        this.conTrong = conTrong;
+        // Đồng bộ với soChoConTrong
+        this.soChoConTrong = conTrong;
+    }
     
     /**
      * Lấy thời gian đã format

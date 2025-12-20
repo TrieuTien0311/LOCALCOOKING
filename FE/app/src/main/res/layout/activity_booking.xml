@@ -57,8 +57,8 @@
 
         <TextView
             android:id="@+id/txtThoiGian"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="201dp"
+            android:layout_height="21dp"
             android:layout_marginStart="35dp"
             android:layout_marginBottom="5dp"
             android:text="14:00 - T5, 02/10/2025"
@@ -397,6 +397,34 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text=" 23 Lê Duẩn - Đà Nẵng"
+                            android:textColor="#7A7777"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView69"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Sức chứa:"
+                            android:textColor="@color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txt_SucChua_DL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text=" 20 người"
                             android:textColor="#7A7777"
                             android:textSize="12sp" />
                     </LinearLayout>

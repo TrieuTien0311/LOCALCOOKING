@@ -107,6 +107,11 @@ public interface ApiService {
     Call<List<LichTrinhLopHoc>> getAllLichTrinh();
     @GET("api/lichtrinh/{id}")
     Call<LichTrinhLopHoc> getLichTrinhById(@retrofit2.http.Path("id") Integer id);
+    
+    // Lấy lịch trình với thông tin đầy đủ (có số chỗ trống)
+    @GET("api/lichtrinh/{id}/detail")
+    Call<LichTrinhLopHoc> getLichTrinhDetailById(@retrofit2.http.Path("id") Integer id);
+    
     // Lấy lịch trình theo khóa học
     @GET("api/lichtrinh/khoahoc/{maKhoaHoc}")
     Call<List<LichTrinhLopHoc>> getLichTrinhByKhoaHoc(@retrofit2.http.Path("maKhoaHoc") Integer maKhoaHoc);

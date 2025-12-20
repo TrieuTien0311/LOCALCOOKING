@@ -1,5 +1,7 @@
 package com.android.be.controller;
 
+import com.android.be.dto.CheckSeatsResponse;
+import com.android.be.dto.LichTrinhLopHocDTO;
 import com.android.be.model.LichTrinhLopHoc;
 import com.android.be.service.LichTrinhLopHocService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,14 @@ public class LichTrinhLopHocController {
     @GetMapping("/{id}")
     public ResponseEntity<LichTrinhLopHoc> getLichTrinhById(@PathVariable Integer id) {
         return lichTrinhService.getLichTrinhById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    // GET - Lấy lịch trình theo ID với thông tin đầy đủ (DTO có số chỗ trống)
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<LichTrinhLopHocDTO> getLichTrinhDetailById(@PathVariable Integer id) {
+        return lichTrinhService.getLichTrinhDTOById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -83,9 +93,35 @@ public class LichTrinhLopHocController {
     
     // GET - Kiểm tra chỗ trống (Stored Procedure)
     @GetMapping("/check-seats")
-    public ResponseEntity<Object[]> checkAvailableSeats(
+    public ResponseEntity<CheckSeatsResponse> checkAvailableSeats(
             @RequestParam Integer maLichTrinh,
             @RequestParam String ngayThamGia) {
-        return ResponseEntity.ok(lichTrinhService.checkAvailableSeats(maLichTrinh, ngayThamGia));
+        try {
+            Object[] result = lichTrinhService.checkAvailableSeats(maLichTrinh, ngayThamGia);
+            
+            if (result != null && result.length > 0) {
+                // Parse result từ stored procedure
+                // sp_KiemTraChoTrong trả về: maLichTrinh, maKhoaHoc, tenKhoaHoc, TongCho, DaDat, ConTrong, TrangThai
+                Integer maLT = result[0] != null ? ((Number) result[0]).intValue() : null;
+                Integer maKH = result[1] != null ? ((Number) result[1]).intValue() : null;
+                String tenKH = result[2] != null ? result[2].toString() : null;
+                Integer tongCho = result[3] != null ? ((Number) result[3]).intValue() : 0;
+                Integer daDat = result[4] != null ? ((Number) result[4]).intValue() : 0;
+                Integer conTrong = result[5] != null ? ((Number) result[5]).intValue() : 0;
+                String trangThai = result[6] != null ? result[6].toString() : "Không xác định";
+                
+                CheckSeatsResponse response = new CheckSeatsResponse(
+                    true,
+                    "Kiểm tra chỗ trống thành công",
+                    maLT, maKH, tenKH, tongCho, daDat, conTrong, trangThai
+                );
+                
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.ok(new CheckSeatsResponse(false, "Không tìm thấy thông tin lịch trình"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok(new CheckSeatsResponse(false, "Lỗi: " + e.getMessage()));
+        }
     }
 }
