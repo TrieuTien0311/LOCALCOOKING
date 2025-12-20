@@ -25,8 +25,13 @@ public class DatLich {
     @Column(name = "maLichTrinh", nullable = false)
     private Integer maLichTrinh;
     
+<<<<<<< HEAD
     @Column(name = "ngayThamGia", nullable = false)
     private LocalDate ngayThamGia;
+=======
+    @Column(name = "ngayThamGia")
+    private java.time.LocalDate ngayThamGia;
+>>>>>>> 98267840acf8e9d169f6c90ae9ada15bdf33cfcc
     
     @Column(name = "soLuongNguoi")
     private Integer soLuongNguoi = 1;
@@ -52,6 +57,7 @@ public class DatLich {
     @Column(name = "ghiChu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
     
+<<<<<<< HEAD
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maHocVien", insertable = false, updatable = false)
@@ -60,4 +66,11 @@ public class DatLich {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maLichTrinh", insertable = false, updatable = false)
     private LichTrinhLopHoc lichTrinh;
+=======
+    @Column(name = "maUuDai")
+    private Integer maUuDai;
+    
+    @Column(name = "soTienGiam", precision = 10, scale = 2)
+    private java.math.BigDecimal soTienGiam;
+>>>>>>> 98267840acf8e9d169f6c90ae9ada15bdf33cfcc
 }
