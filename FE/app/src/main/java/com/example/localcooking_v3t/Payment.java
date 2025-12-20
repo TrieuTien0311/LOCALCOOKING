@@ -45,7 +45,7 @@ public class Payment extends AppCompatActivity {
     private ShapeableImageView imgMonAn;
     private TextView txtTenLop, txtGiaTien, txtSoLuongDat, txtThoiGian, txtNgay, txtDiaDiem;
     private TextView txtTongTien, txtTongTien_CTiet, txtTongThanhToan, txtTienGiam;
-    private TextView txtVoucherName;
+    private TextView txtVoucherName; // Sử dụng txtChonUuDai trong layout
     private Button btnConfirmPayment;
     private ImageView btnBack;
     private RadioGroup rdGroupPayment;
@@ -138,12 +138,8 @@ public class Payment extends AppCompatActivity {
         idEmail = findViewById(R.id.idEmail);
         idPhone = findViewById(R.id.idPhone);
 
-        // Tìm TextView hiển thị tên voucher (nếu có trong layout)
-        try {
-            txtVoucherName = findViewById(R.id.txtVoucherName);
-        } catch (Exception e) {
-            // View không tồn tại
-        }
+        // Sử dụng txtChonUuDai để hiển thị tên voucher đã chọn
+        txtVoucherName = findViewById(R.id.txtChonUuDai);
     }
 
     private void nhanDuLieuTuIntent() {
@@ -233,7 +229,7 @@ public class Payment extends AppCompatActivity {
 
         if (txtTienGiam != null) txtTienGiam.setText("-0đ");
         if (txtTongThanhToan != null) txtTongThanhToan.setText(formatTien(tongTien) + "đ");
-        if (txtVoucherName != null) txtVoucherName.setText("Thêm ưu đãi");
+        if (txtVoucherName != null) txtVoucherName.setText("Chọn để khám phá nhiều ưu đãi");
     }
 
     private void xuLySuKien() {

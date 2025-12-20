@@ -3,6 +3,7 @@ package com.android.be.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,6 @@ import com.android.be.repository.ThongBaoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,7 +41,6 @@ public class ThongBaoSchedulerService {
      * Tạo thông báo nhắc nhở cho các lớp học diễn ra vào ngày mai
      */
     @Scheduled(cron = "0 0 8 * * *") // 8:00 AM mỗi ngày
-    @Transactional
     public void taoThongBaoTruoc1Ngay() {
         try {
             logger.info("Bắt đầu tạo thông báo nhắc nhở trước 1 ngày...");
@@ -68,34 +67,38 @@ public class ThongBaoSchedulerService {
             
             int count = 0;
             for (Object[] row : results) {
-                Integer maHocVien = (Integer) row[0];
-                String tenKhoaHoc = (String) row[1];
-                LocalDate ngayThamGia = ((java.sql.Date) row[2]).toLocalDate();
-                LocalTime gioBatDau = ((java.sql.Time) row[3]).toLocalTime();
-                String diaDiem = (String) row[4];
-                String hinhAnh = (String) row[5];
-                
-                logger.info("Xử lý: User {}, Khóa học: {}", maHocVien, tenKhoaHoc);
-                
-                // Kiểm tra đã có thông báo chưa
-                if (!daCoThongBaoNhacNho1Ngay(maHocVien, tenKhoaHoc)) {
-                    ThongBao tb = new ThongBao();
-                    tb.setMaNguoiNhan(maHocVien);
-                    tb.setTieuDe("🔔 Lớp học sắp diễn ra");
-                    tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ diễn ra vào ngày mai (" +
-                            ngayThamGia.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                            ") lúc " + gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
-                            " tại " + diaDiem + ". Hãy chuẩn bị sẵn sàng nhé!");
-                    tb.setLoaiThongBao("NhacNho");
-                    tb.setHinhAnh(hinhAnh);
-                    tb.setDaDoc(false);
-                    tb.setNgayTao(LocalDateTime.now());
+                try {
+                    Integer maHocVien = (Integer) row[0];
+                    String tenKhoaHoc = (String) row[1];
+                    LocalDate ngayThamGia = ((java.sql.Date) row[2]).toLocalDate();
+                    LocalTime gioBatDau = ((java.sql.Time) row[3]).toLocalTime();
+                    String diaDiem = (String) row[4];
+                    String hinhAnh = (String) row[5];
                     
-                    thongBaoRepository.save(tb);
-                    count++;
-                    logger.info("Đã tạo thông báo cho user {}", maHocVien);
-                } else {
-                    logger.info("Đã có thông báo cho user {} hôm nay", maHocVien);
+                    logger.info("Xử lý: User {}, Khóa học: {}", maHocVien, tenKhoaHoc);
+                    
+                    // Kiểm tra đã có thông báo chưa
+                    if (!daCoThongBaoNhacNho1Ngay(maHocVien, tenKhoaHoc)) {
+                        ThongBao tb = new ThongBao();
+                        tb.setMaNguoiNhan(maHocVien);
+                        tb.setTieuDe("🔔 Lớp học sắp diễn ra");
+                        tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ diễn ra vào ngày mai (" +
+                                ngayThamGia.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
+                                ") lúc " + gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
+                                " tại " + diaDiem + ". Hãy chuẩn bị sẵn sàng nhé!");
+                        tb.setLoaiThongBao("NhacNho");
+                        tb.setHinhAnh(hinhAnh);
+                        tb.setDaDoc(false);
+                        tb.setNgayTao(LocalDateTime.now());
+                        
+                        thongBaoRepository.save(tb);
+                        count++;
+                        logger.info("Đã tạo thông báo cho user {}", maHocVien);
+                    } else {
+                        logger.info("Đã có thông báo cho user {} hôm nay", maHocVien);
+                    }
+                } catch (Exception e) {
+                    logger.error("Lỗi xử lý thông báo cho row: {}", e.getMessage());
                 }
             }
             
@@ -111,14 +114,15 @@ public class ThongBaoSchedulerService {
      * Tạo thông báo nhắc nhở cho các lớp học bắt đầu trong 30 phút tới
      */
     @Scheduled(fixedRate = 300000) // 5 phút = 300,000 ms
-    @Transactional
     public void taoThongBaoTruoc30Phut() {
         try {
             LocalDate homNay = LocalDate.now();
             java.sql.Date sqlDate = java.sql.Date.valueOf(homNay);
             LocalTime gioHienTai = LocalTime.now();
-            LocalTime gioSau25Phut = gioHienTai.plusMinutes(25);
-            LocalTime gioSau35Phut = gioHienTai.plusMinutes(35);
+            
+            // Format thời gian thành chuỗi HH:mm:ss để so sánh trong SQL Server
+            String gioSau25Phut = gioHienTai.plusMinutes(25).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            String gioSau35Phut = gioHienTai.plusMinutes(35).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
             
             String sql = "SELECT DISTINCT d.maHocVien, kh.tenKhoaHoc, " +
                         "lt.gioBatDau, lt.diaDiem, kh.hinhAnh " +
@@ -127,8 +131,8 @@ public class ThongBaoSchedulerService {
                         "JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc " +
                         "WHERE d.ngayThamGia = ?1 " +
                         "AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành') " +
-                        "AND lt.gioBatDau >= ?2 " +
-                        "AND lt.gioBatDau <= ?3";
+                        "AND lt.gioBatDau >= CAST(?2 AS TIME) " +
+                        "AND lt.gioBatDau <= CAST(?3 AS TIME)";
             
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter(1, sqlDate);
@@ -140,27 +144,31 @@ public class ThongBaoSchedulerService {
             
             int count = 0;
             for (Object[] row : results) {
-                Integer maHocVien = (Integer) row[0];
-                String tenKhoaHoc = (String) row[1];
-                LocalTime gioBatDau = ((java.sql.Time) row[2]).toLocalTime();
-                String diaDiem = (String) row[3];
-                String hinhAnh = (String) row[4];
-                
-                // Kiểm tra đã có thông báo chưa
-                if (!daCoThongBaoNhacNho30Phut(maHocVien, tenKhoaHoc)) {
-                    ThongBao tb = new ThongBao();
-                    tb.setMaNguoiNhan(maHocVien);
-                    tb.setTieuDe("⏰ Còn 30 phút nữa!");
-                    tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ bắt đầu lúc " +
-                            gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
-                            " tại " + diaDiem + ". Hãy đến đúng giờ nhé!");
-                    tb.setLoaiThongBao("NhacNho");
-                    tb.setHinhAnh(hinhAnh);
-                    tb.setDaDoc(false);
-                    tb.setNgayTao(LocalDateTime.now());
+                try {
+                    Integer maHocVien = (Integer) row[0];
+                    String tenKhoaHoc = (String) row[1];
+                    LocalTime gioBatDau = ((java.sql.Time) row[2]).toLocalTime();
+                    String diaDiem = (String) row[3];
+                    String hinhAnh = (String) row[4];
                     
-                    thongBaoRepository.save(tb);
-                    count++;
+                    // Kiểm tra đã có thông báo chưa
+                    if (!daCoThongBaoNhacNho30Phut(maHocVien, tenKhoaHoc)) {
+                        ThongBao tb = new ThongBao();
+                        tb.setMaNguoiNhan(maHocVien);
+                        tb.setTieuDe("⏰ Còn 30 phút nữa!");
+                        tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ bắt đầu lúc " +
+                                gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
+                                " tại " + diaDiem + ". Hãy đến đúng giờ nhé!");
+                        tb.setLoaiThongBao("NhacNho");
+                        tb.setHinhAnh(hinhAnh);
+                        tb.setDaDoc(false);
+                        tb.setNgayTao(LocalDateTime.now());
+                        
+                        thongBaoRepository.save(tb);
+                        count++;
+                    }
+                } catch (Exception e) {
+                    logger.error("Lỗi xử lý thông báo 30 phút: {}", e.getMessage());
                 }
             }
             
