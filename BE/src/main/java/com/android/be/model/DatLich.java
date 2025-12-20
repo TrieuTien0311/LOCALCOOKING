@@ -21,8 +21,11 @@ public class DatLich {
     @Column(name = "maHocVien", nullable = false)
     private Integer maHocVien;
     
-    @Column(name = "maLopHoc", nullable = false)
-    private Integer maLopHoc;
+    @Column(name = "maLichTrinh", nullable = false)
+    private Integer maLichTrinh;
+    
+    @Column(name = "ngayThamGia")
+    private java.time.LocalDate ngayThamGia;
     
     @Column(name = "soLuongNguoi")
     private Integer soLuongNguoi = 1;
@@ -47,4 +50,10 @@ public class DatLich {
     
     @Column(name = "ghiChu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
+    
+    @Column(name = "maUuDai")
+    private Integer maUuDai;
+    
+    @Column(name = "soTienGiam", precision = 10, scale = 2)
+    private java.math.BigDecimal soTienGiam;
 }

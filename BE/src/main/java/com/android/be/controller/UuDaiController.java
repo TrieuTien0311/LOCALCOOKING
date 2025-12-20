@@ -1,5 +1,7 @@
 package com.android.be.controller;
 
+import com.android.be.dto.ApDungUuDaiRequest;
+import com.android.be.dto.ApDungUuDaiResponse;
 import com.android.be.dto.UuDaiDTO;
 import com.android.be.model.UuDai;
 import com.android.be.service.UuDaiService;
@@ -44,5 +46,36 @@ public class UuDaiController {
     public ResponseEntity<Void> deleteUuDai(@PathVariable Integer id) {
         uuDaiService.deleteUuDai(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    /**
+     * Lấy danh sách ưu đãi khả dụng cho user
+     * GET /api/uudai/available?maHocVien=1&soLuongNguoi=5
+     */
+    @GetMapping("/available")
+    public ResponseEntity<List<UuDaiDTO>> getAvailableUuDai(
+            @RequestParam Integer maHocVien,
+            @RequestParam(defaultValue = "1") Integer soLuongNguoi) {
+        return ResponseEntity.ok(uuDaiService.getAvailableUuDaiForUser(maHocVien, soLuongNguoi));
+    }
+    
+    /**
+     * Áp dụng mã ưu đãi và tính toán giảm giá
+     * POST /api/uudai/apply
+     */
+    @PostMapping("/apply")
+    public ResponseEntity<ApDungUuDaiResponse> apDungUuDai(@RequestBody ApDungUuDaiRequest request) {
+        ApDungUuDaiResponse response = uuDaiService.apDungUuDai(request);
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Xác nhận sử dụng mã ưu đãi (gọi sau khi thanh toán thành công)
+     * POST /api/uudai/confirm/{maUuDai}
+     */
+    @PostMapping("/confirm/{maUuDai}")
+    public ResponseEntity<?> confirmUuDai(@PathVariable Integer maUuDai) {
+        uuDaiService.tangSoLuongDaSuDung(maUuDai);
+        return ResponseEntity.ok().build();
     }
 }

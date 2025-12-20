@@ -15,7 +15,7 @@ public class DatLichMapper {
         DatLichDTO dto = new DatLichDTO();
         dto.setMaDatLich(datLich.getMaDatLich());
         dto.setMaHocVien(datLich.getMaHocVien());
-        dto.setMaLopHoc(datLich.getMaLopHoc());
+        dto.setMaLichTrinh(datLich.getMaLichTrinh());
         dto.setSoLuongNguoi(datLich.getSoLuongNguoi());
         dto.setTongTien(datLich.getTongTien() != null ? datLich.getTongTien().doubleValue() : null);
         dto.setTenNguoiDat(datLich.getTenNguoiDat());

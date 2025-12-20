@@ -27,6 +27,9 @@ import com.example.localcooking_v3t.model.VerifyOtpResponse;
 import com.example.localcooking_v3t.model.ThongBaoDTO;
 import com.example.localcooking_v3t.model.UnreadCountResponse;
 import com.example.localcooking_v3t.model.MessageResponse;
+import com.example.localcooking_v3t.model.UuDaiDTO;
+import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
+import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
 
 import java.util.List;
 
@@ -151,5 +154,30 @@ public interface ApiService {
     // Xóa tất cả thông báo đã đọc
     @DELETE("api/thongbao/user/{maNguoiNhan}/delete-read")
     Call<MessageResponse> deleteAllReadNotifications(@Path("maNguoiNhan") Integer maNguoiNhan);
+
+    // ========== API ƯU ĐÃI ==========
+
+    // Lấy tất cả ưu đãi
+    @GET("api/uudai")
+    Call<List<UuDaiDTO>> getAllUuDai();
+
+    // Lấy ưu đãi theo ID
+    @GET("api/uudai/{id}")
+    Call<UuDaiDTO> getUuDaiById(@Path("id") Integer id);
+
+    // Lấy danh sách ưu đãi khả dụng cho user
+    @GET("api/uudai/available")
+    Call<List<UuDaiDTO>> getAvailableUuDai(
+            @Query("maHocVien") Integer maHocVien,
+            @Query("soLuongNguoi") Integer soLuongNguoi
+    );
+
+    // Áp dụng mã ưu đãi
+    @POST("api/uudai/apply")
+    Call<ApDungUuDaiResponse> apDungUuDai(@Body ApDungUuDaiRequest request);
+
+    // Xác nhận sử dụng mã ưu đãi (sau khi thanh toán thành công)
+    @POST("api/uudai/confirm/{maUuDai}")
+    Call<Void> confirmUuDai(@Path("maUuDai") Integer maUuDai);
 
 }

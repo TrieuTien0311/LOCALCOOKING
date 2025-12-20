@@ -15,7 +15,7 @@ USE DatLichHocNauAn;
 GO
 
 ---------------------------------------------------------------------
--- PHẦN 2: TẠO CẤU TRÚC BẢNG (ĐÃ TỐI ƯU)
+-- PHẦN 2: TẠO CẤU TRÚC BẢNG
 ---------------------------------------------------------------------
 
 -- 1. NGƯỜI DÙNG
@@ -130,39 +130,7 @@ CREATE TABLE HinhAnhKhoaHoc (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
 );
 
--- 10. ĐẶT LỊCH
-CREATE TABLE DatLich (
-    maDatLich INT PRIMARY KEY IDENTITY(1,1),
-    maHocVien INT NOT NULL,
-    maLichTrinh INT NOT NULL,
-    ngayThamGia DATE NOT NULL,
-    
-    soLuongNguoi INT DEFAULT 1,
-    tongTien DECIMAL(10,2),
-    tenNguoiDat NVARCHAR(100),
-    emailNguoiDat VARCHAR(100),
-    sdtNguoiDat VARCHAR(15),
-    ngayDat DATETIME DEFAULT GETDATE(),
-    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
-    ghiChu NVARCHAR(MAX),
-    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
-    FOREIGN KEY (maLichTrinh) REFERENCES LichTrinhLopHoc(maLichTrinh)
-);
-
--- 11. THANH TOÁN
-CREATE TABLE ThanhToan (
-    maThanhToan INT PRIMARY KEY IDENTITY(1,1),
-    maDatLich INT NOT NULL,
-    soTien DECIMAL(10,2) NOT NULL,
-    phuongThuc NVARCHAR(30) NOT NULL,
-    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
-    ngayThanhToan DATETIME,
-    maGiaoDich VARCHAR(100),
-    ghiChu NVARCHAR(MAX),
-    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
-);
-
--- 12. ĐÁNH GIÁ
+-- 10. ĐÁNH GIÁ
 CREATE TABLE DanhGia (
     maDanhGia INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -174,7 +142,7 @@ CREATE TABLE DanhGia (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
 );
 
--- 13. THÔNG BÁO
+-- 11. THÔNG BÁO
 CREATE TABLE ThongBao (
     maThongBao INT PRIMARY KEY IDENTITY(1,1),
     maNguoiNhan INT,
@@ -187,7 +155,7 @@ CREATE TABLE ThongBao (
     FOREIGN KEY (maNguoiNhan) REFERENCES NguoiDung(maNguoiDung)
 );
 
--- 14. YÊU THÍCH
+-- 12. YÊU THÍCH
 CREATE TABLE YeuThich (
     maYeuThich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -198,7 +166,7 @@ CREATE TABLE YeuThich (
     CONSTRAINT UQ_YeuThich UNIQUE (maHocVien, maKhoaHoc)
 );
 
--- 15. ƯU ĐÃI
+-- 13. ƯU ĐÃI
 CREATE TABLE UuDai (
     maUuDai INT PRIMARY KEY IDENTITY(1,1),
     maCode VARCHAR(50) UNIQUE NOT NULL,
@@ -209,11 +177,48 @@ CREATE TABLE UuDai (
     giamToiDa DECIMAL(10,2),
     soLuong INT,
     soLuongDaSuDung INT DEFAULT 0,
+	loaiUuDai NVARCHAR(50) NULL,
+	dieuKienSoLuong INT NULL,
     ngayBatDau DATE NOT NULL,
     ngayKetThuc DATE NOT NULL,
     hinhAnh VARCHAR(255),
     trangThai NVARCHAR(20) DEFAULT N'Hoạt Động',
     ngayTao DATETIME DEFAULT GETDATE()
+);
+
+-- 14. ĐẶT LỊCH
+CREATE TABLE DatLich (
+    maDatLich INT PRIMARY KEY IDENTITY(1,1),
+    maHocVien INT NOT NULL,
+    maLichTrinh INT NOT NULL,
+    ngayThamGia DATE NOT NULL,
+    
+    soLuongNguoi INT DEFAULT 1,
+    tongTien DECIMAL(10,2),
+    tenNguoiDat NVARCHAR(100),
+    emailNguoiDat VARCHAR(100),
+    sdtNguoiDat VARCHAR(15),
+    ngayDat DATETIME DEFAULT GETDATE(),
+	maUuDai INT NULL,
+	soTienGiam DECIMAL(10,2) NULL,
+    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
+    ghiChu NVARCHAR(MAX),
+    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
+    FOREIGN KEY (maLichTrinh) REFERENCES LichTrinhLopHoc(maLichTrinh),
+	FOREIGN KEY (maUuDai) REFERENCES UuDai(maUuDai)
+);
+
+-- 15. THANH TOÁN
+CREATE TABLE ThanhToan (
+    maThanhToan INT PRIMARY KEY IDENTITY(1,1),
+    maDatLich INT NOT NULL,
+    soTien DECIMAL(10,2) NOT NULL,
+    phuongThuc NVARCHAR(30) NOT NULL,
+    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
+    ngayThanhToan DATETIME,
+    maGiaoDich VARCHAR(100),
+    ghiChu NVARCHAR(MAX),
+    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
 );
 
 -- 16. LỊCH SỬ ƯU ĐÃI
@@ -543,7 +548,7 @@ GO
 INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, gioiTinh, diaChi, vaiTro, trangThai) VALUES
 (N'admin', N'admin123', N'Quản Trị Viên', N'admin@localcooking.vn', N'0901234567', N'Nam', N'123 Nguyễn Huệ, Q1, TP.HCM', N'Admin', N'HoatDong'),
 (N'VanAn', N'gv123', N'Nguyễn Văn An', N'nguyenvanan@gmail.com', N'0912345678', N'Nam', N'456 Lê Lợi, Q1, TP.HCM', N'GiaoVien', N'HoatDong'),
-(N'ThiBinh', N'gv123', N'Trần Thị Bình', N'tranthibinh@gmail.com', N'0923456789', N'Nữ', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
+(N'AnhThu', N'gv123', N'Nguyễn Hoàng Anh Thư', N'nguyenthu2018dn@gmail.com', N'0923456789', N'Nữ', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'ThaoVy', N'hv123', N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'Nữ', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'TrieuTien', N'hv123', N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'Nam', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'ThiThuong', N'hv123', N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Nữ', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
@@ -843,14 +848,15 @@ INSERT INTO DatLich (maHocVien, maLichTrinh, ngayThamGia, soLuongNguoi, tongTien
 (6, 9, '2025-12-22', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
 
 -- 10. ƯU ĐÃI
-INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, giamToiDa, soLuong, ngayBatDau, ngayKetThuc, hinhAnh) VALUES
-('GIAM50K', N'Giảm 50k cho thành viên mới', N'Áp dụng cho đơn hàng từ 500k', 'SoTien', 50000, 50000, 100, '2025-01-01', '2025-12-31', 'uudai1.jpg'),
-('GIAM10%', N'Giảm 10% mùa lễ hội', N'Giảm tối đa 100k', 'PhanTram', 10, 100000, 50, '2025-12-01', '2025-12-31', 'uudai2.jpg'),
-('FREESHIP', N'Miễn phí tài liệu', N'Tặng bộ tài liệu công thức', 'SoTien', 0, 0, 200, '2025-01-01', '2025-06-30', 'uudai3.jpg');
+INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, ngayKetThuc, trangThai, loaiUuDai, dieuKienSoLuong, hinhAnh) VALUES 
+('KHACHHANGMOI', N'Ưu đãi tài khoản mới', N'Giảm 30% cho đơn hàng đầu tiên', 'PhanTram', 30, '2024-01-01', '2025-12-31', N'Hoạt Động', 'NEWUSER', NULL, 'uudai1.jpg'),
+('THAMGIANHOM', N'Ưu đãi nhóm', N'Giảm 20% khi đặt từ 5 người', 'PhanTram', 20, '2024-01-01', '2025-12-31', N'Hoạt Động', 'GROUP', 5, 'uudai2.jpg');
 
 PRINT N'✓ Đã thực thi xong!';
 GO
+
 select * from GiaoVien
 select * from NguoiDung
 select * from DatLich
 select * from KhoaHoc
+SELECT * FROM UuDai;
