@@ -46,7 +46,25 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.NoticeVi
         holder.txtTitleTB.setText(notice.getTieuDeTB());
         holder.txtNoiDungTB.setText(notice.getNoiDungTB());
         holder.txtThoiGianTB.setText(notice.getThoiGianTB());
-        holder.imgThongBao.setImageResource(notice.getAnhTB());
+
+        // Load ảnh - ưu tiên resource ID, nếu không có thì dùng URL
+        if (notice.getAnhTB() > 0) {
+            // Dùng resource ID (dữ liệu local)
+            holder.imgThongBao.setImageResource(notice.getAnhTB());
+        } else if (notice.getAnhTBUrl() != null && !notice.getAnhTBUrl().isEmpty()) {
+            // Dùng URL từ server - map tên file sang resource
+            String anhUrl = notice.getAnhTBUrl();
+            int resId = getDrawableResourceByName(holder.itemView.getContext(), anhUrl);
+            if (resId != 0) {
+                holder.imgThongBao.setImageResource(resId);
+            } else {
+                // Fallback về ảnh mặc định
+                holder.imgThongBao.setImageResource(R.drawable.logo);
+            }
+        } else {
+            // Ảnh mặc định
+            holder.imgThongBao.setImageResource(R.drawable.logo);
+        }
 
         // Thay đổi màu CardView dựa trên trạng thái
         if (!notice.isTrangThai()) {
@@ -63,12 +81,17 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.NoticeVi
         // Xử lý sự kiện click
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                // Đánh dấu đã đọc khi click
-                notice.setTrangThai(true);
-                notifyItemChanged(position);
                 listener.onItemClick(notice, position);
             }
         });
+    }
+
+    // Helper method để lấy resource ID từ tên file
+    private int getDrawableResourceByName(android.content.Context context, String fileName) {
+        if (fileName == null) return 0;
+        // Loại bỏ extension
+        String name = fileName.replace(".jpg", "").replace(".png", "").replace(".jpeg", "");
+        return context.getResources().getIdentifier(name, "drawable", context.getPackageName());
     }
 
     @Override
