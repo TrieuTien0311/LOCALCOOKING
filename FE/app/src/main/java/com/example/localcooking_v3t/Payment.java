@@ -105,7 +105,6 @@ public class Payment extends AppCompatActivity {
 
         initViews();
         nhanDuLieuTuIntent();
-        capNhatGiaoBan();
         xuLySuKien();
         setupClearFocusOnTouch();
     }
@@ -138,33 +137,150 @@ public class Payment extends AppCompatActivity {
         idEmail = findViewById(R.id.idEmail);
         idPhone = findViewById(R.id.idPhone);
 
-        // Tìm TextView hiển thị tên voucher (nếu có trong layout)
-        try {
-            txtVoucherName = findViewById(R.id.txtVoucherName);
-        } catch (Exception e) {
-            // View không tồn tại
-        }
+        // Sử dụng txtChonUuDai để hiển thị tên voucher
+        txtVoucherName = findViewById(R.id.txtChonUuDai);
     }
 
     private void nhanDuLieuTuIntent() {
-        lopHoc = getIntent().getParcelableExtra("lopHoc");
+        // Nhận các thông tin cơ bản
         soLuongDat = getIntent().getIntExtra("soLuongDat", 1);
         tongTien = getIntent().getDoubleExtra("tongTien", 0);
         tongTienSauGiam = tongTien;
-
-        if (lopHoc == null) {
-            Toast.makeText(this, "Không nhận được thông tin lớp học!", Toast.LENGTH_SHORT).show();
+        
+        // Kiểm tra dữ liệu
+        if (tongTien <= 0) {
+            Toast.makeText(this, "Không nhận được thông tin giá tiền!", Toast.LENGTH_SHORT).show();
             finish();
+            return;
+        }
+        
+        Log.d(TAG, "=== Nhận dữ liệu từ Intent ===");
+        Log.d(TAG, "Số lượng đặt: " + soLuongDat);
+        Log.d(TAG, "Tổng tiền: " + tongTien);
+        
+        // Hiển thị thông tin lên UI
+        hienThiThongTinLopHoc();
+        
+        // Cập nhật phần bottom (tổng tiền)
+        capNhatGiaoBan();
+    }
+    
+    /**
+     * Cập nhật giá ở phần bottom
+     */
+    private void capNhatGiaoBan() {
+        Log.d(TAG, "=== Cập nhật giá bottom ===");
+        Log.d(TAG, "Tổng tiền: " + tongTien);
+        Log.d(TAG, "Tổng tiền sau giảm: " + tongTienSauGiam);
+        
+        // Cập nhật UI với thông tin ban đầu
+        if (txtTongTien != null) {
+            txtTongTien.setText(formatTien(tongTien) + "đ");
+            Log.d(TAG, "Set txtTongTien: " + formatTien(tongTien) + "đ");
+        }
+        
+        if (txtTongTien_CTiet != null) {
+            txtTongTien_CTiet.setText(formatTien(tongTien) + "đ");
+            Log.d(TAG, "Set txtTongTien_CTiet: " + formatTien(tongTien) + "đ");
+        }
+        
+        if (txtTongThanhToan != null) {
+            txtTongThanhToan.setText(formatTien(tongTienSauGiam) + "đ");
+            Log.d(TAG, "Set txtTongThanhToan: " + formatTien(tongTienSauGiam) + "đ");
+        }
+        
+        if (txtTienGiam != null) {
+            txtTienGiam.setText("-0đ");
+        }
+        
+        if (txtSoLuongDat != null) {
+            txtSoLuongDat.setText(String.valueOf(soLuongDat));
         }
     }
-
-    private void capNhatGiaoBan() {
-        // Cập nhật UI với thông tin ban đầu
-        if (txtTongTien != null) txtTongTien.setText(formatTien(tongTien) + "đ");
-        if (txtTongTien_CTiet != null) txtTongTien_CTiet.setText(formatTien(tongTien) + "đ");
-        if (txtTongThanhToan != null) txtTongThanhToan.setText(formatTien(tongTien) + "đ");
-        if (txtTienGiam != null) txtTienGiam.setText("-0đ");
-        if (txtSoLuongDat != null) txtSoLuongDat.setText(String.valueOf(soLuongDat));
+    
+    /**
+     * Hiển thị thông tin lớp học lên UI
+     */
+    private void hienThiThongTinLopHoc() {
+        // Tên lớp học
+        if (txtTenLop != null) {
+            String tenKhoaHoc = getIntent().getStringExtra("tenKhoaHoc");
+            if (tenKhoaHoc != null) {
+                txtTenLop.setText(tenKhoaHoc);
+            }
+        }
+        
+        // Giá tiền (đơn giá)
+        if (txtGiaTien != null) {
+            double giaDonVi = tongTien / soLuongDat;
+            txtGiaTien.setText(formatTien(giaDonVi) + "đ");
+        }
+        
+        // Số lượng
+        if (txtSoLuongDat != null) {
+            txtSoLuongDat.setText(String.valueOf(soLuongDat));
+        }
+        
+        // Thời gian
+        if (txtThoiGian != null) {
+            String thoiGian = getIntent().getStringExtra("thoiGian");
+            if (thoiGian != null) {
+                txtThoiGian.setText(thoiGian);
+            }
+        }
+        
+        // Ngày tham gia
+        if (txtNgay != null) {
+            String ngayThamGia = getIntent().getStringExtra("ngayThamGia");
+            if (ngayThamGia != null) {
+                txtNgay.setText(formatNgay(ngayThamGia));
+            }
+        }
+        
+        // Địa điểm
+        if (txtDiaDiem != null) {
+            String diaDiem = getIntent().getStringExtra("diaDiem");
+            if (diaDiem != null) {
+                txtDiaDiem.setText(diaDiem);
+            }
+        }
+        
+        // Hình ảnh
+        if (imgMonAn != null) {
+            String hinhAnh = getIntent().getStringExtra("hinhAnh");
+            if (hinhAnh != null && !hinhAnh.isEmpty()) {
+                // Loại bỏ extension
+                String name = hinhAnh.replace(".png", "").replace(".jpg", "");
+                // Lấy resource ID
+                int resId = getResources().getIdentifier(name, "drawable", getPackageName());
+                if (resId != 0) {
+                    imgMonAn.setImageResource(resId);
+                } else {
+                    // Hình mặc định
+                    imgMonAn.setImageResource(getResources().getIdentifier("phobo", "drawable", getPackageName()));
+                }
+            }
+        }
+        
+        Log.d(TAG, "Hiển thị thông tin lớp học:");
+        Log.d(TAG, "- Tên: " + getIntent().getStringExtra("tenKhoaHoc"));
+        Log.d(TAG, "- Số lượng: " + soLuongDat);
+        Log.d(TAG, "- Tổng tiền: " + tongTien);
+    }
+    
+    /**
+     * Format ngày từ "2025-12-25" sang "25/12/2025"
+     */
+    private String formatNgay(String ngayStr) {
+        try {
+            String[] parts = ngayStr.split("-");
+            if (parts.length == 3) {
+                return parts[2] + "/" + parts[1] + "/" + parts[0];
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error formatting date: " + e.getMessage());
+        }
+        return ngayStr;
     }
 
     private void apDungMaUuDai(String maCode) {
@@ -233,7 +349,7 @@ public class Payment extends AppCompatActivity {
 
         if (txtTienGiam != null) txtTienGiam.setText("-0đ");
         if (txtTongThanhToan != null) txtTongThanhToan.setText(formatTien(tongTien) + "đ");
-        if (txtVoucherName != null) txtVoucherName.setText("Thêm ưu đãi");
+        if (txtVoucherName != null) txtVoucherName.setText("Chọn để khám phá nhiều ưu đãi");
     }
 
     private void xuLySuKien() {

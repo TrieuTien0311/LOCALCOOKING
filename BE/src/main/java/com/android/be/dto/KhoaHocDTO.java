@@ -21,6 +21,10 @@ public class KhoaHocDTO {
     private Float saoTrungBinh;
     private Boolean coUuDai;
     
+    // Thông tin ưu đãi (tự động tính toán khi coUuDai = true)
+    private Double phanTramGiam;
+    private BigDecimal giaSauGiam;
+    
     // Thông tin lịch trình
     private List<LichTrinhLopHocDTO> lichTrinhList;
     

@@ -15,8 +15,7 @@ public class DatLichMapper {
         DatLichDTO dto = new DatLichDTO();
         dto.setMaDatLich(datLich.getMaDatLich());
         dto.setMaHocVien(datLich.getMaHocVien());
-<<<<<<< HEAD
-        
+
         // Get maKhoaHoc from LichTrinhLopHoc relationship
         if (datLich.getLichTrinh() != null) {
             dto.setMaLopHoc(datLich.getLichTrinh().getMaKhoaHoc());
@@ -28,9 +27,7 @@ public class DatLichMapper {
             }
         }
         
-=======
         dto.setMaLichTrinh(datLich.getMaLichTrinh());
->>>>>>> 98267840acf8e9d169f6c90ae9ada15bdf33cfcc
         dto.setSoLuongNguoi(datLich.getSoLuongNguoi());
         dto.setTongTien(datLich.getTongTien() != null ? datLich.getTongTien().doubleValue() : null);
         dto.setTenNguoiDat(datLich.getTenNguoiDat());

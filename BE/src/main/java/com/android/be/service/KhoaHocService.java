@@ -10,6 +10,7 @@ import com.android.be.repository.KhoaHocRepository;
 import com.android.be.repository.LichTrinhLopHocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -145,6 +146,11 @@ public class KhoaHocService {
         dto.setSaoTrungBinh(khoaHoc.getSaoTrungBinh());
         dto.setCoUuDai(khoaHoc.getCoUuDai());
         
+        // Tính toán thông tin ưu đãi nếu khóa học có ưu đãi
+        if (Boolean.TRUE.equals(khoaHoc.getCoUuDai())) {
+            tinhToanUuDai(dto, khoaHoc.getGiaTien());
+        }
+        
         // Lấy danh sách lịch trình
         List<LichTrinhLopHoc> lichTrinhs = lichTrinhRepository.findByMaKhoaHoc(khoaHoc.getMaKhoaHoc());
         dto.setLichTrinhList(lichTrinhs.stream()
@@ -156,6 +162,28 @@ public class KhoaHocService {
         dto.setDanhMucMonAnList(danhMucMonAnList);
         
         return dto;
+    }
+    
+    /**
+     * Tính toán phần trăm giảm và giá sau giảm cho khóa học có ưu đãi
+     * Cố định giảm 10%
+     */
+    private void tinhToanUuDai(KhoaHocDTO dto, BigDecimal giaTien) {
+        // Cố định phần trăm giảm là 10%
+        double phanTramGiam = 10.0;
+        
+        // Tính số tiền giảm = giá tiền * 10%
+        BigDecimal soTienGiam = giaTien.multiply(BigDecimal.valueOf(phanTramGiam))
+                .divide(BigDecimal.valueOf(100), 0, java.math.RoundingMode.HALF_UP);
+        
+        // Tính giá sau giảm
+        BigDecimal giaSauGiam = giaTien.subtract(soTienGiam);
+        if (giaSauGiam.compareTo(BigDecimal.ZERO) < 0) {
+            giaSauGiam = BigDecimal.ZERO;
+        }
+        
+        dto.setPhanTramGiam(phanTramGiam);
+        dto.setGiaSauGiam(giaSauGiam);
     }
     
     private LichTrinhLopHocDTO convertLichTrinhToDTO(LichTrinhLopHoc lichTrinh) {

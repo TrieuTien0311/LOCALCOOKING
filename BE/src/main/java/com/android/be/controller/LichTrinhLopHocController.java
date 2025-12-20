@@ -34,8 +34,21 @@ public class LichTrinhLopHocController {
     
     // GET - Lấy lịch trình theo ID với thông tin đầy đủ (DTO có số chỗ trống)
     @GetMapping("/{id}/detail")
-    public ResponseEntity<LichTrinhLopHocDTO> getLichTrinhDetailById(@PathVariable Integer id) {
-        return lichTrinhService.getLichTrinhDTOById(id)
+    public ResponseEntity<LichTrinhLopHocDTO> getLichTrinhDetailById(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String ngayThamGia) {
+        
+        // Parse ngày tham gia nếu có
+        java.time.LocalDate ngay = null;
+        if (ngayThamGia != null && !ngayThamGia.isEmpty()) {
+            try {
+                ngay = java.time.LocalDate.parse(ngayThamGia);
+            } catch (Exception e) {
+                // Nếu parse lỗi, để null (sẽ dùng ngày mai)
+            }
+        }
+        
+        return lichTrinhService.getLichTrinhDTOById(id, ngay)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

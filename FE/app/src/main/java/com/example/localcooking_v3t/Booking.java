@@ -213,13 +213,14 @@ public class Booking extends AppCompatActivity {
             loadKhoaHocData();
         }
         
-        // 2. Lấy thông tin lịch trình với số chỗ trống
-        apiService.getLichTrinhDetailById(maLichTrinh).enqueue(new Callback<LichTrinhLopHoc>() {
+        // 2. Lấy thông tin lịch trình với số chỗ trống cho ngày cụ thể
+        apiService.getLichTrinhDetailById(maLichTrinh, ngayThamGia).enqueue(new Callback<LichTrinhLopHoc>() {
             @Override
             public void onResponse(Call<LichTrinhLopHoc> call, Response<LichTrinhLopHoc> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     lichTrinhLopHoc = response.body();
                     Log.d("BOOKING_API", "Loaded LichTrinh: " + lichTrinhLopHoc.getMaLichTrinh());
+                    Log.d("BOOKING_API", "Ngày tham gia: " + ngayThamGia);
                     
                     // Cập nhật thông tin từ API nếu chưa có
                     if (thoiGian == null || thoiGian.isEmpty()) {
@@ -229,10 +230,10 @@ public class Booking extends AppCompatActivity {
                         diaDiem = lichTrinhLopHoc.getDiaDiem();
                     }
                     
-                    // Lấy số chỗ trống từ API
+                    // Lấy số chỗ trống từ API (đã tính cho ngày cụ thể)
                     if (lichTrinhLopHoc.getConTrong() != null) {
                         soLuongConLai = lichTrinhLopHoc.getConTrong();
-                        Log.d("BOOKING_API", "Số chỗ còn trống từ API: " + soLuongConLai);
+                        Log.d("BOOKING_API", "Số chỗ còn trống cho ngày " + ngayThamGia + ": " + soLuongConLai);
                     }
                     
                     // 3. Load thông tin giáo viên
@@ -285,9 +286,15 @@ public class Booking extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     khoaHoc = response.body();
                     Log.d("BOOKING_API", "Loaded KhoaHoc: " + khoaHoc.getTenKhoaHoc());
+                    Log.d("BOOKING_API", "coUuDai: " + khoaHoc.getCoUuDai());
+                    Log.d("BOOKING_API", "phanTramGiam: " + khoaHoc.getPhanTramGiam());
+                    Log.d("BOOKING_API", "giaSauGiam: " + khoaHoc.getGiaSauGiam());
                     
                     // Hiển thị thông tin khóa học lên UI
                     displayKhoaHocInfo();
+                    
+                    // GỌI LẠI displayBookingInfo() để cập nhật giá với thông tin ưu đãi
+                    displayBookingInfo();
                 } else {
                     Log.e("BOOKING_API", "Error loading KhoaHoc: " + response.code());
                 }
@@ -396,12 +403,11 @@ public class Booking extends AppCompatActivity {
     private void updateUI() {
         txtSoLuongDat.setText(String.valueOf(soLuong));
         
-        // Hiển thị số chỗ còn trống và tổng số chỗ
-        if (lichTrinhLopHoc != null && lichTrinhLopHoc.getSoLuongToiDa() != null) {
-            int soLuongToiDa = lichTrinhLopHoc.getSoLuongToiDa();
-            txtGioiHan.setText("Còn " + soLuongConLai + "/" + soLuongToiDa + " suất");
+        // Hiển thị số chỗ còn trống (không phải tổng số chỗ)
+        if (soLuongConLai > 0) {
+            txtGioiHan.setText("Tối đa " + soLuongConLai + " người");
         } else {
-            txtGioiHan.setText("Còn " + soLuongConLai + " suất");
+            txtGioiHan.setText("Hết chỗ");
         }
     }
     
@@ -453,10 +459,106 @@ public class Booking extends AppCompatActivity {
             txtTenLop.setText(tenKhoaHoc);
         }
         
-        // Giá tiền
+        // Xử lý hiển thị giá với ưu đãi
         TextView txtGiaTien = findViewById(R.id.txt_GiaTien_DL);
-        if (txtGiaTien != null && giaTien != null) {
-            txtGiaTien.setText(formatCurrency(giaTien));
+        TextView txtGiaCu = findViewById(R.id.txt_GiaCu_DL);
+        Button tagGiamGia = findViewById(R.id.tagGiamGia);
+        View gachChan = findViewById(R.id.gachChan);
+        
+        // Kiểm tra coUuDai từ KhoaHoc (đã load từ API)
+        boolean coUuDai = (khoaHoc != null && khoaHoc.getCoUuDai() != null && khoaHoc.getCoUuDai());
+        
+        Log.d("BOOKING_UI", "=== Hiển thị giá ===");
+        Log.d("BOOKING_UI", "coUuDai: " + coUuDai);
+        Log.d("BOOKING_UI", "giaTien gốc: " + (giaTien != null ? giaTien.toString() : "null"));
+        
+        if (coUuDai) {
+            // CÓ ƯU ĐÃI (coUuDai = 1): Hiển thị tag giảm giá, giá cũ gạch ngang, giá sau giảm
+            
+            Log.d("BOOKING_UI", "Có ưu đãi - hiển thị giá giảm");
+            
+            // Tính giá sau giảm và phần trăm giảm
+            BigDecimal giaSauGiam = giaTien;
+            Double phanTramGiam = null;
+            
+            // Ưu tiên lấy từ backend
+            if (khoaHoc.getGiaSauGiam() != null) {
+                giaSauGiam = BigDecimal.valueOf(khoaHoc.getGiaSauGiam());
+                Log.d("BOOKING_UI", "Giá sau giảm từ backend: " + giaSauGiam);
+                
+                // Tính phần trăm giảm nếu backend không có
+                if (khoaHoc.getPhanTramGiam() != null) {
+                    phanTramGiam = khoaHoc.getPhanTramGiam();
+                } else if (giaTien != null && giaTien.compareTo(BigDecimal.ZERO) > 0) {
+                    // Tính: phanTramGiam = (giaTien - giaSauGiam) / giaTien * 100
+                    double giam = giaTien.subtract(giaSauGiam).doubleValue();
+                    phanTramGiam = (giam / giaTien.doubleValue()) * 100;
+                }
+            } else if (khoaHoc.getPhanTramGiam() != null) {
+                // Tính giá sau giảm từ phần trăm
+                phanTramGiam = khoaHoc.getPhanTramGiam();
+                giaSauGiam = giaTien.multiply(BigDecimal.valueOf(100 - phanTramGiam))
+                        .divide(BigDecimal.valueOf(100), 0, java.math.RoundingMode.HALF_UP);
+                Log.d("BOOKING_UI", "Giá sau giảm tính toán: " + giaSauGiam + " (giảm " + phanTramGiam + "%)");
+            }
+            
+            // 1. Hiển thị tag giảm giá
+            if (tagGiamGia != null) {
+                if (phanTramGiam != null && phanTramGiam > 0) {
+                    tagGiamGia.setVisibility(View.VISIBLE);
+                    tagGiamGia.setText(String.format("-%.0f%%", phanTramGiam));
+                    Log.d("BOOKING_UI", "Hiển thị tag giảm: -" + String.format("%.0f", phanTramGiam) + "%");
+                } else {
+                    tagGiamGia.setVisibility(View.GONE);
+                    Log.d("BOOKING_UI", "Không có phần trăm giảm, ẩn tag");
+                }
+            }
+            
+            // 2. Hiển thị giá gốc bị gạch (txt_GiaCu_DL)
+            if (txtGiaCu != null && giaTien != null) {
+                txtGiaCu.setVisibility(View.VISIBLE);
+                txtGiaCu.setText(formatCurrency(giaTien));
+                Log.d("BOOKING_UI", "Hiển thị giá cũ: " + formatCurrency(giaTien));
+            }
+            
+            // 3. Hiển thị gạch chân
+            if (gachChan != null) {
+                gachChan.setVisibility(View.VISIBLE);
+            }
+            
+            // 4. Hiển thị giá sau giảm (txt_GiaTien_DL)
+            if (txtGiaTien != null) {
+                txtGiaTien.setText(formatCurrency(giaSauGiam));
+                Log.d("BOOKING_UI", "Hiển thị giá sau giảm: " + formatCurrency(giaSauGiam));
+            }
+            
+            // Cập nhật giá tiền để tính tổng tiền đúng
+            giaTien = giaSauGiam;
+        } else {
+            // KHÔNG CÓ ƯU ĐÃI (coUuDai = 0): Chỉ hiển thị giá gốc, ẩn tag và giá cũ
+            
+            Log.d("BOOKING_UI", "Không có ưu đãi - chỉ hiển thị giá gốc");
+            
+            // Ẩn tag giảm giá
+            if (tagGiamGia != null) {
+                tagGiamGia.setVisibility(View.GONE);
+            }
+            
+            // Ẩn giá cũ
+            if (txtGiaCu != null) {
+                txtGiaCu.setVisibility(View.GONE);
+            }
+            
+            // Ẩn gạch chân
+            if (gachChan != null) {
+                gachChan.setVisibility(View.GONE);
+            }
+            
+            // Chỉ hiển thị giá gốc
+            if (txtGiaTien != null && giaTien != null) {
+                txtGiaTien.setText(formatCurrency(giaTien));
+                Log.d("BOOKING_UI", "Hiển thị giá gốc: " + formatCurrency(giaTien));
+            }
         }
         
         // Địa điểm
@@ -661,7 +763,7 @@ public class Booking extends AppCompatActivity {
         request.setNgayThamGia(ngayThamGia);
         request.setSoLuongNguoi(soLuong);
         
-        // Tính tổng tiền
+        // Tính tổng tiền (đã bao gồm giảm giá nếu có)
         BigDecimal tongTien = giaTien.multiply(BigDecimal.valueOf(soLuong));
         request.setTongTien(tongTien);
         
@@ -690,16 +792,39 @@ public class Booking extends AppCompatActivity {
                         
                         Toast.makeText(Booking.this, "Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
                         
-                        // Chuyển sang PaymentActivity
+                        // Chuyển sang PaymentActivity với các thông tin cần thiết
                         Intent intent = new Intent(Booking.this, Payment.class);
+                        
+                        // Thông tin cơ bản
                         intent.putExtra("maDatLich", datLich.getMaDatLich());
+                        intent.putExtra("maKhoaHoc", maKhoaHoc);
                         intent.putExtra("tenKhoaHoc", tenKhoaHoc);
+                        intent.putExtra("soLuongDat", soLuong);
+                        intent.putExtra("tongTien", tongTien.doubleValue());
+                        
+                        // Thông tin hiển thị
                         intent.putExtra("ngayThamGia", datLich.getNgayThamGia());
-                        intent.putExtra("soLuongNguoi", datLich.getSoLuongNguoi());
-                        intent.putExtra("tongTien", datLich.getTongTien().toString());
-                        intent.putExtra("trangThai", datLich.getTrangThai());
                         intent.putExtra("thoiGian", thoiGian);
                         intent.putExtra("diaDiem", diaDiem);
+                        intent.putExtra("trangThai", datLich.getTrangThai());
+                        
+                        // Thông tin từ KhoaHoc (nếu có)
+                        if (khoaHoc != null) {
+                            intent.putExtra("hinhAnh", khoaHoc.getHinhAnh());
+                            intent.putExtra("coUuDai", khoaHoc.getCoUuDai() != null ? khoaHoc.getCoUuDai() : false);
+                            if (khoaHoc.getPhanTramGiam() != null) {
+                                intent.putExtra("phanTramGiam", khoaHoc.getPhanTramGiam());
+                            }
+                            if (khoaHoc.getGiaSauGiam() != null) {
+                                intent.putExtra("giaSauGiam", khoaHoc.getGiaSauGiam());
+                            }
+                            if (khoaHoc.getSaoTrungBinh() != null) {
+                                intent.putExtra("saoTrungBinh", khoaHoc.getSaoTrungBinh());
+                            }
+                            if (khoaHoc.getSoLuongDanhGia() != null) {
+                                intent.putExtra("soLuongDanhGia", khoaHoc.getSoLuongDanhGia());
+                            }
+                        }
                         
                         startActivity(intent);
                         finish();

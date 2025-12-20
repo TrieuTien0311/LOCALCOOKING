@@ -30,7 +30,13 @@ public class LichTrinhLopHocService {
     // GET - Lấy lịch trình theo ID với thông tin số chỗ trống (DTO)
     public Optional<LichTrinhLopHocDTO> getLichTrinhDTOById(Integer id) {
         return lichTrinhRepository.findById(id)
-                .map(this::convertToDTO);
+                .map(lichTrinh -> convertToDTO(lichTrinh, null));
+    }
+    
+    // GET - Lấy lịch trình theo ID với thông tin số chỗ trống cho ngày cụ thể
+    public Optional<LichTrinhLopHocDTO> getLichTrinhDTOById(Integer id, LocalDate ngayThamGia) {
+        return lichTrinhRepository.findById(id)
+                .map(lichTrinh -> convertToDTO(lichTrinh, ngayThamGia));
     }
     
     // GET - Lấy lịch trình theo khóa học
@@ -86,8 +92,10 @@ public class LichTrinhLopHocService {
     
     /**
      * Convert LichTrinhLopHoc entity sang DTO với thông tin số chỗ trống
+     * @param lichTrinh Lịch trình cần convert
+     * @param ngayThamGia Ngày tham gia (null = ngày mai)
      */
-    private LichTrinhLopHocDTO convertToDTO(LichTrinhLopHoc lichTrinh) {
+    private LichTrinhLopHocDTO convertToDTO(LichTrinhLopHoc lichTrinh, LocalDate ngayThamGia) {
         LichTrinhLopHocDTO dto = new LichTrinhLopHocDTO();
         dto.setMaLichTrinh(lichTrinh.getMaLichTrinh());
         dto.setMaKhoaHoc(lichTrinh.getMaKhoaHoc());
@@ -99,8 +107,8 @@ public class LichTrinhLopHocService {
         dto.setSoLuongToiDa(lichTrinh.getSoLuongToiDa());
         dto.setTrangThai(lichTrinh.getTrangThai());
         
-        // Tính số chỗ còn trống cho ngày mai (mặc định)
-        LocalDate ngayKiemTra = LocalDate.now().plusDays(1);
+        // Tính số chỗ còn trống cho ngày được chỉ định (hoặc ngày mai nếu không có)
+        LocalDate ngayKiemTra = (ngayThamGia != null) ? ngayThamGia : LocalDate.now().plusDays(1);
         Integer soLuongDaDat = datLichRepository.countBookedSeats(lichTrinh.getMaLichTrinh(), ngayKiemTra);
         Integer soLuongToiDa = lichTrinh.getSoLuongToiDa() != null ? lichTrinh.getSoLuongToiDa() : 0;
         Integer conTrong = soLuongToiDa - soLuongDaDat;
