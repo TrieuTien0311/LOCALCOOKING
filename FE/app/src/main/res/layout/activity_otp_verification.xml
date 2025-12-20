@@ -141,89 +141,102 @@
 
                         <!-- OTP Input Boxes -->
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="25dp"
                             android:gravity="center_horizontal"
                             android:orientation="horizontal">
 
                             <EditText
                                 android:id="@+id/otpBox1"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
-                                android:layout_marginEnd="8dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
 
                             <EditText
                                 android:id="@+id/otpBox2"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
-                                android:layout_marginEnd="8dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
 
                             <EditText
                                 android:id="@+id/otpBox3"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
-                                android:layout_marginEnd="8dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
 
                             <EditText
                                 android:id="@+id/otpBox4"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
-                                android:layout_marginEnd="8dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
 
                             <EditText
                                 android:id="@+id/otpBox5"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
-                                android:layout_marginEnd="8dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
 
                             <EditText
                                 android:id="@+id/otpBox6"
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/otp_box_bg"
                                 android:gravity="center"
                                 android:inputType="number"
                                 android:maxLength="1"
                                 android:textColor="#3D2817"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:importantForAutofill="no" />
                         </LinearLayout>
 
 
@@ -246,7 +259,9 @@
                                 android:inputType="textPassword"
                                 android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                android:importantForAutofill="no"
+                                android:autofillHints="" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Confirm Password Input -->
@@ -268,7 +283,9 @@
                                 android:inputType="textPassword"
                                 android:padding="16dp"
                                 android:textColor="#000000"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                android:importantForAutofill="no"
+                                android:autofillHints="" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Submit Button -->

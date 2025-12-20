@@ -269,6 +269,97 @@ BEGIN
 END;
 GO
 
+
+IF OBJECT_ID('sp_ThongBaoTruoc1Ngay', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc1Ngay;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc1Ngay
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NgayMai DATE = DATEADD(DAY, 1, CAST(GETDATE() AS DATE));
+    
+    -- Tạo thông báo cho những học viên có lịch học vào ngày mai
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'🔔 Lớp học sắp diễn ra',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy chuẩn bị sẵn sàng nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @NgayMai
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'🔔 Lớp học sắp diễn ra'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%' 
+            AND tb.noiDung LIKE N'%' + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N'%'
+            AND CAST(tb.ngayTao AS DATE) = CAST(GETDATE() AS DATE)
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 30 phút
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc30Phut', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc30Phut;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc30Phut
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @HomNay DATE = CAST(GETDATE() AS DATE);
+    DECLARE @GioHienTai TIME = CAST(GETDATE() AS TIME);
+    DECLARE @GioSau30Phut TIME = DATEADD(MINUTE, 30, @GioHienTai);
+    
+    -- Tạo thông báo cho những học viên có lớp học bắt đầu trong 30 phút tới
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'⏰ Còn 30 phút nữa!',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ bắt đầu lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy đến đúng giờ nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @HomNay
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Lớp bắt đầu trong khoảng 25-35 phút tới (để có buffer)
+      AND lt.gioBatDau >= @GioHienTai
+      AND lt.gioBatDau <= DATEADD(MINUTE, 35, @GioHienTai)
+      AND lt.gioBatDau >= DATEADD(MINUTE, 25, @GioHienTai)
+      -- Kiểm tra chưa có thông báo 30 phút cho lịch này hôm nay
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'⏰ Còn 30 phút nữa!'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%'
+            AND CAST(tb.ngayTao AS DATE) = @HomNay
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
 -- Trigger: Cập nhật đánh giá
 CREATE TRIGGER trg_CapNhatDanhGiaKhoaHoc
 ON DanhGia
@@ -754,7 +845,7 @@ INSERT INTO HinhAnhKhoaHoc (maKhoaHoc, duongDan, thuTu) VALUES
 INSERT INTO DatLich (maHocVien, maLichTrinh, ngayThamGia, soLuongNguoi, tongTien, tenNguoiDat, emailNguoiDat, sdtNguoiDat, trangThai) VALUES
 (4, 1, '2025-12-22', 1, 650000, N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'Đã Duyệt'),
 (5, 5, '2025-12-24', 2, 1430000, N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'Chờ Duyệt'),
-(6, 9, '2025-12-28', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
+(6, 9, '2025-12-22', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
 
 -- 10. ƯU ĐÃI
 INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, ngayKetThuc, trangThai, loaiUuDai, dieuKienSoLuong, hinhAnh) VALUES 
@@ -764,4 +855,8 @@ INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, nga
 PRINT N'✓ Đã thực thi xong!';
 GO
 
+select * from GiaoVien
+select * from NguoiDung
+select * from DatLich
+select * from KhoaHoc
 SELECT * FROM UuDai;

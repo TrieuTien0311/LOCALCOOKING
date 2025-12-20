@@ -45,7 +45,7 @@ public class Payment extends AppCompatActivity {
     private ShapeableImageView imgMonAn;
     private TextView txtTenLop, txtGiaTien, txtSoLuongDat, txtThoiGian, txtNgay, txtDiaDiem;
     private TextView txtTongTien, txtTongTien_CTiet, txtTongThanhToan, txtTienGiam;
-    private TextView txtVoucherName;
+    private TextView txtVoucherName; // Sử dụng txtChonUuDai trong layout
     private Button btnConfirmPayment;
     private ImageView btnBack;
     private RadioGroup rdGroupPayment;
@@ -137,7 +137,7 @@ public class Payment extends AppCompatActivity {
         idEmail = findViewById(R.id.idEmail);
         idPhone = findViewById(R.id.idPhone);
 
-        // Sử dụng txtChonUuDai để hiển thị tên voucher
+        // Sử dụng txtChonUuDai để hiển thị tên voucher đã chọn
         txtVoucherName = findViewById(R.id.txtChonUuDai);
     }
 
