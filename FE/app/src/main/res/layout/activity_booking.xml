@@ -135,6 +135,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
+                            android:visibility="visible"
                             app:srcCompat="@drawable/ic_back"
                             app:tint="#CB7E61" />
                         <!-- Hình ảnh món ăn với CardView bo tròn -->
@@ -219,6 +220,7 @@
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
                             android:rotation="180"
+                            android:visibility="visible"
                             app:srcCompat="@drawable/ic_back"
                             app:tint="#CB7E61" />
                     </LinearLayout>

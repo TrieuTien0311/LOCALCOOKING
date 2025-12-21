@@ -93,6 +93,15 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             holder.cardView.setLayoutParams(params);
         }
         
+        // THÊM MỚI: Hiển thị ảnh banner khóa học
+        if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
+            int resId = lopHoc.getHinhAnhResId(holder.itemView.getContext());
+            holder.imgMonAn.setImageResource(resId);
+        } else {
+            // Ảnh mặc định nếu không có
+            holder.imgMonAn.setImageResource(R.drawable.hue);
+        }
+        
         // Hiển thị thông tin lớp học
         holder.txtTenLop.setText(lopHoc.getTenLop());
         holder.txtMoTa.setText(lopHoc.getMoTa());

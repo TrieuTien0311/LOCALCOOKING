@@ -29,6 +29,9 @@ public class KhoaHoc implements Serializable {
     // Danh sách lịch trình (nếu cần)
     private List<LichTrinhLopHoc> lichTrinhList;
     
+    // THÊM MỚI: Danh sách hình ảnh slide
+    private List<HinhAnhKhoaHoc> hinhAnhList;
+    
     // Constructors
     public KhoaHoc() {
         this.soLuongDanhGia = 0;
@@ -162,6 +165,15 @@ public class KhoaHoc implements Serializable {
     
     public void setLichTrinhList(List<LichTrinhLopHoc> lichTrinhList) {
         this.lichTrinhList = lichTrinhList;
+    }
+    
+    // THÊM MỚI: Getter/Setter cho hinhAnhList
+    public List<HinhAnhKhoaHoc> getHinhAnhList() {
+        return hinhAnhList;
+    }
+    
+    public void setHinhAnhList(List<HinhAnhKhoaHoc> hinhAnhList) {
+        this.hinhAnhList = hinhAnhList;
     }
     
     // Helper methods

@@ -31,6 +31,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import com.example.localcooking_v3t.model.HinhAnhKhoaHoc;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +63,13 @@ public class Booking extends AppCompatActivity {
     
     private SessionManager sessionManager;
     private ApiService apiService;
+    
+    // Quản lý slide ảnh
+    private List<HinhAnhKhoaHoc> hinhAnhList;
+    private int currentImageIndex = 0;
+    private ImageView imMonAn;
+    private ImageView btnPre, btnNext;
+    private ImageView[] circles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +99,91 @@ public class Booking extends AppCompatActivity {
         btnTiepTuc = findViewById(R.id.btn_TiepTuc);
         txtThoiGianHeader = findViewById(R.id.txtThoiGian);
         txtDiaDiemHeader = findViewById(R.id.txtDiaDiem);
+        
+        // Ánh xạ views cho slide ảnh
+        imMonAn = findViewById(R.id.im_MonAn_DL);
+        btnPre = findViewById(R.id.btnPre);
+        btnNext = findViewById(R.id.btnNext);
+        
+        // Ánh xạ 5 circles
+        circles = new ImageView[5];
+        circles[0] = findViewById(R.id.circle1);
+        circles[1] = findViewById(R.id.circle2);
+        circles[2] = findViewById(R.id.circle3);
+        circles[3] = findViewById(R.id.circle4);
+        circles[4] = findViewById(R.id.circle5);
+        
+        // Xử lý nút Previous với animation
+        btnPre.setOnClickListener(v -> {
+            if (hinhAnhList != null && !hinhAnhList.isEmpty()) {
+                currentImageIndex--;
+                if (currentImageIndex < 0) {
+                    currentImageIndex = hinhAnhList.size() - 1; // Quay vòng
+                }
+                displayCurrentImageWithAnimation(true); // true = slide từ trái sang
+            }
+        });
+        
+        // Xử lý nút Next với animation
+        btnNext.setOnClickListener(v -> {
+            if (hinhAnhList != null && !hinhAnhList.isEmpty()) {
+                currentImageIndex++;
+                if (currentImageIndex >= hinhAnhList.size()) {
+                    currentImageIndex = 0; // Quay vòng
+                }
+                displayCurrentImageWithAnimation(false); // false = slide từ phải sang
+            }
+        });
+        
+        // Thêm gesture swipe cho ảnh
+        if (imMonAn != null) {
+            imMonAn.setOnTouchListener(new View.OnTouchListener() {
+                private float startX;
+                private float startY;
+                private static final int SWIPE_THRESHOLD = 100;
+                private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+                
+                @Override
+                public boolean onTouch(View v, android.view.MotionEvent event) {
+                    switch (event.getAction()) {
+                        case android.view.MotionEvent.ACTION_DOWN:
+                            startX = event.getX();
+                            startY = event.getY();
+                            return true;
+                            
+                        case android.view.MotionEvent.ACTION_UP:
+                            float endX = event.getX();
+                            float endY = event.getY();
+                            float diffX = endX - startX;
+                            float diffY = endY - startY;
+                            
+                            // Kiểm tra swipe ngang (không phải dọc)
+                            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > SWIPE_THRESHOLD) {
+                                if (hinhAnhList != null && !hinhAnhList.isEmpty()) {
+                                    if (diffX > 0) {
+                                        // Swipe phải -> ảnh trước
+                                        currentImageIndex--;
+                                        if (currentImageIndex < 0) {
+                                            currentImageIndex = hinhAnhList.size() - 1;
+                                        }
+                                        displayCurrentImageWithAnimation(true);
+                                    } else {
+                                        // Swipe trái -> ảnh sau
+                                        currentImageIndex++;
+                                        if (currentImageIndex >= hinhAnhList.size()) {
+                                            currentImageIndex = 0;
+                                        }
+                                        displayCurrentImageWithAnimation(false);
+                                    }
+                                }
+                                return true;
+                            }
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
         
         // Xử lý nút Back - quay về trang danh sách khóa học
         if (btnBack != null) {
@@ -665,16 +760,48 @@ public class Booking extends AppCompatActivity {
      * Hiển thị thông tin khóa học (hình ảnh, giáo viên, mô tả)
      */
     private void displayKhoaHocInfo() {
-        if (khoaHoc == null) return;
+        if (khoaHoc == null) {
+            Log.e("BOOKING_UI", "khoaHoc is NULL!");
+            return;
+        }
         
         Log.d("BOOKING_UI", "=== Displaying KhoaHoc Info ===");
+        Log.d("BOOKING_UI", "KhoaHoc: " + khoaHoc.getTenKhoaHoc());
+        Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // Hình ảnh món ăn
-        ImageView imMonAn = findViewById(R.id.im_MonAn_DL);
-        if (imMonAn != null && khoaHoc.getHinhAnh() != null) {
-            int resId = khoaHoc.getHinhAnhResId(this);
-            imMonAn.setImageResource(resId);
-            Log.d("BOOKING_UI", "Set image: " + khoaHoc.getHinhAnh());
+        // THAY ĐỔI: Hiển thị slide ảnh thay vì 1 ảnh
+        if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
+            // Có danh sách ảnh slide -> hiển thị slide
+            hinhAnhList = khoaHoc.getHinhAnhList();
+            currentImageIndex = 0;
+            displayCurrentImage();
+            
+            // Hiển thị nút Pre/Next
+            if (btnPre != null) {
+                btnPre.setVisibility(View.VISIBLE);
+                Log.d("BOOKING_UI", "Show btnPre");
+            }
+            if (btnNext != null) {
+                btnNext.setVisibility(View.VISIBLE);
+                Log.d("BOOKING_UI", "Show btnNext");
+            }
+            
+            Log.d("BOOKING_UI", "Loaded " + hinhAnhList.size() + " images for slide");
+        } else {
+            Log.w("BOOKING_UI", "No hinhAnhList found, showing banner only");
+            
+            if (khoaHoc.getHinhAnh() != null) {
+                // Không có slide -> hiển thị ảnh banner
+                int resId = khoaHoc.getHinhAnhResId(this);
+                if (imMonAn != null) {
+                    imMonAn.setImageResource(resId);
+                }
+                
+                Log.d("BOOKING_UI", "Set banner image: " + khoaHoc.getHinhAnh());
+            }
+            
+            // KHÔNG ẨN NÚT NỮA - để user vẫn thấy (có thể sẽ disable sau)
+            Log.d("BOOKING_UI", "Keeping buttons visible (no slide images)");
         }
         
         // Giới thiệu lớp học
@@ -800,6 +927,98 @@ public class Booking extends AppCompatActivity {
         
         startActivity(intent);
         // Không finish() để user có thể quay lại
+    }
+    
+    /**
+     * Hiển thị ảnh hiện tại trong slide
+     */
+    private void displayCurrentImage() {
+        displayCurrentImageWithAnimation(false, false);
+    }
+    
+    /**
+     * Hiển thị ảnh hiện tại với animation
+     * @param slideFromLeft true = slide từ trái sang phải, false = slide từ phải sang trái
+     */
+    private void displayCurrentImageWithAnimation(boolean slideFromLeft) {
+        displayCurrentImageWithAnimation(slideFromLeft, true);
+    }
+    
+    /**
+     * Hiển thị ảnh hiện tại với hoặc không có animation
+     */
+    private void displayCurrentImageWithAnimation(boolean slideFromLeft, boolean withAnimation) {
+        if (hinhAnhList == null || hinhAnhList.isEmpty() || imMonAn == null) {
+            Log.e("BOOKING_UI", "Cannot display image: hinhAnhList or imMonAn is null");
+            return;
+        }
+        
+        // Lấy ảnh hiện tại
+        HinhAnhKhoaHoc currentImage = hinhAnhList.get(currentImageIndex);
+        
+        // Convert tên file thành resource ID
+        int resId = currentImage.getHinhAnhResId(this);
+        
+        if (withAnimation) {
+            // Animation fade out
+            imMonAn.animate()
+                    .alpha(0f)
+                    .setDuration(150)
+                    .withEndAction(() -> {
+                        // Đổi ảnh
+                        imMonAn.setImageResource(resId);
+                        
+                        // Animation slide in
+                        imMonAn.setTranslationX(slideFromLeft ? -100f : 100f);
+                        imMonAn.animate()
+                                .alpha(1f)
+                                .translationX(0f)
+                                .setDuration(200)
+                                .start();
+                    })
+                    .start();
+        } else {
+            // Không animation - hiển thị trực tiếp
+            imMonAn.setImageResource(resId);
+        }
+        
+        // Cập nhật indicators
+        updateIndicators();
+        
+        Log.d("BOOKING_UI", "Displaying image " + (currentImageIndex + 1) + "/" + hinhAnhList.size() + ": " + currentImage.getDuongDan());
+    }
+    
+    /**
+     * Cập nhật trạng thái indicators (circles)
+     */
+    private void updateIndicators() {
+        if (circles == null || hinhAnhList == null || hinhAnhList.isEmpty()) {
+            return;
+        }
+        
+        // Hiển thị số circles bằng số ảnh (tối đa 5)
+        int imageCount = Math.min(hinhAnhList.size(), 5);
+        
+        for (int i = 0; i < circles.length; i++) {
+            if (circles[i] != null) {
+                if (i < imageCount) {
+                    // Hiển thị circle
+                    circles[i].setVisibility(View.VISIBLE);
+                    
+                    // Đổi màu: active (đang xem) hoặc inactive
+                    if (i == currentImageIndex) {
+                        circles[i].setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.active_indicator));
+                    } else {
+                        circles[i].setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.inactive_indicator));
+                    }
+                } else {
+                    // Ẩn circle thừa
+                    circles[i].setVisibility(View.GONE);
+                }
+            }
+        }
+        
+        Log.d("BOOKING_UI", "Updated indicators: " + (currentImageIndex + 1) + "/" + imageCount);
     }
 
 }

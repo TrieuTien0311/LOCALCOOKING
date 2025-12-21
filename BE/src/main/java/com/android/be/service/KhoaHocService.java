@@ -24,6 +24,7 @@ public class KhoaHocService {
     private final LichTrinhLopHocRepository lichTrinhRepository;
     private final DanhMucMonAnService danhMucMonAnService;
     private final DatLichRepository datLichRepository;
+    private final HinhAnhKhoaHocService hinhAnhKhoaHocService; // THÊM MỚI
     
     public List<KhoaHocDTO> getAllKhoaHoc() {
         return khoaHocRepository.findAll().stream()
@@ -160,6 +161,10 @@ public class KhoaHocService {
         // Lấy danh sách danh mục món ăn (3 danh mục: khai vị, món chính, tráng miệng)
         List<DanhMucMonAnDTO> danhMucMonAnList = danhMucMonAnService.getDanhMucMonAnByKhoaHoc(khoaHoc.getMaKhoaHoc());
         dto.setDanhMucMonAnList(danhMucMonAnList);
+        
+        // THÊM MỚI: Lấy danh sách hình ảnh slide
+        List<com.android.be.dto.HinhAnhKhoaHocDTO> hinhAnhList = hinhAnhKhoaHocService.getHinhAnhByKhoaHoc(khoaHoc.getMaKhoaHoc());
+        dto.setHinhAnhList(hinhAnhList);
         
         return dto;
     }
