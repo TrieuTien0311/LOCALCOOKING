@@ -34,6 +34,8 @@ import com.example.localcooking_v3t.model.MessageResponse;
 import com.example.localcooking_v3t.model.UuDaiDTO;
 import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
 import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
+import com.example.localcooking_v3t.model.MomoPaymentRequest;
+import com.example.localcooking_v3t.model.MomoPaymentResponse;
 
 import java.util.List;
 
@@ -232,6 +234,20 @@ public interface ApiService {
     // Xác nhận sử dụng mã ưu đãi (sau khi thanh toán thành công)
     @POST("api/uudai/confirm/{maUuDai}")
     Call<Void> confirmUuDai(@Path("maUuDai") Integer maUuDai);
+
+    // ========== API MOMO PAYMENT ==========
+
+    // Tạo thanh toán Momo
+    @POST("api/momo/create")
+    Call<MomoPaymentResponse> createMomoPayment(@Body MomoPaymentRequest request);
+
+    // Kiểm tra trạng thái thanh toán
+    @GET("api/momo/status/{orderId}")
+    Call<MomoPaymentResponse> checkMomoPaymentStatus(@Path("orderId") String orderId);
+
+    // Simulate thanh toán thành công (cho testing)
+    @POST("api/momo/simulate-success/{orderId}")
+    Call<java.util.Map<String, Object>> simulateMomoSuccess(@Path("orderId") String orderId);
 
 
 }

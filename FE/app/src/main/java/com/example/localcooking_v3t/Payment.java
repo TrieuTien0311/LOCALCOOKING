@@ -1,7 +1,10 @@
 package com.example.localcooking_v3t;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -28,9 +32,13 @@ import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
 import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
 import com.example.localcooking_v3t.model.KhoaHoc;
+import com.example.localcooking_v3t.model.MomoPaymentRequest;
+import com.example.localcooking_v3t.model.MomoPaymentResponse;
 import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.math.BigDecimal;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,6 +72,12 @@ public class Payment extends AppCompatActivity {
     private String selectedMaCode;
     private Double soTienGiam = 0.0;
     private Double tongTienSauGiam = 0.0;
+
+    // Momo
+    private String currentOrderId;
+    private Handler paymentCheckHandler;
+    private Runnable paymentCheckRunnable;
+    private boolean isCheckingPayment = false;
 
     private SessionManager sessionManager;
     private ActivityResultLauncher<Intent> voucherLauncher;
@@ -388,7 +402,7 @@ public class Payment extends AppCompatActivity {
             txtTrangThai2.setVisibility(View.VISIBLE);
         });
 
-        // Nút thanh toán - chuyển đến Bill
+        // Nút thanh toán - Gọi Momo
         btnConfirmPayment.setOnClickListener(v -> {
             // Validate thông tin liên hệ
             String name = idName.getText() != null ? idName.getText().toString().trim() : "";
@@ -400,18 +414,331 @@ public class Payment extends AppCompatActivity {
                 return;
             }
 
-            // Xác nhận sử dụng mã ưu đãi nếu có
-            if (selectedMaUuDai != null) {
-                confirmUuDai(selectedMaUuDai);
+            // Kiểm tra phương thức thanh toán
+            if (!rdMomo.isChecked() && !rdThe.isChecked()) {
+                Toast.makeText(this, "Vui lòng chọn phương thức thanh toán!", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            Intent intent = new Intent(Payment.this, Bill.class);
-            intent.putExtra("tongTienGoc", tongTien);
-            intent.putExtra("soTienGiam", soTienGiam);
-            intent.putExtra("tongTienThanhToan", tongTienSauGiam);
-            intent.putExtra("maUuDai", selectedMaUuDai);
-            startActivity(intent);
+            if (rdMomo.isChecked()) {
+                // Thanh toán qua Momo
+                createMomoPayment(name, email, phone);
+            } else {
+                // Thanh toán qua thẻ (chưa implement)
+                Toast.makeText(this, "Thanh toán qua thẻ đang phát triển!", Toast.LENGTH_SHORT).show();
+            }
         });
+    }
+
+    /**
+     * Tạo thanh toán Momo
+     */
+    private void createMomoPayment(String name, String email, String phone) {
+        // Hiển thị loading
+        btnConfirmPayment.setEnabled(false);
+        btnConfirmPayment.setText("Đang xử lý...");
+
+        // Tạo request
+        MomoPaymentRequest request = new MomoPaymentRequest();
+        request.setMaHocVien(sessionManager.getMaNguoiDung());
+        request.setMaLichTrinh(getIntent().getIntExtra("maLichTrinh", 0));
+        request.setSoTien(BigDecimal.valueOf(tongTienSauGiam));
+        request.setTenKhoaHoc(getIntent().getStringExtra("tenKhoaHoc"));
+        request.setNgayThamGia(getIntent().getStringExtra("ngayThamGia"));
+        request.setSoLuongNguoi(soLuongDat);
+        request.setTenNguoiDat(name);
+        request.setEmailNguoiDat(email);
+        request.setSdtNguoiDat(phone);
+        
+        if (selectedMaUuDai != null) {
+            request.setMaUuDai(selectedMaUuDai);
+            request.setSoTienGiam(BigDecimal.valueOf(soTienGiam));
+        }
+
+        Log.d(TAG, "Creating Momo payment: " + tongTienSauGiam);
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.createMomoPayment(request).enqueue(new Callback<MomoPaymentResponse>() {
+            @Override
+            public void onResponse(Call<MomoPaymentResponse> call, Response<MomoPaymentResponse> response) {
+                btnConfirmPayment.setEnabled(true);
+                btnConfirmPayment.setText("Thanh toán");
+
+                if (response.isSuccessful() && response.body() != null) {
+                    MomoPaymentResponse momoResponse = response.body();
+                    
+                    if (momoResponse.isSuccess()) {
+                        currentOrderId = momoResponse.getOrderId();
+                        String payUrl = momoResponse.getPayUrl();
+                        String deeplink = momoResponse.getDeeplink();
+                        
+                        Log.d(TAG, "Momo payment created: orderId=" + currentOrderId);
+                        Log.d(TAG, "PayUrl: " + payUrl);
+                        Log.d(TAG, "Deeplink: " + deeplink);
+                        
+                        // Mở Momo app hoặc web
+                        openMomoPayment(deeplink, payUrl);
+                        
+                        // Bắt đầu kiểm tra trạng thái thanh toán
+                        startPaymentStatusCheck();
+                    } else {
+                        Toast.makeText(Payment.this, 
+                            "Lỗi: " + momoResponse.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(Payment.this, 
+                        "Không thể tạo thanh toán Momo", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MomoPaymentResponse> call, Throwable t) {
+                btnConfirmPayment.setEnabled(true);
+                btnConfirmPayment.setText("Thanh toán");
+                Log.e(TAG, "Momo payment error", t);
+                Toast.makeText(Payment.this, 
+                    "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Mở Momo web để thanh toán (Sandbox chỉ hỗ trợ web, không hỗ trợ app thật)
+     */
+    private void openMomoPayment(String deeplink, String payUrl) {
+        // QUAN TRỌNG: Momo Sandbox chỉ hoạt động qua WEB
+        // Deeplink sẽ mở app Momo thật nhưng giao dịch sandbox không tồn tại trên app thật
+        // Nên luôn mở payUrl (web) để test sandbox
+        
+        try {
+            if (payUrl != null && !payUrl.isEmpty()) {
+                Log.d(TAG, "Opening Momo Sandbox web: " + payUrl);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(payUrl));
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Không có link thanh toán", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot open payment URL", e);
+            Toast.makeText(this, "Không thể mở trang thanh toán", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Bắt đầu kiểm tra trạng thái thanh toán định kỳ
+     */
+    private void startPaymentStatusCheck() {
+        if (isCheckingPayment) return;
+        
+        isCheckingPayment = true;
+        paymentCheckHandler = new Handler(Looper.getMainLooper());
+        
+        paymentCheckRunnable = new Runnable() {
+            int checkCount = 0;
+            final int MAX_CHECKS = 60; // Kiểm tra tối đa 60 lần (5 phút)
+            
+            @Override
+            public void run() {
+                if (!isCheckingPayment || checkCount >= MAX_CHECKS) {
+                    stopPaymentStatusCheck();
+                    return;
+                }
+                
+                checkCount++;
+                checkPaymentStatus();
+                
+                // Kiểm tra lại sau 5 giây
+                paymentCheckHandler.postDelayed(this, 5000);
+            }
+        };
+        
+        // Bắt đầu kiểm tra sau 3 giây
+        paymentCheckHandler.postDelayed(paymentCheckRunnable, 3000);
+    }
+
+    /**
+     * Dừng kiểm tra trạng thái thanh toán
+     */
+    private void stopPaymentStatusCheck() {
+        isCheckingPayment = false;
+        if (paymentCheckHandler != null && paymentCheckRunnable != null) {
+            paymentCheckHandler.removeCallbacks(paymentCheckRunnable);
+        }
+    }
+
+    /**
+     * Kiểm tra trạng thái thanh toán
+     */
+    private void checkPaymentStatus() {
+        if (currentOrderId == null) return;
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.checkMomoPaymentStatus(currentOrderId).enqueue(new Callback<MomoPaymentResponse>() {
+            @Override
+            public void onResponse(Call<MomoPaymentResponse> call, Response<MomoPaymentResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    MomoPaymentResponse status = response.body();
+                    
+                    if (status.isSuccess()) {
+                        // Thanh toán thành công!
+                        stopPaymentStatusCheck();
+                        onPaymentSuccess(status);
+                    } else if (status.getResultCode() != -1 && status.getResultCode() != 0) {
+                        // Thanh toán thất bại
+                        stopPaymentStatusCheck();
+                        onPaymentFailed(status.getMessage());
+                    }
+                    // Nếu resultCode == -1 hoặc 0 nhưng chưa success, tiếp tục chờ
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MomoPaymentResponse> call, Throwable t) {
+                Log.e(TAG, "Error checking payment status", t);
+            }
+        });
+    }
+
+    /**
+     * Xử lý khi thanh toán thành công
+     */
+    private void onPaymentSuccess(MomoPaymentResponse response) {
+        Log.d(TAG, "Payment successful! TransId: " + response.getTransId());
+        
+        // Xác nhận sử dụng mã ưu đãi nếu có
+        if (selectedMaUuDai != null) {
+            confirmUuDai(selectedMaUuDai);
+        }
+
+        // Hiển thị dialog thành công
+        new AlertDialog.Builder(this)
+            .setTitle("🎉 Thanh toán thành công!")
+            .setMessage("Cảm ơn bạn đã đặt lịch học.\n\nMã giao dịch: " + response.getTransId())
+            .setPositiveButton("Xem hóa đơn", (dialog, which) -> {
+                goToBill(response.getTransId());
+            })
+            .setCancelable(false)
+            .show();
+    }
+
+    /**
+     * Chuyển sang màn hình Bill với đầy đủ thông tin
+     */
+    private void goToBill(String transId) {
+        Intent intent = new Intent(Payment.this, Bill.class);
+        
+        // Thông tin thanh toán
+        intent.putExtra("tongTienGoc", tongTien);
+        intent.putExtra("soTienGiam", soTienGiam);
+        intent.putExtra("tongTienThanhToan", tongTienSauGiam);
+        intent.putExtra("orderId", currentOrderId);
+        intent.putExtra("transId", transId);
+        intent.putExtra("paymentSuccess", true);
+        
+        // Thông tin lớp học
+        intent.putExtra("tenKhoaHoc", getIntent().getStringExtra("tenKhoaHoc"));
+        intent.putExtra("diaDiem", getIntent().getStringExtra("diaDiem"));
+        intent.putExtra("thoiGian", getIntent().getStringExtra("thoiGian"));
+        intent.putExtra("ngayThamGia", getIntent().getStringExtra("ngayThamGia"));
+        intent.putExtra("hinhAnh", getIntent().getStringExtra("hinhAnh"));
+        intent.putExtra("moTa", getIntent().getStringExtra("moTa"));
+        intent.putExtra("soLuongDat", soLuongDat);
+        
+        // Thông tin người đặt
+        String tenNguoiDat = idName.getText() != null ? idName.getText().toString().trim() : "";
+        String sdtNguoiDat = idPhone.getText() != null ? idPhone.getText().toString().trim() : "";
+        intent.putExtra("tenNguoiDat", tenNguoiDat);
+        intent.putExtra("sdtNguoiDat", sdtNguoiDat);
+        
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * Xử lý khi thanh toán thất bại
+     */
+    private void onPaymentFailed(String message) {
+        Log.e(TAG, "Payment failed: " + message);
+        
+        new AlertDialog.Builder(this)
+            .setTitle("❌ Thanh toán thất bại")
+            .setMessage(message != null ? message : "Giao dịch không thành công. Vui lòng thử lại.")
+            .setPositiveButton("Thử lại", (dialog, which) -> {
+                // Reset để thử lại
+                currentOrderId = null;
+            })
+            .setNegativeButton("Hủy", null)
+            .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Khi quay lại từ Momo web, dừng auto-check và hiển thị dialog hỏi kết quả
+        if (currentOrderId != null) {
+            stopPaymentStatusCheck(); // Dừng auto-check
+            showPaymentResultDialog(); // Hiện dialog để user chọn
+        }
+    }
+
+    /**
+     * Hiển thị dialog hỏi kết quả thanh toán
+     */
+    private void showPaymentResultDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Xác nhận thanh toán")
+            .setMessage("Bạn đã thanh toán thành công chưa?")
+            .setPositiveButton("Thành công", (dialog, which) -> {
+                // Gọi API cập nhật trạng thái = 1 (thành công)
+                simulatePaymentSuccess();
+            })
+            .setNegativeButton("Chưa thanh toán", (dialog, which) -> {
+                // Giữ trạng thái = 0, quay lại màn hình thanh toán
+                currentOrderId = null;
+                Toast.makeText(this, "Giao dịch chưa hoàn tất", Toast.LENGTH_SHORT).show();
+            })
+            .setCancelable(false)
+            .show();
+    }
+
+    /**
+     * Giả lập thanh toán thành công (cho Sandbox testing)
+     */
+    private void simulatePaymentSuccess() {
+        if (currentOrderId == null) {
+            Toast.makeText(this, "Không có giao dịch để giả lập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Đang giả lập thanh toán...", Toast.LENGTH_SHORT).show();
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.simulateMomoSuccess(currentOrderId).enqueue(new Callback<java.util.Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<java.util.Map<String, Object>> call, Response<java.util.Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Boolean success = (Boolean) response.body().get("success");
+                    if (success != null && success) {
+                        // Kiểm tra lại trạng thái
+                        checkPaymentStatus();
+                    } else {
+                        Toast.makeText(Payment.this, "Giả lập thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<java.util.Map<String, Object>> call, Throwable t) {
+                Log.e(TAG, "Simulate error", t);
+                Toast.makeText(Payment.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopPaymentStatusCheck();
     }
 
     private void confirmUuDai(Integer maUuDai) {
