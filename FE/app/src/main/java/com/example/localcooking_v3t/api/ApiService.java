@@ -3,7 +3,11 @@ package com.example.localcooking_v3t.api;
 import com.example.localcooking_v3t.model.ChangePasswordRequest;
 import com.example.localcooking_v3t.model.ChangePasswordResponse;
 import com.example.localcooking_v3t.model.ChangePasswordWithOtpRequest;
+import com.example.localcooking_v3t.model.CheckSeatsResponse;
 import com.example.localcooking_v3t.model.DanhMucMonAn;
+import com.example.localcooking_v3t.model.DatLich;
+import com.example.localcooking_v3t.model.DatLichRequest;
+import com.example.localcooking_v3t.model.DatLichResponse;
 import com.example.localcooking_v3t.model.ForgotPasswordRequest;
 import com.example.localcooking_v3t.model.ForgotPasswordResponse;
 import com.example.localcooking_v3t.model.GiaoVien;
@@ -27,6 +31,9 @@ import com.example.localcooking_v3t.model.VerifyOtpResponse;
 import com.example.localcooking_v3t.model.ThongBaoDTO;
 import com.example.localcooking_v3t.model.UnreadCountResponse;
 import com.example.localcooking_v3t.model.MessageResponse;
+import com.example.localcooking_v3t.model.UuDaiDTO;
+import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
+import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
 
 import java.util.List;
 
@@ -103,6 +110,14 @@ public interface ApiService {
     Call<List<LichTrinhLopHoc>> getAllLichTrinh();
     @GET("api/lichtrinh/{id}")
     Call<LichTrinhLopHoc> getLichTrinhById(@retrofit2.http.Path("id") Integer id);
+
+    // Lấy lịch trình với thông tin đầy đủ (có số chỗ trống)
+    @GET("api/lichtrinh/{id}/detail")
+    Call<LichTrinhLopHoc> getLichTrinhDetailById(
+            @retrofit2.http.Path("id") Integer id,
+            @retrofit2.http.Query("ngayThamGia") String ngayThamGia
+    );
+
     // Lấy lịch trình theo khóa học
     @GET("api/lichtrinh/khoahoc/{maKhoaHoc}")
     Call<List<LichTrinhLopHoc>> getLichTrinhByKhoaHoc(@retrofit2.http.Path("maKhoaHoc") Integer maKhoaHoc);
@@ -152,21 +167,71 @@ public interface ApiService {
     @DELETE("api/thongbao/user/{maNguoiNhan}/delete-read")
     Call<MessageResponse> deleteAllReadNotifications(@Path("maNguoiNhan") Integer maNguoiNhan);
 
+
     // ========== API YÊU THÍCH ==========
-    
+
     // Lấy danh sách khóa học yêu thích của học viên (trả về KhoaHoc đầy đủ)
     @GET("api/yeuthich/hocvien/{maHocVien}/khoahoc")
     Call<List<KhoaHoc>> getFavoritesByHocVien(@Path("maHocVien") Integer maHocVien);
-    
+
     // Kiểm tra khóa học đã được yêu thích chưa
     @GET("api/yeuthich/check")
     Call<java.util.Map<String, Boolean>> checkFavorite(
             @Query("maHocVien") Integer maHocVien,
             @Query("maKhoaHoc") Integer maKhoaHoc
     );
-    
+
     // Toggle yêu thích (thêm/xóa)
     @POST("api/yeuthich/toggle")
     Call<java.util.Map<String, Object>> toggleFavorite(@Body java.util.Map<String, Integer> request);
+
+    // ========== API ĐẶT LỊCH ==========
+
+    // Kiểm tra chỗ trống
+    @GET("api/lichtrinh/check-seats")
+    Call<CheckSeatsResponse> checkAvailableSeats(
+            @Query("maLichTrinh") Integer maLichTrinh,
+            @Query("ngayThamGia") String ngayThamGia
+    );
+
+    // Tạo đặt lịch mới
+    @POST("api/datlich")
+    Call<DatLichResponse> createDatLich(@Body DatLichRequest request);
+
+    // Lấy đặt lịch theo học viên
+    @GET("api/datlich/hocvien/{maHocVien}")
+    Call<List<DatLich>> getDatLichByHocVien(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy đặt lịch theo học viên và trạng thái
+    @GET("api/datlich/hocvien/{maHocVien}/trangthai/{trangThai}")
+    Call<List<DatLich>> getDatLichByHocVienAndTrangThai(
+            @Path("maHocVien") Integer maHocVien,
+            @Path("trangThai") String trangThai
+    );
+    // ========== API ƯU ĐÃI ==========
+
+    // Lấy tất cả ưu đãi
+    @GET("api/uudai")
+    Call<List<UuDaiDTO>> getAllUuDai();
+
+    // Lấy ưu đãi theo ID
+    @GET("api/uudai/{id}")
+    Call<UuDaiDTO> getUuDaiById(@Path("id") Integer id);
+
+    // Lấy danh sách ưu đãi khả dụng cho user
+    @GET("api/uudai/available")
+    Call<List<UuDaiDTO>> getAvailableUuDai(
+            @Query("maHocVien") Integer maHocVien,
+            @Query("soLuongNguoi") Integer soLuongNguoi
+    );
+
+    // Áp dụng mã ưu đãi
+    @POST("api/uudai/apply")
+    Call<ApDungUuDaiResponse> apDungUuDai(@Body ApDungUuDaiRequest request);
+
+    // Xác nhận sử dụng mã ưu đãi (sau khi thanh toán thành công)
+    @POST("api/uudai/confirm/{maUuDai}")
+    Call<Void> confirmUuDai(@Path("maUuDai") Integer maUuDai);
+
 
 }

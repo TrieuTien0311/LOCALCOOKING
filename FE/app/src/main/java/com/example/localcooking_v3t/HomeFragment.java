@@ -230,6 +230,12 @@ public class HomeFragment extends Fragment {
                     List<KhoaHoc> allClasses = response.body();
                     Log.d(TAG, "Loaded " + allClasses.size() + " classes from API");
                     
+                    // Kiểm tra fragment còn attached không
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached, skip displaying classes");
+                        return;
+                    }
+                    
                     // Log chi tiết để debug
                     for (KhoaHoc kh : allClasses) {
                         Log.d(TAG, "KhoaHoc: " + kh.getTenKhoaHoc() + 
@@ -241,15 +247,27 @@ public class HomeFragment extends Fragment {
                     List<KhoaHoc> popularClasses = selectPopularClasses(allClasses);
                     displayPopularClasses(popularClasses);
                 } else {
+                    // Kiểm tra fragment còn attached không
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached, skip error handling");
+                        return;
+                    }
+                    
                     Log.e(TAG, "Failed to load classes: " + response.code());
-                    Toast.makeText(requireContext(), "Không thể tải lớp học", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Không thể tải lớp học", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<KhoaHoc>> call, Throwable t) {
+                // Kiểm tra fragment còn attached không
+                if (!isAdded() || getContext() == null) {
+                    Log.w(TAG, "Fragment not attached, skip error handling");
+                    return;
+                }
+                
                 Log.e(TAG, "Error loading classes", t);
-                Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -328,6 +346,12 @@ public class HomeFragment extends Fragment {
      * Hiển thị 4 lớp học phổ biến
      */
     private void displayPopularClasses(List<KhoaHoc> classes) {
+        // Kiểm tra fragment còn attached không
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skip displaying popular classes");
+            return;
+        }
+        
         if (layoutPopularClasses == null || classes.isEmpty()) return;
         
         layoutPopularClasses.removeAllViews();
@@ -335,7 +359,9 @@ public class HomeFragment extends Fragment {
         for (int i = 0; i < Math.min(classes.size(), 4); i++) {
             KhoaHoc lopHoc = classes.get(i);
             View classCard = createClassCard(lopHoc, i + 1);
-            layoutPopularClasses.addView(classCard);
+            if (classCard != null) {
+                layoutPopularClasses.addView(classCard);
+            }
         }
     }
     
@@ -343,10 +369,16 @@ public class HomeFragment extends Fragment {
      * Tạo CardView cho lớp học với bố cục cân đối
      */
     private View createClassCard(KhoaHoc khoaHoc, int index) {
+        // Kiểm tra fragment còn attached không
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skip creating class card");
+            return null;
+        }
+        
         float density = getResources().getDisplayMetrics().density;
         
         // Tạo CardView với chiều cao cố định và margin để hiển thị đổ bóng
-        CardView cardView = new CardView(requireContext());
+        CardView cardView = new CardView(getContext());
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 (int) (160 * density),
                 (int) (230 * density)  // Chiều cao cố định
@@ -470,6 +502,12 @@ public class HomeFragment extends Fragment {
         
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(requireActivity(), location -> {
+                    // Kiểm tra fragment còn attached không
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached, skip location update");
+                        return;
+                    }
+                    
                     if (location != null) {
                         // Lưu tọa độ hiện tại
                         currentLatitude = location.getLatitude();
@@ -489,10 +527,16 @@ public class HomeFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    // Kiểm tra fragment còn attached không
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached, skip error handling");
+                        return;
+                    }
+                    
                     Log.e(TAG, "Failed to get location", e);
                     tvCurrentLocation.setText("Hà Nội");
                     tvDestination.setText("Đà Nẵng");
-                    Toast.makeText(requireContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
                 });
     }
     
@@ -500,7 +544,13 @@ public class HomeFragment extends Fragment {
      * Chuyển đổi tọa độ thành tên địa phương
      */
     private void getAddressFromLocation(double latitude, double longitude) {
-        Geocoder geocoder = new Geocoder(requireContext(), new Locale("vi", "VN"));
+        // Kiểm tra fragment còn attached không
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skip geocoding");
+            return;
+        }
+        
+        Geocoder geocoder = new Geocoder(getContext(), new Locale("vi", "VN"));
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
             if (addresses != null && !addresses.isEmpty()) {

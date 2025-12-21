@@ -5,11 +5,14 @@ import com.android.be.dto.KhoaHocDTO;
 import com.android.be.dto.LichTrinhLopHocDTO;
 import com.android.be.model.KhoaHoc;
 import com.android.be.model.LichTrinhLopHoc;
+import com.android.be.repository.DatLichRepository;
 import com.android.be.repository.KhoaHocRepository;
 import com.android.be.repository.LichTrinhLopHocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +23,7 @@ public class KhoaHocService {
     private final KhoaHocRepository khoaHocRepository;
     private final LichTrinhLopHocRepository lichTrinhRepository;
     private final DanhMucMonAnService danhMucMonAnService;
+    private final DatLichRepository datLichRepository;
     
     public List<KhoaHocDTO> getAllKhoaHoc() {
         return khoaHocRepository.findAll().stream()
@@ -142,6 +146,11 @@ public class KhoaHocService {
         dto.setSaoTrungBinh(khoaHoc.getSaoTrungBinh());
         dto.setCoUuDai(khoaHoc.getCoUuDai());
         
+        // Tính toán thông tin ưu đãi nếu khóa học có ưu đãi
+        if (Boolean.TRUE.equals(khoaHoc.getCoUuDai())) {
+            tinhToanUuDai(dto, khoaHoc.getGiaTien());
+        }
+        
         // Lấy danh sách lịch trình
         List<LichTrinhLopHoc> lichTrinhs = lichTrinhRepository.findByMaKhoaHoc(khoaHoc.getMaKhoaHoc());
         dto.setLichTrinhList(lichTrinhs.stream()
@@ -155,6 +164,28 @@ public class KhoaHocService {
         return dto;
     }
     
+    /**
+     * Tính toán phần trăm giảm và giá sau giảm cho khóa học có ưu đãi
+     * Cố định giảm 10%
+     */
+    private void tinhToanUuDai(KhoaHocDTO dto, BigDecimal giaTien) {
+        // Cố định phần trăm giảm là 10%
+        double phanTramGiam = 10.0;
+        
+        // Tính số tiền giảm = giá tiền * 10%
+        BigDecimal soTienGiam = giaTien.multiply(BigDecimal.valueOf(phanTramGiam))
+                .divide(BigDecimal.valueOf(100), 0, java.math.RoundingMode.HALF_UP);
+        
+        // Tính giá sau giảm
+        BigDecimal giaSauGiam = giaTien.subtract(soTienGiam);
+        if (giaSauGiam.compareTo(BigDecimal.ZERO) < 0) {
+            giaSauGiam = BigDecimal.ZERO;
+        }
+        
+        dto.setPhanTramGiam(phanTramGiam);
+        dto.setGiaSauGiam(giaSauGiam);
+    }
+    
     private LichTrinhLopHocDTO convertLichTrinhToDTO(LichTrinhLopHoc lichTrinh) {
         LichTrinhLopHocDTO dto = new LichTrinhLopHocDTO();
         dto.setMaLichTrinh(lichTrinh.getMaLichTrinh());
@@ -166,6 +197,25 @@ public class KhoaHocService {
         dto.setDiaDiem(lichTrinh.getDiaDiem());
         dto.setSoLuongToiDa(lichTrinh.getSoLuongToiDa());
         dto.setTrangThai(lichTrinh.getTrangThai());
+        
+        // Tính số chỗ còn trống cho ngày mai (hoặc ngày gần nhất)
+        LocalDate ngayKiemTra = LocalDate.now().plusDays(1);
+        Integer soLuongDaDat = datLichRepository.countBookedSeats(lichTrinh.getMaLichTrinh(), ngayKiemTra);
+        Integer soLuongToiDa = lichTrinh.getSoLuongToiDa() != null ? lichTrinh.getSoLuongToiDa() : 0;
+        Integer conTrong = soLuongToiDa - soLuongDaDat;
+        
+        dto.setSoLuongHienTai(soLuongDaDat);
+        dto.setConTrong(conTrong);
+        
+        // Set trạng thái hiển thị
+        if (conTrong <= 0) {
+            dto.setTrangThaiHienThi("Hết chỗ");
+        } else if (conTrong <= 3) {
+            dto.setTrangThaiHienThi("Sắp hết chỗ");
+        } else {
+            dto.setTrangThaiHienThi("Còn chỗ");
+        }
+        
         return dto;
     }
 }

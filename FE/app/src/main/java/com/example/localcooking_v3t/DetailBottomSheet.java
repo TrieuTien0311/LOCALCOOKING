@@ -153,42 +153,63 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         // Xử lý nút Đặt lịch - Chuyển sang Booking Activity
         btnDatLich.setOnClickListener(v -> {
             if (lopHoc != null) {
+                // Debug log
+                android.util.Log.d("DETAIL_BOTTOM_SHEET", "lopHoc: " + lopHoc.getTenLop());
+                android.util.Log.d("DETAIL_BOTTOM_SHEET", "maKhoaHoc: " + lopHoc.getMaKhoaHoc());
+                android.util.Log.d("DETAIL_BOTTOM_SHEET", "lichTrinhList: " + (lopHoc.getLichTrinhList() == null ? "NULL" : lopHoc.getLichTrinhList().size() + " items"));
+                
+                // Kiểm tra có lịch trình không
+                if (lopHoc.getLichTrinhList() == null || lopHoc.getLichTrinhList().isEmpty()) {
+                    Toast.makeText(getContext(), "Khóa học chưa có lịch trình. Vui lòng thử lại sau!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                
+                // Lấy lịch trình đầu tiên
+                Integer maLichTrinh = lopHoc.getLichTrinhList().get(0).getMaLichTrinh();
+                if (maLichTrinh == null || maLichTrinh == 0) {
+                    Toast.makeText(getContext(), "Lịch trình không hợp lệ. Vui lòng thử lại sau!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                
                 // Đóng bottom sheet
                 dismiss();
 
                 // Chuyển sang Booking Activity
                 Intent intent = new Intent(getActivity(), Booking.class);
 
-                // Truyền dữ liệu lớp học
-                intent.putExtra("tenLop", lopHoc.getTenLop());
-                intent.putExtra("moTa", lopHoc.getMoTa());
+                // Truyền dữ liệu theo format mới
+                intent.putExtra("maKhoaHoc", lopHoc.getMaKhoaHoc());
+                intent.putExtra("maLichTrinh", maLichTrinh);
+                intent.putExtra("tenKhoaHoc", lopHoc.getTenLop());
+                intent.putExtra("giaTien", String.valueOf(lopHoc.getGiaTien()));
                 intent.putExtra("thoiGian", lopHoc.getThoiGian());
+                intent.putExtra("diaDiem", lopHoc.getDiaDiem());
                 
-                // Format ngày
-                String ngay = lopHoc.getNgayBatDau();
-                if (ngay != null && !ngay.isEmpty()) {
+                // Sử dụng ngày được chọn từ calendar nếu có
+                String ngayThamGia = "";
+                if (selectedDate != null && !selectedDate.isEmpty()) {
+                    // Convert từ "T4, 15/01/2025" sang "2025-01-15"
                     try {
-                        String[] parts = ngay.split("-");
-                        if (parts.length == 3) {
-                            ngay = parts[2] + "/" + parts[1] + "/" + parts[0];
+                        String[] parts = selectedDate.split(", ");
+                        if (parts.length == 2) {
+                            String[] dateParts = parts[1].split("/");
+                            if (dateParts.length == 3) {
+                                ngayThamGia = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+                            }
                         }
                     } catch (Exception e) {
-                        // Ignore
+                        // Nếu lỗi, dùng ngày bắt đầu
+                        ngayThamGia = lopHoc.getNgayBatDau();
                     }
+                } else {
+                    // Dùng ngày bắt đầu từ lớp học
+                    ngayThamGia = lopHoc.getNgayBatDau();
                 }
-                intent.putExtra("ngay", ngay);
-                
-                intent.putExtra("diaDiem", lopHoc.getDiaDiem());
-                intent.putExtra("gia", lopHoc.getGia());
-                intent.putExtra("giaSo", lopHoc.getGiaTien());
-                intent.putExtra("danhGia", lopHoc.getDanhGia());
-                intent.putExtra("soDanhGia", lopHoc.getSoDanhGia());
-                intent.putExtra("hinhAnh", lopHoc.getHinhAnh());
-                intent.putExtra("coUuDai", lopHoc.getCoUuDai());
-                intent.putExtra("thoiGianKetThuc", "23:59:59"); // Mặc định
-                intent.putExtra("suat", lopHoc.getSuat());
+                intent.putExtra("ngayThamGia", ngayThamGia);
 
                 startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "Không có thông tin lớp học", Toast.LENGTH_SHORT).show();
             }
         });
 

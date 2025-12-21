@@ -2,6 +2,7 @@ package com.example.localcooking_v3t;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +16,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.localcooking_v3t.api.ApiService;
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
+import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
 import com.example.localcooking_v3t.model.KhoaHoc;
+import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Payment extends AppCompatActivity {
+
+    private static final String TAG = "Payment";
+    private static final int REQUEST_VOUCHER = 1001;
 
     // Views
     private ShapeableImageView imgMonAn;
     private TextView txtTenLop, txtGiaTien, txtSoLuongDat, txtThoiGian, txtNgay, txtDiaDiem;
     private TextView txtTongTien, txtTongTien_CTiet, txtTongThanhToan, txtTienGiam;
+    private TextView txtVoucherName; // Sử dụng txtChonUuDai trong layout
     private Button btnConfirmPayment;
     private ImageView btnBack;
     private RadioGroup rdGroupPayment;
@@ -43,6 +59,15 @@ public class Payment extends AppCompatActivity {
     private int soLuongDat = 1;
     private double tongTien = 0;
 
+    // Ưu đãi
+    private Integer selectedMaUuDai;
+    private String selectedMaCode;
+    private Double soTienGiam = 0.0;
+    private Double tongTienSauGiam = 0.0;
+
+    private SessionManager sessionManager;
+    private ActivityResultLauncher<Intent> voucherLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +80,31 @@ public class Payment extends AppCompatActivity {
             return insets;
         });
 
+        sessionManager = new SessionManager(this);
+
+        // Đăng ký launcher cho Vouchers activity
+        voucherLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Intent data = result.getData();
+                        selectedMaUuDai = data.getIntExtra(Vouchers.RESULT_MA_UU_DAI, -1);
+                        selectedMaCode = data.getStringExtra(Vouchers.RESULT_MA_CODE);
+                        String tenUuDai = data.getStringExtra(Vouchers.RESULT_TEN_UU_DAI);
+
+                        if (selectedMaCode != null) {
+                            // Gọi API để tính toán giảm giá
+                            apDungMaUuDai(selectedMaCode);
+                            if (txtVoucherName != null && tenUuDai != null) {
+                                txtVoucherName.setText(tenUuDai);
+                            }
+                        }
+                    }
+                }
+        );
+
         initViews();
         nhanDuLieuTuIntent();
-     
         xuLySuKien();
         setupClearFocusOnTouch();
     }
@@ -89,19 +136,229 @@ public class Payment extends AppCompatActivity {
         idName = findViewById(R.id.idName);
         idEmail = findViewById(R.id.idEmail);
         idPhone = findViewById(R.id.idPhone);
+
+        // Sử dụng txtChonUuDai để hiển thị tên voucher đã chọn
+        txtVoucherName = findViewById(R.id.txtChonUuDai);
     }
 
     private void nhanDuLieuTuIntent() {
-        lopHoc = getIntent().getParcelableExtra("lopHoc");
+        // Nhận các thông tin cơ bản
         soLuongDat = getIntent().getIntExtra("soLuongDat", 1);
         tongTien = getIntent().getDoubleExtra("tongTien", 0);
-
-        if (lopHoc == null) {
-            Toast.makeText(this, "Không nhận được thông tin lớp học!", Toast.LENGTH_SHORT).show();
+        tongTienSauGiam = tongTien;
+        
+        // Kiểm tra dữ liệu
+        if (tongTien <= 0) {
+            Toast.makeText(this, "Không nhận được thông tin giá tiền!", Toast.LENGTH_SHORT).show();
             finish();
+            return;
+        }
+        
+        Log.d(TAG, "=== Nhận dữ liệu từ Intent ===");
+        Log.d(TAG, "Số lượng đặt: " + soLuongDat);
+        Log.d(TAG, "Tổng tiền: " + tongTien);
+        
+        // Hiển thị thông tin lên UI
+        hienThiThongTinLopHoc();
+        
+        // Cập nhật phần bottom (tổng tiền)
+        capNhatGiaoBan();
+    }
+    
+    /**
+     * Cập nhật giá ở phần bottom
+     */
+    private void capNhatGiaoBan() {
+        Log.d(TAG, "=== Cập nhật giá bottom ===");
+        Log.d(TAG, "Tổng tiền: " + tongTien);
+        Log.d(TAG, "Tổng tiền sau giảm: " + tongTienSauGiam);
+        
+        // Cập nhật UI với thông tin ban đầu
+        if (txtTongTien != null) {
+            txtTongTien.setText(formatTien(tongTien) + "đ");
+            Log.d(TAG, "Set txtTongTien: " + formatTien(tongTien) + "đ");
+        }
+        
+        if (txtTongTien_CTiet != null) {
+            txtTongTien_CTiet.setText(formatTien(tongTien) + "đ");
+            Log.d(TAG, "Set txtTongTien_CTiet: " + formatTien(tongTien) + "đ");
+        }
+        
+        if (txtTongThanhToan != null) {
+            txtTongThanhToan.setText(formatTien(tongTienSauGiam) + "đ");
+            Log.d(TAG, "Set txtTongThanhToan: " + formatTien(tongTienSauGiam) + "đ");
+        }
+        
+        if (txtTienGiam != null) {
+            txtTienGiam.setText("-0đ");
+        }
+        
+        // Không set txtSoLuongDat ở đây nữa vì đã set trong hienThiThongTinLopHoc()
+    }
+    
+    /**
+     * Hiển thị thông tin lớp học lên UI
+     */
+    private void hienThiThongTinLopHoc() {
+        // Tên lớp học
+        if (txtTenLop != null) {
+            String tenKhoaHoc = getIntent().getStringExtra("tenKhoaHoc");
+            if (tenKhoaHoc != null) {
+                txtTenLop.setText(tenKhoaHoc);
+            }
+        }
+        
+        // Kiểm tra có ưu đãi giờ chót không
+        boolean coUuDai = getIntent().getBooleanExtra("coUuDai", false);
+        double giaDonVi = tongTien / soLuongDat;
+        
+        // Giá tiền (đơn giá) - hiển thị giá sau giảm nếu có ưu đãi
+        if (txtGiaTien != null) {
+            if (coUuDai) {
+                // Có ưu đãi: hiển thị giá đã giảm
+                txtGiaTien.setText(formatTien(giaDonVi) + "đ");
+            } else {
+                // Không ưu đãi: hiển thị giá gốc
+                txtGiaTien.setText(formatTien(giaDonVi) + "đ");
+            }
+        }
+        
+        // Số lượng - thêm text "người"
+        if (txtSoLuongDat != null) {
+            txtSoLuongDat.setText("SL: " + soLuongDat + " người");
+        }
+        
+        // Thời gian
+        if (txtThoiGian != null) {
+            String thoiGian = getIntent().getStringExtra("thoiGian");
+            if (thoiGian != null) {
+                txtThoiGian.setText("Thời gian: " + thoiGian);
+            }
+        }
+        
+        // Ngày tham gia
+        if (txtNgay != null) {
+            String ngayThamGia = getIntent().getStringExtra("ngayThamGia");
+            if (ngayThamGia != null) {
+                txtNgay.setText("Ngày: " + formatNgay(ngayThamGia));
+            }
+        }
+        
+        // Địa điểm
+        if (txtDiaDiem != null) {
+            String diaDiem = getIntent().getStringExtra("diaDiem");
+            if (diaDiem != null) {
+                txtDiaDiem.setText("Địa điểm: " + diaDiem);
+            }
+        }
+        
+        // Hình ảnh
+        if (imgMonAn != null) {
+            String hinhAnh = getIntent().getStringExtra("hinhAnh");
+            if (hinhAnh != null && !hinhAnh.isEmpty()) {
+                // Loại bỏ extension
+                String name = hinhAnh.replace(".png", "").replace(".jpg", "");
+                // Lấy resource ID
+                int resId = getResources().getIdentifier(name, "drawable", getPackageName());
+                if (resId != 0) {
+                    imgMonAn.setImageResource(resId);
+                } else {
+                    // Hình mặc định
+                    imgMonAn.setImageResource(getResources().getIdentifier("phobo", "drawable", getPackageName()));
+                }
+            }
+        }
+        
+        Log.d(TAG, "Hiển thị thông tin lớp học:");
+        Log.d(TAG, "- Tên: " + getIntent().getStringExtra("tenKhoaHoc"));
+        Log.d(TAG, "- Số lượng: " + soLuongDat + " người");
+        Log.d(TAG, "- Có ưu đãi: " + coUuDai);
+        Log.d(TAG, "- Tổng tiền: " + tongTien);
+    }
+    
+    /**
+     * Format ngày từ "2025-12-25" sang "25/12/2025"
+     */
+    private String formatNgay(String ngayStr) {
+        try {
+            String[] parts = ngayStr.split("-");
+            if (parts.length == 3) {
+                return parts[2] + "/" + parts[1] + "/" + parts[0];
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error formatting date: " + e.getMessage());
+        }
+        return ngayStr;
+    }
+
+    private void apDungMaUuDai(String maCode) {
+        Integer maHocVien = sessionManager.getMaNguoiDung();
+        if (maHocVien == null || maHocVien == -1) {
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng mã ưu đãi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ApDungUuDaiRequest request = new ApDungUuDaiRequest(
+                maHocVien,
+                maCode,
+                tongTien,
+                soLuongDat
+        );
+
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<ApDungUuDaiResponse> call = apiService.apDungUuDai(request);
+
+        call.enqueue(new Callback<ApDungUuDaiResponse>() {
+            @Override
+            public void onResponse(Call<ApDungUuDaiResponse> call, Response<ApDungUuDaiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApDungUuDaiResponse result = response.body();
+                    if (result.isThanhCong()) {
+                        soTienGiam = result.getSoTienGiam();
+                        tongTienSauGiam = result.getTongTienSauGiam();
+                        selectedMaUuDai = result.getMaUuDai();
+
+                        // Cập nhật UI
+                        capNhatGiaUuDai();
+                        Toast.makeText(Payment.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Payment.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        resetUuDai();
+                    }
+                } else {
+                    Toast.makeText(Payment.this, "Không thể áp dụng mã ưu đãi", Toast.LENGTH_SHORT).show();
+                    resetUuDai();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApDungUuDaiResponse> call, Throwable t) {
+                Log.e(TAG, "Error applying voucher", t);
+                Toast.makeText(Payment.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                resetUuDai();
+            }
+        });
+    }
+
+    private void capNhatGiaUuDai() {
+        if (txtTienGiam != null) {
+            txtTienGiam.setText("-" + formatTien(soTienGiam) + "đ");
+        }
+        if (txtTongThanhToan != null) {
+            txtTongThanhToan.setText(formatTien(tongTienSauGiam) + "đ");
         }
     }
 
+    private void resetUuDai() {
+        selectedMaUuDai = null;
+        selectedMaCode = null;
+        soTienGiam = 0.0;
+        tongTienSauGiam = tongTien;
+
+        if (txtTienGiam != null) txtTienGiam.setText("-0đ");
+        if (txtTongThanhToan != null) txtTongThanhToan.setText(formatTien(tongTien) + "đ");
+        if (txtVoucherName != null) txtVoucherName.setText("Chọn để khám phá nhiều ưu đãi");
+    }
 
     private void xuLySuKien() {
         btnBack.setOnClickListener(v -> finish());
@@ -109,7 +366,10 @@ public class Payment extends AppCompatActivity {
         // Xử lý click vào "Thêm ưu đãi" - chuyển đến Vouchers
         findViewById(R.id.cardView2).setOnClickListener(v -> {
             Intent intent = new Intent(Payment.this, Vouchers.class);
-            startActivity(intent);
+            intent.putExtra(Vouchers.EXTRA_MA_HOC_VIEN, sessionManager.getMaNguoiDung());
+            intent.putExtra(Vouchers.EXTRA_SO_LUONG_NGUOI, soLuongDat);
+            intent.putExtra(Vouchers.EXTRA_TONG_TIEN, tongTien);
+            voucherLauncher.launch(intent);
         });
 
         // Xử lý RadioButton Momo
@@ -140,8 +400,33 @@ public class Payment extends AppCompatActivity {
                 return;
             }
 
+            // Xác nhận sử dụng mã ưu đãi nếu có
+            if (selectedMaUuDai != null) {
+                confirmUuDai(selectedMaUuDai);
+            }
+
             Intent intent = new Intent(Payment.this, Bill.class);
+            intent.putExtra("tongTienGoc", tongTien);
+            intent.putExtra("soTienGiam", soTienGiam);
+            intent.putExtra("tongTienThanhToan", tongTienSauGiam);
+            intent.putExtra("maUuDai", selectedMaUuDai);
             startActivity(intent);
+        });
+    }
+
+    private void confirmUuDai(Integer maUuDai) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<Void> call = apiService.confirmUuDai(maUuDai);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d(TAG, "Voucher confirmed: " + maUuDai);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e(TAG, "Failed to confirm voucher", t);
+            }
         });
     }
 

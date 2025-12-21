@@ -58,4 +58,10 @@ public class UuDai {
     
     @Column(name = "ngayTao")
     private LocalDateTime ngayTao = LocalDateTime.now();
+    
+    @Column(name = "loaiUuDai", length = 50)
+    private String loaiUuDai; // NEWUSER | GROUP | NORMAL
+    
+    @Column(name = "dieuKienSoLuong")
+    private Integer dieuKienSoLuong; // Số lượng người tối thiểu (cho GROUP)
 }

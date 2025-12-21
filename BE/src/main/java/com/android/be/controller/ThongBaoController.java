@@ -3,6 +3,7 @@ package com.android.be.controller;
 import com.android.be.dto.ThongBaoDTO;
 import com.android.be.model.ThongBao;
 import com.android.be.service.ThongBaoService;
+import com.android.be.service.ThongBaoSchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class ThongBaoController {
     
     private final ThongBaoService thongBaoService;
+    private final ThongBaoSchedulerService thongBaoSchedulerService;
     
     // Lấy tất cả thông báo
     @GetMapping
@@ -104,6 +106,40 @@ public class ThongBaoController {
         thongBaoService.deleteAllReadNotifications(maNguoiNhan);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Đã xóa tất cả thông báo đã đọc");
+        return ResponseEntity.ok(response);
+    }
+    
+    // API test: Tạo thông báo nhắc nhở trước 1 ngày (gọi thủ công)
+    @GetMapping("/trigger/truoc-1-ngay")
+    public ResponseEntity<Map<String, String>> triggerThongBaoTruoc1Ngay() {
+        thongBaoSchedulerService.taoThongBaoTruoc1Ngay();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Đã chạy tạo thông báo nhắc nhở trước 1 ngày");
+        return ResponseEntity.ok(response);
+    }
+    
+    // API test: Tạo thông báo nhắc nhở trước 30 phút (gọi thủ công)
+    @GetMapping("/trigger/truoc-30-phut")
+    public ResponseEntity<Map<String, String>> triggerThongBaoTruoc30Phut() {
+        thongBaoSchedulerService.taoThongBaoTruoc30Phut();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Đã chạy tạo thông báo nhắc nhở trước 30 phút");
+        return ResponseEntity.ok(response);
+    }
+    
+    // API test: Tạo thông báo test không kiểm tra trùng
+    @GetMapping("/trigger/test-truoc-1-ngay")
+    public ResponseEntity<Map<String, Object>> testTriggerThongBao() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            int count = thongBaoSchedulerService.taoThongBaoTruoc1NgayKhongKiemTra();
+            response.put("success", true);
+            response.put("message", "Đã tạo " + count + " thông báo");
+            response.put("count", count);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
         return ResponseEntity.ok(response);
     }
 }

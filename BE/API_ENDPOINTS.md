@@ -34,7 +34,18 @@ http://localhost:8080/api
 - **PUT** `/giaovien/{id}` - Cập nhật giáo viên
 - **DELETE** `/giaovien/{id}` - Xóa giáo viên
 
-## 5. Lớp Học (LopHoc)
+## 5. Khóa Học (KhoaHoc)
+- **GET** `/khoahoc` - Lấy tất cả khóa học (trả về KhoaHocDTO)
+- **GET** `/khoahoc/{id}` - Lấy khóa học theo ID (trả về KhoaHocDTO)
+- **GET** `/khoahoc/search?diaDiem={diaDiem}&ngayTimKiem={ngayTimKiem}` - Tìm kiếm khóa học theo địa điểm và ngày (trả về KhoaHocDTO)
+    - `diaDiem` (required): Tên thành phố hoặc địa điểm (ví dụ: "Hà Nội", "Đà Nẵng", "Huế", "Cần Thơ")
+    - `ngayTimKiem` (optional): Ngày tìm kiếm theo định dạng YYYY-MM-DD (ví dụ: "2025-01-15")
+    - **Lưu ý:** API tự động tính toán `phanTramGiam` và `giaSauGiam` cho các khóa học có `coUuDai = true`
+- **POST** `/khoahoc` - Tạo khóa học mới
+- **PUT** `/khoahoc/{id}` - Cập nhật khóa học
+- **DELETE** `/khoahoc/{id}` - Xóa khóa học
+
+## 5.1. Lớp Học (LopHoc)
 - **GET** `/lophoc` - Lấy tất cả lớp học (trả về LopHocDTO)
 - **GET** `/lophoc/{id}` - Lấy lớp học theo ID (trả về LopHocDTO)
 - **GET** `/lophoc/search?diaDiem={diaDiem}&ngayTimKiem={ngayTimKiem}` - Tìm kiếm lớp học theo địa điểm và ngày (trả về LopHocDTO)
@@ -52,6 +63,18 @@ http://localhost:8080/api
 - **POST** `/lichhoc` - Tạo lịch học mới
 - **PUT** `/lichhoc/{id}` - Cập nhật lịch học
 - **DELETE** `/lichhoc/{id}` - Xóa lịch học
+
+## 6.1. Lịch Trình Lớp Học (LichTrinhLopHoc)
+- **GET** `/lichtrinh` - Lấy tất cả lịch trình
+- **GET** `/lichtrinh/{id}` - Lấy lịch trình theo ID
+- **GET** `/lichtrinh/khoahoc/{maKhoaHoc}` - Lấy lịch trình theo khóa học
+- **GET** `/lichtrinh/giaovien/{maGiaoVien}` - Lấy lịch trình theo giáo viên
+- **GET** `/lichtrinh/diadiem?diaDiem={diaDiem}` - Lấy lịch trình theo địa điểm
+- **GET** `/lichtrinh/active` - Lấy lịch trình đang hoạt động
+- **GET** `/lichtrinh/check-seats?maLichTrinh={maLichTrinh}&ngayThamGia={ngayThamGia}` - Kiểm tra chỗ trống
+- **POST** `/lichtrinh` - Tạo lịch trình mới
+- **PUT** `/lichtrinh/{id}` - Cập nhật lịch trình
+- **DELETE** `/lichtrinh/{id}` - Xóa lịch trình
 
 ## 7. Danh Mục Món Ăn (DanhMucMonAn)
 - **GET** `/danhmucmonan` - Lấy tất cả danh mục món ăn
@@ -83,8 +106,21 @@ http://localhost:8080/api
 - **DELETE** `/hinhanhlophoc/{id}` - Xóa hình ảnh lớp học
 
 ## 11. Đặt Lịch (DatLich)
+
+### Luồng đặt lịch mới:
+1. User tìm kiếm khóa học theo địa điểm và ngày: `GET /api/khoahoc/search`
+2. User chọn khóa học và nhấn "Đặt lịch"
+3. Lấy lịch trình của khóa học: `GET /api/lichtrinh/khoahoc/{maKhoaHoc}`
+4. User chọn lịch trình (thứ, giờ học)
+5. Kiểm tra chỗ trống: `GET /api/lichtrinh/check-seats`
+6. User điều chỉnh số người và xác nhận
+7. Tạo đặt lịch: `POST /api/datlich`
+
+### Endpoints:
 - **GET** `/datlich` - Lấy tất cả đặt lịch
 - **GET** `/datlich/{id}` - Lấy đặt lịch theo ID
+- **GET** `/datlich/hocvien/{maHocVien}` - Lấy đặt lịch theo học viên
+- **GET** `/datlich/hocvien/{maHocVien}/trangthai/{trangThai}` - Lấy đặt lịch theo học viên và trạng thái
 - **POST** `/datlich` - Tạo đặt lịch mới
 - **PUT** `/datlich/{id}` - Cập nhật đặt lịch
 - **DELETE** `/datlich/{id}` - Xóa đặt lịch
@@ -120,7 +156,10 @@ http://localhost:8080/api
 ## 15. Ưu Đãi (UuDai)
 - **GET** `/uudai` - Lấy tất cả ưu đãi (trả về UuDaiDTO)
 - **GET** `/uudai/{id}` - Lấy ưu đãi theo ID (trả về UuDaiDTO)
+- **GET** `/uudai/available?maHocVien={maHocVien}&soLuongNguoi={soLuongNguoi}` - Lấy danh sách ưu đãi khả dụng cho user
 - **POST** `/uudai` - Tạo ưu đãi mới
+- **POST** `/uudai/apply` - Áp dụng mã ưu đãi và tính toán giảm giá
+- **POST** `/uudai/confirm/{maUuDai}` - Xác nhận sử dụng mã ưu đãi (gọi sau khi thanh toán thành công)
 - **PUT** `/uudai/{id}` - Cập nhật ưu đãi
 - **DELETE** `/uudai/{id}` - Xóa ưu đãi
 
@@ -370,7 +409,67 @@ http://localhost:8080/api
 }
 ```
 
-### 17. Tìm kiếm lớp học theo địa điểm
+### 17. Tìm kiếm khóa học theo địa điểm
+**Ví dụ 1: Tìm tất cả khóa học ở Hà Nội**
+```
+GET /api/khoahoc/search?diaDiem=Hà Nội
+```
+
+**Ví dụ 2: Tìm khóa học ở Đà Nẵng vào ngày 15/01/2025**
+```
+GET /api/khoahoc/search?diaDiem=Đà Nẵng&ngayTimKiem=2025-01-15
+```
+
+**Response:**
+```json
+[
+  {
+    "maKhoaHoc": 1,
+    "tenKhoaHoc": "Ẩm thực phố cổ Hà Nội",
+    "moTa": "Khám phá hương vị đặc trưng của ẩm thực phố cổ",
+    "gioiThieu": "Trải nghiệm nấu các món ăn đường phố nổi tiếng nhất Hà Nội",
+    "giaTriSauBuoiHoc": "• Nắm vững kỹ thuật nấu phở Hà Nội chính gốc...",
+    "giaTien": 650000,
+    "hinhAnh": "phobo.png",
+    "soLuongDanhGia": 15,
+    "saoTrungBinh": 4.5,
+    "coUuDai": true,
+    "phanTramGiam": 10.0,
+    "giaSauGiam": 585000,
+    "lichTrinhList": [
+      {
+        "maLichTrinh": 1,
+        "maKhoaHoc": 1,
+        "maGiaoVien": 1,
+        "thuTrongTuan": "Thứ 2, Thứ 4, Thứ 6",
+        "gioBatDau": "09:00:00",
+        "gioKetThuc": "12:00:00",
+        "diaDiem": "45 Hàng Bạc, Hoàn Kiếm, Hà Nội",
+        "soLuongToiDa": 20,
+        "soLuongHienTai": 5,
+        "conTrong": 15,
+        "trangThai": true,
+        "trangThaiHienThi": "Còn chỗ"
+      }
+    ],
+    "danhMucMonAnList": [
+      {
+        "maDanhMuc": 1,
+        "tenDanhMuc": "Khai vị",
+        "monAnList": [...]
+      }
+    ]
+  }
+]
+```
+
+**Lưu ý về tính toán ưu đãi:**
+- Khi `coUuDai = true`, backend tự động tính toán:
+  - `phanTramGiam`: Cố định 10%
+  - `giaSauGiam`: Giá sau khi giảm 10%
+- Công thức: `giaSauGiam = giaTien - (giaTien * 10%)`
+
+### 18. Tìm kiếm lớp học theo địa điểm
 **Ví dụ 1: Tìm tất cả lớp học ở Hà Nội (còn hiệu lực)**
 ```
 GET /api/lophoc/search?diaDiem=Hà Nội

@@ -22,6 +22,10 @@ public class KhoaHoc implements Serializable {
     private Boolean coUuDai;
     private String ngayTao;
     
+    // Thông tin ưu đãi
+    private Double phanTramGiam; // Phần trăm giảm giá (VD: 10.0 = giảm 10%)
+    private Double giaSauGiam; // Giá sau khi áp dụng ưu đãi
+    
     // Danh sách lịch trình (nếu cần)
     private List<LichTrinhLopHoc> lichTrinhList;
     
@@ -136,6 +140,22 @@ public class KhoaHoc implements Serializable {
         this.ngayTao = ngayTao;
     }
     
+    public Double getPhanTramGiam() {
+        return phanTramGiam;
+    }
+    
+    public void setPhanTramGiam(Double phanTramGiam) {
+        this.phanTramGiam = phanTramGiam;
+    }
+    
+    public Double getGiaSauGiam() {
+        return giaSauGiam;
+    }
+    
+    public void setGiaSauGiam(Double giaSauGiam) {
+        this.giaSauGiam = giaSauGiam;
+    }
+    
     public List<LichTrinhLopHoc> getLichTrinhList() {
         return lichTrinhList;
     }
@@ -158,12 +178,15 @@ public class KhoaHoc implements Serializable {
     }
     
     /**
-     * Lấy giá sau khi giảm (nếu có ưu đãi)
+     * Lấy giá sau khi giảm dưới dạng format tiền tệ (nếu có ưu đãi)
      */
-    public String getGiaSauGiam() {
-        if (coUuDai != null && coUuDai && giaTien != null) {
-            double giaSauGiam = giaTien * 0.9; // Giảm 10%
+    public String getGiaSauGiamFormatted() {
+        if (giaSauGiam != null) {
             return String.format("%,.0fđ", giaSauGiam).replace(",", ".");
+        }
+        if (coUuDai != null && coUuDai && giaTien != null) {
+            double giaSauGiamTinh = giaTien * 0.9; // Giảm 10%
+            return String.format("%,.0fđ", giaSauGiamTinh).replace(",", ".");
         }
         return getGiaFormatted();
     }

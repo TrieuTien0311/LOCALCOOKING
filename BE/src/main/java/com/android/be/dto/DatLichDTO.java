@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 public class DatLichDTO {
     private Integer maDatLich;
     private Integer maHocVien;
-    private Integer maLopHoc;
+    private Integer maLopHoc; // Mã khóa học
+    private Integer maLichTrinh;
     private String tenLopHoc;
     private Integer soLuongNguoi;
     private Double tongTien;

@@ -15,7 +15,7 @@ USE DatLichHocNauAn;
 GO
 
 ---------------------------------------------------------------------
--- PHẦN 2: TẠO CẤU TRÚC BẢNG (ĐÃ TỐI ƯU)
+-- PHẦN 2: TẠO CẤU TRÚC BẢNG
 ---------------------------------------------------------------------
 
 -- 1. NGƯỜI DÙNG
@@ -130,39 +130,7 @@ CREATE TABLE HinhAnhKhoaHoc (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
 );
 
--- 10. ĐẶT LỊCH
-CREATE TABLE DatLich (
-    maDatLich INT PRIMARY KEY IDENTITY(1,1),
-    maHocVien INT NOT NULL,
-    maLichTrinh INT NOT NULL,
-    ngayThamGia DATE NOT NULL,
-    
-    soLuongNguoi INT DEFAULT 1,
-    tongTien DECIMAL(10,2),
-    tenNguoiDat NVARCHAR(100),
-    emailNguoiDat VARCHAR(100),
-    sdtNguoiDat VARCHAR(15),
-    ngayDat DATETIME DEFAULT GETDATE(),
-    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
-    ghiChu NVARCHAR(MAX),
-    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
-    FOREIGN KEY (maLichTrinh) REFERENCES LichTrinhLopHoc(maLichTrinh)
-);
-
--- 11. THANH TOÁN
-CREATE TABLE ThanhToan (
-    maThanhToan INT PRIMARY KEY IDENTITY(1,1),
-    maDatLich INT NOT NULL,
-    soTien DECIMAL(10,2) NOT NULL,
-    phuongThuc NVARCHAR(30) NOT NULL,
-    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
-    ngayThanhToan DATETIME,
-    maGiaoDich VARCHAR(100),
-    ghiChu NVARCHAR(MAX),
-    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
-);
-
--- 12. ĐÁNH GIÁ
+-- 10. ĐÁNH GIÁ
 CREATE TABLE DanhGia (
     maDanhGia INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -174,7 +142,7 @@ CREATE TABLE DanhGia (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
 );
 
--- 13. THÔNG BÁO
+-- 11. THÔNG BÁO
 CREATE TABLE ThongBao (
     maThongBao INT PRIMARY KEY IDENTITY(1,1),
     maNguoiNhan INT,
@@ -187,7 +155,7 @@ CREATE TABLE ThongBao (
     FOREIGN KEY (maNguoiNhan) REFERENCES NguoiDung(maNguoiDung)
 );
 
--- 14. YÊU THÍCH
+-- 12. YÊU THÍCH
 CREATE TABLE YeuThich (
     maYeuThich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -197,7 +165,8 @@ CREATE TABLE YeuThich (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc),
     CONSTRAINT UQ_YeuThich UNIQUE (maHocVien, maKhoaHoc)
 );
--- 15. ƯU ĐÃI
+
+-- 13. ƯU ĐÃI
 CREATE TABLE UuDai (
     maUuDai INT PRIMARY KEY IDENTITY(1,1),
     maCode VARCHAR(50) UNIQUE NOT NULL,
@@ -208,11 +177,48 @@ CREATE TABLE UuDai (
     giamToiDa DECIMAL(10,2),
     soLuong INT,
     soLuongDaSuDung INT DEFAULT 0,
+	loaiUuDai NVARCHAR(50) NULL,
+	dieuKienSoLuong INT NULL,
     ngayBatDau DATE NOT NULL,
     ngayKetThuc DATE NOT NULL,
     hinhAnh VARCHAR(255),
     trangThai NVARCHAR(20) DEFAULT N'Hoạt Động',
     ngayTao DATETIME DEFAULT GETDATE()
+);
+
+-- 14. ĐẶT LỊCH
+CREATE TABLE DatLich (
+    maDatLich INT PRIMARY KEY IDENTITY(1,1),
+    maHocVien INT NOT NULL,
+    maLichTrinh INT NOT NULL,
+    ngayThamGia DATE NOT NULL,
+    
+    soLuongNguoi INT DEFAULT 1,
+    tongTien DECIMAL(10,2),
+    tenNguoiDat NVARCHAR(100),
+    emailNguoiDat VARCHAR(100),
+    sdtNguoiDat VARCHAR(15),
+    ngayDat DATETIME DEFAULT GETDATE(),
+	maUuDai INT NULL,
+	soTienGiam DECIMAL(10,2) NULL,
+    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
+    ghiChu NVARCHAR(MAX),
+    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
+    FOREIGN KEY (maLichTrinh) REFERENCES LichTrinhLopHoc(maLichTrinh),
+	FOREIGN KEY (maUuDai) REFERENCES UuDai(maUuDai)
+);
+
+-- 15. THANH TOÁN
+CREATE TABLE ThanhToan (
+    maThanhToan INT PRIMARY KEY IDENTITY(1,1),
+    maDatLich INT NOT NULL,
+    soTien DECIMAL(10,2) NOT NULL,
+    phuongThuc NVARCHAR(30) NOT NULL,
+    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
+    ngayThanhToan DATETIME,
+    maGiaoDich VARCHAR(100),
+    ghiChu NVARCHAR(MAX),
+    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
 );
 
 -- 16. LỊCH SỬ ƯU ĐÃI
@@ -263,6 +269,97 @@ BEGIN
 END;
 GO
 
+
+IF OBJECT_ID('sp_ThongBaoTruoc1Ngay', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc1Ngay;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc1Ngay
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NgayMai DATE = DATEADD(DAY, 1, CAST(GETDATE() AS DATE));
+    
+    -- Tạo thông báo cho những học viên có lịch học vào ngày mai
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'🔔 Lớp học sắp diễn ra',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy chuẩn bị sẵn sàng nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @NgayMai
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'🔔 Lớp học sắp diễn ra'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%' 
+            AND tb.noiDung LIKE N'%' + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N'%'
+            AND CAST(tb.ngayTao AS DATE) = CAST(GETDATE() AS DATE)
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 30 phút
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc30Phut', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc30Phut;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc30Phut
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @HomNay DATE = CAST(GETDATE() AS DATE);
+    DECLARE @GioHienTai TIME = CAST(GETDATE() AS TIME);
+    DECLARE @GioSau30Phut TIME = DATEADD(MINUTE, 30, @GioHienTai);
+    
+    -- Tạo thông báo cho những học viên có lớp học bắt đầu trong 30 phút tới
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'⏰ Còn 30 phút nữa!',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ bắt đầu lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy đến đúng giờ nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @HomNay
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Lớp bắt đầu trong khoảng 25-35 phút tới (để có buffer)
+      AND lt.gioBatDau >= @GioHienTai
+      AND lt.gioBatDau <= DATEADD(MINUTE, 35, @GioHienTai)
+      AND lt.gioBatDau >= DATEADD(MINUTE, 25, @GioHienTai)
+      -- Kiểm tra chưa có thông báo 30 phút cho lịch này hôm nay
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'⏰ Còn 30 phút nữa!'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%'
+            AND CAST(tb.ngayTao AS DATE) = @HomNay
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
 -- Trigger: Cập nhật đánh giá
 CREATE TRIGGER trg_CapNhatDanhGiaKhoaHoc
 ON DanhGia
@@ -451,7 +548,7 @@ GO
 INSERT INTO NguoiDung (tenDangNhap, matKhau, hoTen, email, soDienThoai, gioiTinh, diaChi, vaiTro, trangThai) VALUES
 (N'admin', N'admin123', N'Quản Trị Viên', N'admin@localcooking.vn', N'0901234567', N'Nam', N'123 Nguyễn Huệ, Q1, TP.HCM', N'Admin', N'HoatDong'),
 (N'VanAn', N'gv123', N'Nguyễn Văn An', N'nguyenvanan@gmail.com', N'0912345678', N'Nam', N'456 Lê Lợi, Q1, TP.HCM', N'GiaoVien', N'HoatDong'),
-(N'ThiBinh', N'gv123', N'Trần Thị Bình', N'tranthibinh@gmail.com', N'0923456789', N'Nữ', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
+(N'AnhThu', N'gv123', N'Nguyễn Hoàng Anh Thư', N'nguyenthu2018dn@gmail.com', N'0923456789', N'Nữ', N'789 Trần Hưng Đạo, Q5, TP.HCM', N'GiaoVien', N'HoatDong'),
 (N'ThaoVy', N'hv123', N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'Nữ', N'321 Võ Văn Tần, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'TrieuTien', N'hv123', N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'Nam', N'654 Hai Bà Trưng, Q3, TP.HCM', N'HocVien', N'HoatDong'),
 (N'ThiThuong', N'hv123', N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Nữ', N'987 Cách Mạng Tháng 8, Q10, TP.HCM', N'HocVien', N'HoatDong');
@@ -552,22 +649,22 @@ INSERT INTO LichTrinhLopHoc (maKhoaHoc, maGiaoVien, thuTrongTuan, gioBatDau, gio
 (1, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 (2, 1, '2,4,6',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 18),
 (3, 2, '3,5,7',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 15),
-(4, 1, '7,CN',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
+(4, 1, '7,1',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 -- HUẾ
 (5, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
 (6, 2, '2,4,6',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
 (7, 1, '3,5,7',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 15),
-(8, 2, '7,CN',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
+(8, 2, '7,1',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
 -- ĐÀ NẴNG
 (9, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'78 Trần Phú, Đà Nẵng', 20),
 (10, 2, '2,4,6',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 18),
 (11, 1, '3,5,7',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 20),
-(12, 1, '7,CN',           '14:00', '17:00', N'78 Trần Phú, Đà Nẵng', 18),
+(12, 1, '7,1',           '14:00', '17:00', N'78 Trần Phú, Đà Nẵng', 18),
 -- CẦN THƠ
 (13, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'56 Mậu Thân, Cần Thơ', 20),
 (14, 2, '2,4,6',          '08:30', '11:30', N'56 Mậu Thân, Cần Thơ', 18),
 (15, 1, '3,5,7',          '08:30', '11:30', N'56 Mậu Thân, Cần Thơ', 20),
-(16, 2, '7,CN',            '14:00', '17:00', N'56 Mậu Thân, Cần Thơ', 15);
+(16, 2, '7,1',            '14:00', '17:00', N'56 Mậu Thân, Cần Thơ', 15);
 
 -- 5. DANH MỤC
 INSERT INTO DanhMucMonAn (tenDanhMuc, iconDanhMuc, thuTu) VALUES
@@ -748,21 +845,20 @@ INSERT INTO HinhAnhKhoaHoc (maKhoaHoc, duongDan, thuTu) VALUES
 INSERT INTO DatLich (maHocVien, maLichTrinh, ngayThamGia, soLuongNguoi, tongTien, tenNguoiDat, emailNguoiDat, sdtNguoiDat, trangThai) VALUES
 (4, 1, '2025-12-22', 1, 650000, N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'Đã Duyệt'),
 (5, 5, '2025-12-24', 2, 1430000, N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'Chờ Duyệt'),
-(6, 9, '2025-12-28', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
+(6, 9, '2025-12-22', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
 
 -- 10. ƯU ĐÃI
-INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, giamToiDa, soLuong, ngayBatDau, ngayKetThuc, hinhAnh) VALUES
-('GIAM50K', N'Giảm 50k cho thành viên mới', N'Áp dụng cho đơn hàng từ 500k', 'SoTien', 50000, 50000, 100, '2025-01-01', '2025-12-31', 'uudai1.jpg'),
-('GIAM10%', N'Giảm 10% mùa lễ hội', N'Giảm tối đa 100k', 'PhanTram', 10, 100000, 50, '2025-12-01', '2025-12-31', 'uudai2.jpg'),
-('FREESHIP', N'Miễn phí tài liệu', N'Tặng bộ tài liệu công thức', 'SoTien', 0, 0, 200, '2025-01-01', '2025-06-30', 'uudai3.jpg');
--- 11. YÊU THÍCH (Học viên lưu các khóa học yêu thích)
+INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, ngayKetThuc, trangThai, loaiUuDai, dieuKienSoLuong, hinhAnh) VALUES 
+('KHACHHANGMOI', N'Ưu đãi tài khoản mới', N'Giảm 30% cho đơn hàng đầu tiên', 'PhanTram', 30, '2024-01-01', '2025-12-31', N'Hoạt Động', 'NEWUSER', NULL, 'uudai1.jpg'),
+('THAMGIANHOM', N'Ưu đãi nhóm', N'Giảm 20% khi đặt từ 5 người', 'PhanTram', 20, '2024-01-01', '2025-12-31', N'Hoạt Động', 'GROUP', 5, 'uudai2.jpg');
 
+PRINT N'✓ Đã thực thi xong!';
 GO
+
 select * from GiaoVien
 select * from NguoiDung
-select * from DanhMucMonAn
-select * from HinhAnhMonAn
-select * from KhoaHoc
-select * from LichTrinhLopHoc
-select * from YeuThich
 select * from DatLich
+select * from KhoaHoc
+SELECT * FROM UuDai;
+select * from YeuThich
+select * from LichTrinhLopHoc
