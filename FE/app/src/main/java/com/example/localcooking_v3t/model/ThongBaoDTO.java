@@ -24,7 +24,7 @@ public class ThongBaoDTO {
         this.loaiThongBao = loaiThongBao;
     }
 
-    // Getters
+
     public Integer getMaThongBao() { return maThongBao; }
     public String getTieuDeTB() { return tieuDeTB; }
     public String getNoiDungTB() { return noiDungTB; }

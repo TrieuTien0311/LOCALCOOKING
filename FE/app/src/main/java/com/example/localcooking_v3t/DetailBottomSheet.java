@@ -231,12 +231,25 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-        // Xử lý nút Share
+        // Xử lý nút Share - Chia sẻ qua Messenger hoặc các app khác
         btnShare.setOnClickListener(v -> {
             if (lopHoc != null) {
-                Toast.makeText(getContext(), "Chia sẻ: " + lopHoc.getTenLop(),
-                        Toast.LENGTH_SHORT).show();
-                // TODO: Xử lý logic chia sẻ
+                // Tạo deep link cho lớp học
+                String deepLink = "https://localcooking.app/khoahoc/" + lopHoc.getMaKhoaHoc();
+                
+                String shareText = "🍳 Khám phá lớp học nấu ăn: " + lopHoc.getTenLop() + "\n\n" +
+                        "⏰ Thời gian: " + lopHoc.getThoiGian() + "\n" +
+                        "📍 Địa điểm: " + lopHoc.getDiaDiem() + "\n" +
+                        "💰 Giá: " + String.format("%,.0f", lopHoc.getGiaTien()) + "₫\n\n" +
+                        "👉 Xem chi tiết: " + deepLink;
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Lớp học nấu ăn: " + lopHoc.getTenLop());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+
+                // Mở chooser để chọn app chia sẻ (Messenger, Zalo, Facebook, ...)
+                startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua"));
             }
         });
 
