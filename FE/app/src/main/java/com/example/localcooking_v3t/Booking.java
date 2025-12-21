@@ -29,6 +29,7 @@ import com.example.localcooking_v3t.utils.SessionManager;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -295,7 +296,7 @@ public class Booking extends AppCompatActivity {
             // Vẫn hiển thị UI với dữ liệu từ Intent
             displayBookingInfo();
             btnTiepTuc.setEnabled(true);
-            btnTiepTuc.setText("Đặt lịch");
+            btnTiepTuc.setText("Tiếp tục");
             return;
         }
         
@@ -341,7 +342,7 @@ public class Booking extends AppCompatActivity {
                     
                     // Enable button
                     btnTiepTuc.setEnabled(true);
-                    btnTiepTuc.setText("Đặt lịch");
+                    btnTiepTuc.setText("Tiếp tục");
                     
                     // Kiểm tra nếu hết chỗ
                     if (soLuongConLai <= 0) {
@@ -351,7 +352,7 @@ public class Booking extends AppCompatActivity {
                     }
                 } else {
                     btnTiepTuc.setEnabled(true);
-                    btnTiepTuc.setText("Đặt lịch");
+                    btnTiepTuc.setText("Tiếp tục");
                     Log.e("BOOKING_API", "Error loading LichTrinh: " + response.code());
                     // Vẫn hiển thị UI với dữ liệu từ Intent
                     displayBookingInfo();
@@ -361,7 +362,7 @@ public class Booking extends AppCompatActivity {
             @Override
             public void onFailure(Call<LichTrinhLopHoc> call, Throwable t) {
                 btnTiepTuc.setEnabled(true);
-                btnTiepTuc.setText("Đặt lịch");
+                btnTiepTuc.setText("Tiếp tục");
                 Log.e("BOOKING_API", "Failed to load LichTrinh", t);
                 // Vẫn hiển thị UI với dữ liệu từ Intent
                 displayBookingInfo();
@@ -405,92 +406,7 @@ public class Booking extends AppCompatActivity {
     /**
      * Kiểm tra số chỗ trống từ API
      */
-    private void checkAvailableSeats() {
-        if (maLichTrinh == null || ngayThamGia == null) {
-            Log.e("BOOKING_API", "Cannot check seats: maLichTrinh=" + maLichTrinh + ", ngayThamGia=" + ngayThamGia);
-            btnTiepTuc.setEnabled(true);
-            btnTiepTuc.setText("Đặt lịch");
-            displayBookingInfo();
-            return;
-        }
-        
-        Log.d("BOOKING_API", "=== Calling checkAvailableSeats ===");
-        Log.d("BOOKING_API", "maLichTrinh: " + maLichTrinh);
-        Log.d("BOOKING_API", "ngayThamGia: " + ngayThamGia);
-        Log.d("BOOKING_API", "API URL: " + RetrofitClient.getBaseUrl() + "api/lichtrinh/check-seats?maLichTrinh=" + maLichTrinh + "&ngayThamGia=" + ngayThamGia);
-        
-        apiService.checkAvailableSeats(maLichTrinh, ngayThamGia).enqueue(new Callback<CheckSeatsResponse>() {
-            @Override
-            public void onResponse(Call<CheckSeatsResponse> call, Response<CheckSeatsResponse> response) {
-                Log.d("BOOKING_API", "=== checkAvailableSeats Response ===");
-                Log.d("BOOKING_API", "Response code: " + response.code());
-                Log.d("BOOKING_API", "Response successful: " + response.isSuccessful());
-                
-                btnTiepTuc.setEnabled(true);
-                btnTiepTuc.setText("Đặt lịch");
-                
-                if (response.isSuccessful() && response.body() != null) {
-                    CheckSeatsResponse seatsResponse = response.body();
-                    
-                    Log.d("BOOKING_API", "Response body:");
-                    Log.d("BOOKING_API", "  - success: " + seatsResponse.isSuccess());
-                    Log.d("BOOKING_API", "  - message: " + seatsResponse.getMessage());
-                    Log.d("BOOKING_API", "  - maLichTrinh: " + seatsResponse.getMaLichTrinh());
-                    Log.d("BOOKING_API", "  - maKhoaHoc: " + seatsResponse.getMaKhoaHoc());
-                    Log.d("BOOKING_API", "  - tenKhoaHoc: " + seatsResponse.getTenKhoaHoc());
-                    Log.d("BOOKING_API", "  - tongCho: " + seatsResponse.getTongCho());
-                    Log.d("BOOKING_API", "  - daDat: " + seatsResponse.getDaDat());
-                    Log.d("BOOKING_API", "  - conTrong: " + seatsResponse.getConTrong());
-                    Log.d("BOOKING_API", "  - trangThai: " + seatsResponse.getTrangThai());
-                    
-                    // Xử lý null safety cho conTrong
-                    Integer conTrong = seatsResponse.getConTrong();
-                    soLuongConLai = (conTrong != null) ? conTrong : 0;
-                    
-                    Log.d("BOOKING_API", "Số chỗ còn trống (final): " + soLuongConLai);
-                    
-                    // Hiển thị thông tin lên UI
-                    displayBookingInfo();
-                    
-                    // Kiểm tra nếu hết chỗ
-                    if (soLuongConLai <= 0) {
-                        Toast.makeText(Booking.this, "Lớp học đã hết chỗ", Toast.LENGTH_SHORT).show();
-                        btnTiepTuc.setEnabled(false);
-                        btnTiepTuc.setText("Hết chỗ");
-                    }
-                } else {
-                    Log.e("BOOKING_API", "Error checking seats: " + response.code());
-                    try {
-                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
-                        Log.e("BOOKING_API", "Error body: " + errorBody);
-                    } catch (Exception e) {
-                        Log.e("BOOKING_API", "Cannot read error body", e);
-                    }
-                    // Set giá trị mặc định
-                    soLuongConLai = 10; // Giả định có 10 chỗ
-                    // Vẫn hiển thị UI với dữ liệu mặc định
-                    displayBookingInfo();
-                }
-            }
-            
-            @Override
-            public void onFailure(Call<CheckSeatsResponse> call, Throwable t) {
-                btnTiepTuc.setEnabled(true);
-                btnTiepTuc.setText("Đặt lịch");
-                Log.e("BOOKING_API", "=== checkAvailableSeats Failed ===");
-                Log.e("BOOKING_API", "Error message: " + t.getMessage());
-                Log.e("BOOKING_API", "Error class: " + t.getClass().getName());
-                t.printStackTrace();
-                
-                Toast.makeText(Booking.this, "Không thể kết nối server. Vui lòng kiểm tra kết nối mạng.", Toast.LENGTH_LONG).show();
-                
-                // Set giá trị mặc định để user vẫn có thể đặt
-                soLuongConLai = 10;
-                // Vẫn hiển thị UI với dữ liệu mặc định
-                displayBookingInfo();
-            }
-        });
-    }
+
     
     /**
      * Cập nhật UI
@@ -767,12 +683,30 @@ public class Booking extends AppCompatActivity {
         
         Log.d("BOOKING_UI", "=== Displaying KhoaHoc Info ===");
         Log.d("BOOKING_UI", "KhoaHoc: " + khoaHoc.getTenKhoaHoc());
+        Log.d("BOOKING_UI", "hinhAnh (banner): " + khoaHoc.getHinhAnh());
         Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // THAY ĐỔI: Hiển thị slide ảnh thay vì 1 ảnh
+        // Tạo danh sách ảnh mới: ảnh banner (hinhAnh) + ảnh từ HinhAnhKhoaHoc
+        List<HinhAnhKhoaHoc> combinedImageList = new ArrayList<>();
+        
+        // 1. Thêm ảnh banner (hinhAnh từ KhoaHoc) làm ảnh đầu tiên
+        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+            HinhAnhKhoaHoc bannerImage = new HinhAnhKhoaHoc();
+            bannerImage.setDuongDan(khoaHoc.getHinhAnh());
+            bannerImage.setMaKhoaHoc(khoaHoc.getMaKhoaHoc());
+            combinedImageList.add(bannerImage);
+            Log.d("BOOKING_UI", "Added banner image: " + khoaHoc.getHinhAnh());
+        }
+        
+        // 2. Thêm các ảnh từ HinhAnhKhoaHoc
         if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
-            // Có danh sách ảnh slide -> hiển thị slide
-            hinhAnhList = khoaHoc.getHinhAnhList();
+            combinedImageList.addAll(khoaHoc.getHinhAnhList());
+            Log.d("BOOKING_UI", "Added " + khoaHoc.getHinhAnhList().size() + " images from HinhAnhKhoaHoc");
+        }
+        
+        // Hiển thị slide ảnh
+        if (!combinedImageList.isEmpty()) {
+            hinhAnhList = combinedImageList;
             currentImageIndex = 0;
             displayCurrentImage();
             
@@ -786,22 +720,14 @@ public class Booking extends AppCompatActivity {
                 Log.d("BOOKING_UI", "Show btnNext");
             }
             
-            Log.d("BOOKING_UI", "Loaded " + hinhAnhList.size() + " images for slide");
+            Log.d("BOOKING_UI", "Total images for slide: " + hinhAnhList.size());
         } else {
-            Log.w("BOOKING_UI", "No hinhAnhList found, showing banner only");
+            Log.w("BOOKING_UI", "No images found for slide");
             
-            if (khoaHoc.getHinhAnh() != null) {
-                // Không có slide -> hiển thị ảnh banner
-                int resId = khoaHoc.getHinhAnhResId(this);
-                if (imMonAn != null) {
-                    imMonAn.setImageResource(resId);
-                }
-                
-                Log.d("BOOKING_UI", "Set banner image: " + khoaHoc.getHinhAnh());
+            // Fallback: hiển thị ảnh mặc định
+            if (imMonAn != null) {
+                imMonAn.setImageResource(R.drawable.hue);
             }
-            
-            // KHÔNG ẨN NÚT NỮA - để user vẫn thấy (có thể sẽ disable sau)
-            Log.d("BOOKING_UI", "Keeping buttons visible (no slide images)");
         }
         
         // Giới thiệu lớp học
@@ -910,6 +836,7 @@ public class Booking extends AppCompatActivity {
         // Thông tin từ KhoaHoc (nếu có)
         if (khoaHoc != null) {
             intent.putExtra("hinhAnh", khoaHoc.getHinhAnh());
+            intent.putExtra("moTa", khoaHoc.getMoTa());
             intent.putExtra("coUuDai", khoaHoc.getCoUuDai() != null ? khoaHoc.getCoUuDai() : false);
             if (khoaHoc.getPhanTramGiam() != null) {
                 intent.putExtra("phanTramGiam", khoaHoc.getPhanTramGiam());

@@ -186,7 +186,9 @@ CREATE TABLE UuDai (
     ngayTao DATETIME DEFAULT GETDATE()
 );
 
--- 14. ĐẶT LỊCH
+---------------------------------------------------------------------
+-- BẢNG ĐẶT LỊCH - Đã điều chỉnh
+---------------------------------------------------------------------
 CREATE TABLE DatLich (
     maDatLich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -194,31 +196,79 @@ CREATE TABLE DatLich (
     ngayThamGia DATE NOT NULL,
     
     soLuongNguoi INT DEFAULT 1,
-    tongTien DECIMAL(10,2),
+    tongTien DECIMAL(10,2) NOT NULL,
     tenNguoiDat NVARCHAR(100),
     emailNguoiDat VARCHAR(100),
     sdtNguoiDat VARCHAR(15),
+    
+    maUuDai INT NULL,
+    soTienGiam DECIMAL(10,2) NULL,
+    
+    -- Thời gian
     ngayDat DATETIME DEFAULT GETDATE(),
-	maUuDai INT NULL,
-	soTienGiam DECIMAL(10,2) NULL,
-    trangThai NVARCHAR(30) DEFAULT N'Chờ Duyệt',
+    thoiGianHetHan DATETIME NULL, -- Hết hạn thanh toán (10 phút sau khi đặt)
+    
+    -- Trạng thái đơn
+    -- 'Đặt trước' - Mới đặt, chưa thanh toán (giữ chỗ 10 phút), hoặc thanh toán rồi nhưng lớp học chưa diễn ra
+    -- 'Đã hoàn thành'  - Đã thanh toán, và lớp học đã diễn ra
+    -- 'Đã Hủy' - Đã hủy (chỉ được huỷ với đơn đã thanh toán và vào lúc trước thời gian lớp diễn ra 15 phút)
+    trangThai NVARCHAR(30) DEFAULT N'Đặt trước',
+    
     ghiChu NVARCHAR(MAX),
+    
     FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
     FOREIGN KEY (maLichTrinh) REFERENCES LichTrinhLopHoc(maLichTrinh),
-	FOREIGN KEY (maUuDai) REFERENCES UuDai(maUuDai)
+    FOREIGN KEY (maUuDai) REFERENCES UuDai(maUuDai),
+    
+    -- Constraint kiểm tra trạng thái hợp lệ
+    CONSTRAINT CK_TrangThaiDatLich CHECK (
+        trangThai IN (N'Đặt trước', N'Đã hoàn thành', N'Đã huỷ')
+    )
 );
 
--- 15. THANH TOÁN
+---------------------------------------------------------------------
+-- BẢNG THANH TOÁN - Đã điều chỉnh đầy đủ cho Momo
+---------------------------------------------------------------------
 CREATE TABLE ThanhToan (
     maThanhToan INT PRIMARY KEY IDENTITY(1,1),
     maDatLich INT NOT NULL,
+    
+    -- Thông tin thanh toán cơ bản
     soTien DECIMAL(10,2) NOT NULL,
-    phuongThuc NVARCHAR(30) NOT NULL,
-    trangThai NVARCHAR(30) DEFAULT N'Chưa Thanh Toán',
-    ngayThanhToan DATETIME,
-    maGiaoDich VARCHAR(100),
+    phuongThuc NVARCHAR(30) NOT NULL, -- 'Momo'
+    
+    -- Thông tin Momo
+    requestId VARCHAR(100) NULL,        -- Request ID gửi đến Momo (unique mỗi lần)
+    orderId VARCHAR(100) NULL,          -- Order ID từ hệ thống (unique)
+    transId VARCHAR(100) NULL,          -- Transaction ID từ Momo (sau khi thanh toán thành công)
+    
+    -- URL và response
+    payUrl TEXT NULL,                   -- URL thanh toán Momo trả về
+    deeplink TEXT NULL,                 -- Deep link mở app Momo (nếu có)
+    qrCodeUrl TEXT NULL,                -- QR Code URL (nếu có)
+    
+    -- Kết quả thanh toán
+    resultCode INT NULL,                -- Mã kết quả từ Momo (0 = thành công)
+    message NVARCHAR(255) NULL,         -- Thông báo từ Momo
+    
+    -- Trạng thái thanh toán
+    -- 0 = Chưa thanh toán / Thất bại
+    -- 1 = Đã thanh toán thành công
+    trangThai BIT DEFAULT 0,
+    
+    -- Thời gian
+    thoiGianTao DATETIME DEFAULT GETDATE(),      -- Thời gian tạo giao dịch
+    ngayThanhToan DATETIME NULL,                 -- Thời gian thanh toán thành công
+    thoiGianCapNhat DATETIME NULL,               -- Lần cập nhật cuối
+    
+    -- Thông tin bổ sungJSON)
+    signature VARCHAR(255) NULL,         -- Chữ ký từ Momo (để verify)
     ghiChu NVARCHAR(MAX),
-    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
+    
+    FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich),
+    
+    -- Constraint đảm bảo orderId unique (không trùng)
+    CONSTRAINT UQ_OrderId UNIQUE (orderId)
 );
 
 -- 16. LỊCH SỬ ƯU ĐÃI
@@ -732,10 +782,10 @@ INSERT INTO LichTrinhLopHoc (maKhoaHoc, maGiaoVien, thuTrongTuan, gioBatDau, gio
 (3, 2, '3,5,7',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 15),
 (4, 1, '7,CN',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 -- HUẾ
-(5, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
-(6, 2, '2,4,6',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
+(5, 1, '7,CN',					 '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
+(6, 2, '2,3,4,5,6,7,CN',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
 (7, 1, '3,5,7',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 15),
-(8, 2, '7,CN',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
+(8, 2, '2,4,6',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
 -- ĐÀ NẴNG
 (9, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'78 Trần Phú, Đà Nẵng', 20),
 (10, 2, '2,4,6',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 18),
@@ -929,11 +979,7 @@ INSERT INTO HinhAnhKhoaHoc (maKhoaHoc, duongDan, thuTu) VALUES
 (15, N'hu_tieu_va_mon_ngon_phuong_nam_2.jpg', 1), (15, N'hu_tieu_va_mon_ngon_phuong_nam_3.jpg', 2),
 (16, N'bien_tau_chuoi_va_che_nam_bo_2.jpg', 1),   (16, N'bien_tau_chuoi_va_che_nam_bo_3.jpg', 2);
 
--- 9. ĐẶT LỊCH
-INSERT INTO DatLich (maHocVien, maLichTrinh, ngayThamGia, soLuongNguoi, tongTien, tenNguoiDat, emailNguoiDat, sdtNguoiDat, trangThai) VALUES
-(4, 1, '2025-12-22', 1, 650000, N'Ngô Thị Thảo Vy', N'thaovyn0312@gmail.com', N'0934567890', N'Đã Duyệt'),
-(5, 5, '2025-12-24', 2, 1430000, N'Nguyễn Triều Tiên', N'nguyentrieutien2005py@gmail.com', N'0945678901', N'Chờ Duyệt'),
-(6, 9, '2025-12-22', 1, 680000, N'Nguyễn Thị Thương', N'nguyenthithuong15112005@gmail.com', N'0956789012', N'Đã Duyệt');
+
 
 -- 10. ƯU ĐÃI
 INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, ngayKetThuc, trangThai, loaiUuDai, dieuKienSoLuong, hinhAnh) VALUES 
@@ -1054,22 +1100,533 @@ GO
 
 PRINT N'✓ Đã thực thi xong!';
 GO
+---------------------------- Trigger đặt lịch---------------------------
+---------------------------------------------------------------------
+-- TRIGGER 1: Tự động thêm thông báo khi bấm nút thanh toán
+---------------------------------------------------------------------
+CREATE TRIGGER trg_ThongBaoGiuChoTamThoi
+ON DatLich
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao)
+    SELECT
+        i.maHocVien,
+        N'⏳ Đang giữ chỗ cho bạn',
+        N'Chúng tôi đang giữ chỗ cho lớp "' + kh.tenKhoaHoc + 
+        N'" vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103) +
+        N'. Vui lòng hoàn tất thanh toán trong vòng 10 phút để xác nhận tham gia.',
+        N'GiuCho'
+    FROM inserted i
+    JOIN LichTrinhLopHoc lt ON i.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc;
+END;
+GO
 
---select * from GiaoVien
---select * from NguoiDung
---select * from DatLich
---select * from KhoaHoc
---SELECT * FROM UuDai;
---select * from YeuThich
---select * from LichTrinhLopHoc
+---------------------------------------------------------------------
+-- TRIGGER 2: Thông báo khi thanh toán thành công
+---------------------------------------------------------------------
+CREATE TRIGGER trg_ThongBaoThanhToan
+ON ThanhToan
+AFTER UPDATE
+AS
+BEGIN
+    -- Chỉ thông báo khi chuyển từ chưa thanh toán (0) sang đã thanh toán (1)
+    IF UPDATE(trangThai)
+    BEGIN
+        INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+        SELECT 
+            d.maHocVien,
+            N'💳 Thanh toán thành công',
+            N'Bạn đã thanh toán thành công cho lớp "' + kh.tenKhoaHoc + 
+            N'" với số tiền ' + FORMAT(i.soTien, 'N0') + N'đ. ' +
+            N'Lớp học sẽ diễn ra vào ngày ' + CONVERT(NVARCHAR, d.ngayThamGia, 103) +
+            N' lúc ' + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + 
+            N' tại ' + lt.diaDiem + N'. Hẹn gặp bạn!',
+            N'ThanhToan',
+            kh.hinhAnh
+        FROM inserted i
+        JOIN deleted del ON i.maThanhToan = del.maThanhToan
+        JOIN DatLich d ON i.maDatLich = d.maDatLich
+        JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+        JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+        WHERE i.trangThai = 1 AND del.trangThai = 0; -- Chuyển từ 0 -> 1
+    END
+END;
+GO
 
-SELECT 
-    k.maKhoaHoc,
-    k.tenKhoaHoc AS [Tên Khóa Học],
-    k.hinhAnh AS [Ảnh Khóa Học (Banner)],
-    m.tenMon AS [Tên Món Ăn Cụ Thể]
-FROM KhoaHoc k
-JOIN MonAn m ON k.maKhoaHoc = m.maKhoaHoc
-ORDER BY k.maKhoaHoc, m.maMonAn;
+---------------------------------------------------------------------
+-- TRIGGER 3: Thông báo khi hủy đơn
+---------------------------------------------------------------------
+CREATE TRIGGER trg_ThongBaoHuyDon
+ON DatLich
+AFTER UPDATE
+AS
+BEGIN
+    IF UPDATE(trangThai)
+    BEGIN
+        INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao)
+        SELECT 
+            i.maHocVien,
+            N'❌ Đơn đặt lịch đã bị hủy',
+            N'Đơn đặt lịch học lớp "' + kh.tenKhoaHoc + 
+            N'" vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103) + 
+            N' đã bị hủy. ' +
+            CASE 
+                WHEN i.ghiChu IS NOT NULL THEN N'Lý do: ' + i.ghiChu
+                ELSE N'Nếu bạn đã thanh toán, số tiền sẽ được hoàn lại trong 3-5 ngày làm việc.'
+            END,
+            N'HuyDon'
+        FROM inserted i
+        JOIN deleted d ON i.maDatLich = d.maDatLich
+        JOIN LichTrinhLopHoc lt ON i.maLichTrinh = lt.maLichTrinh
+        JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+        WHERE i.trangThai = N'Đã huỷ' AND d.trangThai != N'Đã huỷ';
+    END
+END;
+GO
 
-Select * from HinhAnhKhoaHoc
+
+
+
+
+---------------------------------------------------------------------
+-- SP 2: Cập nhật thông tin Momo sau khi tạo payment request
+---------------------------------------------------------------------
+CREATE PROCEDURE sp_CapNhatThongTinMomo
+    @maDatLich INT,
+    @requestId VARCHAR(100),
+    @orderId VARCHAR(100),
+    @payUrl TEXT,
+    @deeplink TEXT = NULL,
+    @qrCodeUrl TEXT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        UPDATE ThanhToan
+        SET 
+            requestId = @requestId,
+            orderId = @orderId,
+            payUrl = @payUrl,
+            deeplink = @deeplink,
+            qrCodeUrl = @qrCodeUrl,
+            thoiGianCapNhat = GETDATE(),
+            ghiChu = N'Đã tạo link thanh toán Momo'
+        WHERE maDatLich = @maDatLich;
+        
+        IF @@ROWCOUNT > 0
+            SELECT N'SUCCESS' AS ketQua, N'Cập nhật thông tin Momo thành công' AS thongBao;
+        ELSE
+            SELECT N'ERROR' AS ketQua, N'Không tìm thấy giao dịch' AS thongBao;
+            
+    END TRY
+    BEGIN CATCH
+        SELECT N'ERROR' AS ketQua, ERROR_MESSAGE() AS thongBao;
+    END CATCH
+END;
+GO
+
+---------------------------------------------------------------------
+-- SP 3: Cập nhật kết quả thanh toán từ Momo callback
+CREATE PROCEDURE sp_CapNhatKetQuaThanhToan  -- Dùng ALTER nếu đã tồn tại, hoặc CREATE nếu chưa
+    @orderId VARCHAR(100),
+    @transId VARCHAR(100) = NULL,
+    @resultCode INT,
+    @message NVARCHAR(255) = NULL,
+    @signature VARCHAR(255) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+   
+    DECLARE @maDatLich INT;
+    DECLARE @maThanhToan INT;
+    DECLARE @trangThaiMoi BIT;
+    DECLARE @ketQua NVARCHAR(50);
+    DECLARE @thongBao NVARCHAR(255);
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+       
+        -- 1. Tìm giao dịch theo orderId
+        SELECT @maThanhToan = maThanhToan, @maDatLich = maDatLich
+        FROM ThanhToan
+        WHERE orderId = @orderId;
+       
+        IF @maThanhToan IS NULL
+        BEGIN
+            SET @ketQua = N'ERROR';
+            SET @thongBao = N'Không tìm thấy giao dịch với orderId: ' + @orderId;
+            ROLLBACK TRANSACTION;
+            SELECT @ketQua AS ketQua, @thongBao AS thongBao;
+            RETURN;
+        END
+       
+        -- 2. Xác định trạng thái mới
+        SET @trangThaiMoi = CASE WHEN @resultCode = 0 THEN 1 ELSE 0 END;
+       
+        -- 3. Cập nhật bảng ThanhToan
+        UPDATE ThanhToan
+        SET
+            transId = @transId,
+            resultCode = @resultCode,
+            message = @message,
+            signature = @signature,
+            trangThai = @trangThaiMoi,
+            ngayThanhToan = CASE WHEN @resultCode = 0 THEN GETDATE() ELSE NULL END,
+            thoiGianCapNhat = GETDATE(),
+            ghiChu = CASE
+                WHEN @resultCode = 0 THEN N'✅ Thanh toán thành công qua Momo. TransID: ' + ISNULL(@transId, N'N/A')
+                WHEN @resultCode = 1006 OR @resultCode = 1017 THEN N'❌ Người dùng đã hủy giao dịch'
+                ELSE N'❌ Thanh toán thất bại. Mã lỗi: ' + CAST(@resultCode AS NVARCHAR) + N'. Chi tiết: ' + ISNULL(@message, N'N/A')
+            END
+        WHERE maThanhToan = @maThanhToan;
+       
+        -- 4. Cập nhật bảng DatLich nếu thành công
+        IF @resultCode = 0
+        BEGIN
+            UPDATE DatLich
+            SET thoiGianHetHan = NULL
+            WHERE maDatLich = @maDatLich;
+        END
+       
+        COMMIT TRANSACTION;
+
+        -- 5. Trả về kết quả thành công
+        SET @ketQua = N'SUCCESS';
+        SET @thongBao = CASE
+            WHEN @resultCode = 0 THEN N'Thanh toán thành công!'
+            WHEN @resultCode = 1006 OR @resultCode = 1017 THEN N'Giao dịch đã bị hủy'
+            ELSE N'Thanh toán thất bại: ' + ISNULL(@message, N'Lỗi không xác định')
+        END;
+
+        SELECT
+            @maDatLich AS maDatLich,
+            @maThanhToan AS maThanhToan,
+            @trangThaiMoi AS trangThaiThanhToan,
+            @resultCode AS resultCode,
+            @ketQua AS ketQua,
+            @thongBao AS thongBao;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+           
+        SELECT 
+            NULL AS maDatLich,
+            NULL AS maThanhToan,
+            NULL AS trangThaiThanhToan,
+            NULL AS resultCode,
+            N'ERROR' AS ketQua, 
+            ERROR_MESSAGE() AS thongBao;
+    END CATCH
+END;
+GO
+---------------------------------------------------------------------
+-- SP 4: Xóa đơn hết hạn (chưa thanh toán quá 10 phút)
+---------------------------------------------------------------------
+CREATE PROCEDURE sp_XoaDonHetHan
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @danhSachDonXoa TABLE (maDatLich INT, maHocVien INT, tenKhoaHoc NVARCHAR(200));
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- 1. Lưu danh sách đơn sẽ xóa để gửi thông báo
+        INSERT INTO @danhSachDonXoa (maDatLich, maHocVien, tenKhoaHoc)
+        SELECT 
+            d.maDatLich,
+            d.maHocVien,
+            k.tenKhoaHoc
+        FROM DatLich d
+        JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+        JOIN KhoaHoc k ON lt.maKhoaHoc = k.maKhoaHoc
+        WHERE d.trangThai = N'Đặt trước'
+          AND d.thoiGianHetHan IS NOT NULL
+          AND d.thoiGianHetHan < GETDATE()
+          AND NOT EXISTS (
+              SELECT 1 FROM ThanhToan tt 
+              WHERE tt.maDatLich = d.maDatLich AND tt.trangThai = 1
+          );
+        
+        -- 2. Gửi thông báo cho các đơn bị hủy
+        INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao)
+        SELECT 
+            maHocVien,
+            N'⏰ Đơn đặt lịch đã hết hạn',
+            N'Đơn đặt lịch học lớp "' + tenKhoaHoc + 
+            N'" đã bị hủy do quá thời gian thanh toán (10 phút). ' +
+            N'Vui lòng đặt lại nếu bạn vẫn muốn tham gia.',
+            N'HetHan'
+        FROM @danhSachDonXoa;
+        
+        -- 3. Xóa các giao dịch thanh toán
+        DELETE FROM ThanhToan
+        WHERE maDatLich IN (SELECT maDatLich FROM @danhSachDonXoa);
+        
+        -- 4. Xóa các đơn hết hạn
+        DELETE FROM DatLich
+        WHERE maDatLich IN (SELECT maDatLich FROM @danhSachDonXoa);
+        
+        DECLARE @soLuongXoa INT = (SELECT COUNT(*) FROM @danhSachDonXoa);
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 
+            @soLuongXoa AS soLuongXoa, 
+            N'SUCCESS' AS ketQua,
+            N'Đã xóa ' + CAST(@soLuongXoa AS NVARCHAR) + N' đơn hết hạn' AS thongBao;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT 0 AS soLuongXoa, N'ERROR' AS ketQua, ERROR_MESSAGE() AS thongBao;
+    END CATCH
+END;
+GO
+
+---------------------------------------------------------------------
+-- SP 5: Cập nhật đơn hoàn thành (đã qua thời gian học)
+---------------------------------------------------------------------
+CREATE PROCEDURE sp_CapNhatDonHoanThanh
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @soLuongCapNhat INT = 0;
+    
+    BEGIN TRY
+        -- Cập nhật đơn từ "Đặt trước" -> "Đã hoàn thành" nếu:
+        -- 1. Đã thanh toán (có record trong ThanhToan với trangThai = 1)
+        -- 2. Đã qua thời gian học
+        UPDATE d
+        SET trangThai = N'Đã hoàn thành'
+        FROM DatLich d
+        JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+        WHERE d.trangThai = N'Đặt trước'
+          AND EXISTS (
+              SELECT 1 FROM ThanhToan tt 
+              WHERE tt.maDatLich = d.maDatLich AND tt.trangThai = 1
+          )
+          AND (
+              -- Đã qua ngày học
+              d.ngayThamGia < CAST(GETDATE() AS DATE)
+              OR 
+              -- Hoặc cùng ngày nhưng đã qua giờ kết thúc
+              (d.ngayThamGia = CAST(GETDATE() AS DATE) 
+               AND lt.gioKetThuc < CAST(GETDATE() AS TIME))
+          );
+        
+        SET @soLuongCapNhat = @@ROWCOUNT;
+        
+        SELECT 
+            @soLuongCapNhat AS soLuongCapNhat, 
+            N'SUCCESS' AS ketQua,
+            N'Đã cập nhật ' + CAST(@soLuongCapNhat AS NVARCHAR) + N' đơn sang trạng thái Hoàn thành' AS thongBao;
+        
+    END TRY
+    BEGIN CATCH
+        SELECT 0 AS soLuongCapNhat, N'ERROR' AS ketQua, ERROR_MESSAGE() AS thongBao;
+    END CATCH
+END;
+GO
+
+---------------------------------------------------------------------
+-- SP 6: Hủy đơn đặt lịch
+---------------------------------------------------------------------
+CREATE PROCEDURE sp_HuyDonDatLich
+    @maDatLich INT,
+    @lyDoHuy NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @trangThai NVARCHAR(30);
+    DECLARE @ngayThamGia DATE;
+    DECLARE @gioBatDau TIME;
+    DECLARE @daThanhToan BIT;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- 1. Lấy thông tin đơn
+        SELECT 
+            @trangThai = d.trangThai,
+            @ngayThamGia = d.ngayThamGia,
+            @gioBatDau = lt.gioBatDau,
+            @daThanhToan = CASE WHEN EXISTS(
+                SELECT 1 FROM ThanhToan tt 
+                WHERE tt.maDatLich = d.maDatLich AND tt.trangThai = 1
+            ) THEN 1 ELSE 0 END
+        FROM DatLich d
+        JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+        WHERE d.maDatLich = @maDatLich;
+        
+        -- 2. Kiểm tra đơn có tồn tại không
+        IF @trangThai IS NULL
+        BEGIN
+            SELECT N'ERROR' AS ketQua, N'Không tìm thấy đơn đặt lịch' AS thongBao;
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        -- 3. Kiểm tra đơn đã hoàn thành hoặc đã hủy rồi
+        IF @trangThai IN (N'Đã hoàn thành', N'Đã huỷ')
+        BEGIN
+            SELECT N'ERROR' AS ketQua, N'Không thể hủy đơn ở trạng thái: ' + @trangThai AS thongBao;
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        -- 4. Nếu chưa thanh toán: Xóa luôn
+        IF @daThanhToan = 0
+        BEGIN
+            DELETE FROM ThanhToan WHERE maDatLich = @maDatLich;
+            DELETE FROM DatLich WHERE maDatLich = @maDatLich;
+            
+            COMMIT TRANSACTION;
+            
+            SELECT 
+                N'DELETED' AS ketQua, 
+                N'Đã xóa đơn chưa thanh toán' AS thongBao;
+            RETURN;
+        END
+        
+        -- 5. Nếu đã thanh toán: Kiểm tra thời gian
+        DECLARE @thoiGianLop DATETIME = CAST(CAST(@ngayThamGia AS VARCHAR) + ' ' + CAST(@gioBatDau AS VARCHAR) AS DATETIME);
+        DECLARE @thoiGianHuyToiDa DATETIME = DATEADD(MINUTE, -15, @thoiGianLop);
+        
+        IF GETDATE() >= @thoiGianHuyToiDa
+        BEGIN
+            SELECT 
+                N'ERROR' AS ketQua, 
+                N'Không thể hủy đơn. Chỉ được hủy trước thời gian lớp học 15 phút.' AS thongBao;
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        -- 6. Cập nhật trạng thái thành Đã Hủy
+        UPDATE DatLich
+        SET 
+            trangThai = N'Đã huỷ',
+            ghiChu = ISNULL(@lyDoHuy, N'Khách hàng hủy đơn')
+        WHERE maDatLich = @maDatLich;
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 
+            N'CANCELLED' AS ketQua, 
+            N'Đã hủy đơn thành công. Số tiền sẽ được hoàn lại trong 3-5 ngày làm việc.' AS thongBao;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT N'ERROR' AS ketQua, ERROR_MESSAGE() AS thongBao;
+    END CATCH
+END;
+GO
+
+---------------------------------------------------------------------
+-- SP 7: Lấy danh sách đơn "Đặt trước"
+---------------------------------------------------------------------
+CREATE PROCEDURE sp_LayDonDatTruoc
+    @maHocVien INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        d.maDatLich,
+        d.ngayThamGia,
+        d.soLuongNguoi,
+        d.tongTien,
+        d.soTienGiam,
+        d.trangThai,
+        d.ngayDat,
+        d.thoiGianHetHan,
+        
+        k.maKhoaHoc,
+        k.tenKhoaHoc,
+        k.hinhAnh,
+        k.giaTien,
+        
+        lt.gioBatDau,
+        lt.gioKetThuc,
+        lt.diaDiem,
+        
+        tt.trangThai AS daThanhToan,
+        tt.transId,
+        tt.ngayThanhToan,
+        tt.orderId,
+        tt.message AS thongBaoThanhToan,
+        tt.payUrl,
+        
+        -- Tính thời gian còn lại để thanh toán (phút)
+        CASE 
+            WHEN d.thoiGianHetHan IS NOT NULL AND tt.trangThai = 0
+            THEN DATEDIFF(MINUTE, GETDATE(), d.thoiGianHetHan)
+            ELSE NULL
+        END AS phutConLai,
+        
+        -- Kiểm tra có thể hủy không (trước giờ học 15 phút)
+        CASE 
+            WHEN DATEADD(MINUTE, -15, 
+                    CAST(CAST(d.ngayThamGia AS VARCHAR) + ' ' + CAST(lt.gioBatDau AS VARCHAR) AS DATETIME)
+                 ) > GETDATE()
+            THEN 1
+            ELSE 0
+        END AS coTheHuy
+        
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc k ON lt.maKhoaHoc = k.maKhoaHoc
+    LEFT JOIN ThanhToan tt ON d.maDatLich = tt.maDatLich
+    
+    WHERE d.maHocVien = @maHocVien
+        AND d.trangThai = N'Đặt trước'
+    
+    ORDER BY d.ngayDat DESC;
+END;
+GO
+
+---------------------------------------------------------------------
+-- DỮ LIỆU TEST: ĐƠN ĐÃ HOÀN THÀNH (cho user maHocVien = 5)
+---------------------------------------------------------------------
+
+-- Đơn 1: Ẩm thực phố cổ Hà Nội
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, 1300000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 1300000, N'Momo', 1, 'ORDER_TEST_001', 'TRANS_TEST_001', '2024-11-10 10:05:00', '2024-11-10 10:00:00');
+
+-- Đơn 2: Tinh Hoa Cung Đình Huế
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 5, 1, '2024-10-20', N'Đã hoàn thành', '2024-10-15 14:00:00', NULL, 715000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 715000, N'Momo', 1, 'ORDER_TEST_002', 'TRANS_TEST_002', '2024-10-15 14:05:00', '2024-10-15 14:00:00');
+
+-- Đơn 3: Bánh Xèo và Nem Lụi Đà Nẵng
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 10, 3, '2024-09-10', N'Đã hoàn thành', '2024-09-05 09:00:00', NULL, 1770000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
+
+PRINT N'✅ Đã insert 3 đơn đã hoàn thành cho maHocVien = 4 (ThaoVy)';
+select * from DatLich
+select * from ThanhToan
+select * from NguoiDung
+select * from HinhAnhKhoaHoc
+select * from KhoaHoc
+

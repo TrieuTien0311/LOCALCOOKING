@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +17,20 @@ public class Review extends AppCompatActivity {
 
     private ImageView btnBack;
     private Button btnGuiDanhGia;
+    
+    // Views để hiển thị thông tin đơn hàng
+    private ImageView imgFood;
+    private TextView txtTenKhoaHoc;
+    private TextView txtThoiGian;
+    private TextView txtDiaDiem;
+    
+    // Dữ liệu nhận từ Intent
+    private String orderTitle;
+    private int orderImage;
+    private Integer maDatLich;
+    private Integer maKhoaHoc;
+    private String lich;
+    private String diaDiem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +44,54 @@ public class Review extends AppCompatActivity {
         });
 
         initViews();
+        getIntentData();
+        displayData();
         setupClickListeners();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.imageView6);
         btnGuiDanhGia = findViewById(R.id.button);
+        
+        // Views hiển thị thông tin đơn hàng
+        imgFood = findViewById(R.id.imgFood4);
+        txtTenKhoaHoc = findViewById(R.id.textView18);
+        txtThoiGian = findViewById(R.id.textView14);
+        txtDiaDiem = findViewById(R.id.textView9);
+    }
+    
+    private void getIntentData() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            orderTitle = intent.getStringExtra("orderTitle");
+            orderImage = intent.getIntExtra("orderImage", R.drawable.hue);
+            maDatLich = intent.getIntExtra("maDatLich", -1);
+            maKhoaHoc = intent.getIntExtra("maKhoaHoc", -1);
+            lich = intent.getStringExtra("lich");
+            diaDiem = intent.getStringExtra("diaDiem");
+        }
+    }
+    
+    private void displayData() {
+        // Hiển thị hình ảnh
+        if (orderImage != 0) {
+            imgFood.setImageResource(orderImage);
+        }
+        
+        // Hiển thị tên khóa học
+        if (orderTitle != null && !orderTitle.isEmpty()) {
+            txtTenKhoaHoc.setText(orderTitle);
+        }
+        
+        // Hiển thị thời gian
+        if (lich != null && !lich.isEmpty()) {
+            txtThoiGian.setText(lich);
+        }
+        
+        // Hiển thị địa điểm
+        if (diaDiem != null && !diaDiem.isEmpty()) {
+            txtDiaDiem.setText("Địa điểm: " + diaDiem);
+        }
     }
 
     private void setupClickListeners() {

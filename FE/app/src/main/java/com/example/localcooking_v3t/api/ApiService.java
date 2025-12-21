@@ -34,6 +34,8 @@ import com.example.localcooking_v3t.model.MessageResponse;
 import com.example.localcooking_v3t.model.UuDaiDTO;
 import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
 import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
+import com.example.localcooking_v3t.model.MomoPaymentRequest;
+import com.example.localcooking_v3t.model.MomoPaymentResponse;
 
 import java.util.List;
 
@@ -232,6 +234,34 @@ public interface ApiService {
     // Xác nhận sử dụng mã ưu đãi (sau khi thanh toán thành công)
     @POST("api/uudai/confirm/{maUuDai}")
     Call<Void> confirmUuDai(@Path("maUuDai") Integer maUuDai);
+
+    // ========== API MOMO PAYMENT ==========
+
+    // Tạo thanh toán Momo
+    @POST("api/momo/create")
+    Call<MomoPaymentResponse> createMomoPayment(@Body MomoPaymentRequest request);
+
+    // Kiểm tra trạng thái thanh toán
+    @GET("api/momo/status/{orderId}")
+    Call<MomoPaymentResponse> checkMomoPaymentStatus(@Path("orderId") String orderId);
+
+    // Simulate thanh toán thành công (cho testing)
+    @POST("api/momo/simulate-success/{orderId}")
+    Call<java.util.Map<String, Object>> simulateMomoSuccess(@Path("orderId") String orderId);
+
+    // ========== API LỊCH SỬ ĐẶT LỊCH ==========
+
+    // Lấy danh sách đơn đã hoàn thành
+    @GET("api/don-dat-lich/hoan-thanh/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonHoanThanh(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy danh sách đơn đặt trước
+    @GET("api/don-dat-lich/dat-truoc/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDatTruoc(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy danh sách đơn đã hủy
+    @GET("api/don-dat-lich/da-huy/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDaHuy(@Path("maHocVien") Integer maHocVien);
 
 
 }

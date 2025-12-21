@@ -48,7 +48,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
         holder.imgOrder.setImageResource(order.getHinhAnh());
         holder.txtTieuDe.setText(order.getTieuDe());
-        holder.txtSoLuong.setText(order.getSoLuongNguoi() + " người");
+        holder.txtSoLuong.setText(order.getSoLuongNguoi());
         holder.txtLich.setText(order.getLich());
         holder.txtDiaDiem.setText(order.getDiaDiem());
         holder.txtGia.setText(order.getGia());

@@ -26,17 +26,53 @@ public class ThanhToan {
     private BigDecimal soTien;
     
     @Column(name = "phuongThuc", nullable = false, length = 30)
-    private String phuongThuc; // ChuyenKhoan | MoMo | The
+    private String phuongThuc;
     
-    @Column(name = "trangThai", length = 30)
-    private String trangThai = "Chưa Thanh Toán";
+    // Momo fields
+    @Column(name = "requestId", length = 100)
+    private String requestId;
+    
+    @Column(name = "orderId", length = 100)
+    private String orderId;
+    
+    @Column(name = "transId", length = 100)
+    private String transId;
+    
+    @Column(name = "payUrl", columnDefinition = "TEXT")
+    private String payUrl;
+    
+    @Column(name = "deeplink", columnDefinition = "TEXT")
+    private String deeplink;
+    
+    @Column(name = "qrCodeUrl", columnDefinition = "TEXT")
+    private String qrCodeUrl;
+    
+    @Column(name = "resultCode")
+    private Integer resultCode;
+    
+    @Column(name = "message", length = 255)
+    private String message;
+    
+    @Column(name = "trangThai")
+    private Boolean trangThai = false;
+    
+    @Column(name = "thoiGianTao")
+    private LocalDateTime thoiGianTao;
     
     @Column(name = "ngayThanhToan")
     private LocalDateTime ngayThanhToan;
     
-    @Column(name = "maGiaoDich", length = 100)
-    private String maGiaoDich;
+    @Column(name = "thoiGianCapNhat")
+    private LocalDateTime thoiGianCapNhat;
+    
+    @Column(name = "signature", length = 255)
+    private String signature;
     
     @Column(name = "ghiChu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
+    
+    @PrePersist
+    protected void onCreate() {
+        thoiGianTao = LocalDateTime.now();
+    }
 }

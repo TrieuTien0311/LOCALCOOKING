@@ -127,8 +127,15 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         holder.txtDiaDiem.setText("Địa điểm: " + lopHoc.getDiaDiem());
         
         // Xử lý hiển thị giá với ưu đãi
-        if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai()) {
-            // Có ưu đãi: hiển thị giá gốc bị gạch và giá sau giảm
+        // Logic:
+        // 1. CÓ ƯU ĐÃI + HÔM NAY (dù đã diễn ra hay chưa): giá gốc gạch + giá giảm
+        // 2. Các trường hợp khác: chỉ giá gốc
+        
+        boolean coUuDai = lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai();
+        boolean showDiscountPrice = coUuDai && isToday;
+        
+        if (showDiscountPrice) {
+            // CÓ ƯU ĐÃI + HÔM NAY: Hiển thị giá gốc bị gạch + giá sau giảm
             holder.txtGiaGoc.setVisibility(View.VISIBLE);
             holder.txtGiaGoc.setText(lopHoc.getGia());
             holder.txtGiaGoc.setPaintFlags(holder.txtGiaGoc.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
@@ -137,7 +144,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             String giaSauGiam = calculateDiscountPrice(lopHoc.getGia(), 10);
             holder.txtGia.setText(giaSauGiam);
         } else {
-            // Không có ưu đãi: chỉ hiển thị giá gốc
+            // Các trường hợp khác: Chỉ hiển thị giá gốc (không gạch, không giảm)
             holder.txtGiaGoc.setVisibility(View.GONE);
             holder.txtGia.setText(lopHoc.getGia());
         }

@@ -119,7 +119,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:cornerRadius="6dp" />
             </LinearLayout>
 
@@ -136,7 +136,7 @@
                 android:textColor="#BA5632"
                 android:textSize="12sp"
                 android:textStyle="italic"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -65,4 +65,7 @@ public class DatLich {
     
     @Column(name = "soTienGiam", precision = 10, scale = 2)
     private java.math.BigDecimal soTienGiam;
+    
+    @Column(name = "thoiGianHetHan")
+    private LocalDateTime thoiGianHetHan;
 }
