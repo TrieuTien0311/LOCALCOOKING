@@ -283,20 +283,22 @@ BEGIN
     
     -- Tạo thông báo cho những học viên có lịch học vào ngày mai
     INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
-    SELECT DISTINCT
-        d.maHocVien,
-        N'🔔 Lớp học sắp diễn ra',
-        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
-            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
-            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
-            + N'. Hãy chuẩn bị sẵn sàng nhé!',
-        N'NhacNho',
-        kh.hinhAnh
-    FROM DatLich d
-    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
-    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
-    WHERE d.ngayThamGia = @NgayMai
-      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+			SELECT DISTINCT
+			d.maHocVien,
+			N'🔔 Lớp học sắp diễn ra',
+			N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+				+ CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+				-- Đảm bảo ép kiểu về TIME trước khi format
+				+ LEFT(CAST(lt.gioBatDau AS TIME), 5) + N' tại ' + lt.diaDiem 
+				+ N'. Hãy chuẩn bị sẵn sàng nhé!',
+			N'NhacNho',
+			kh.hinhAnh
+		FROM DatLich d
+		JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+		JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+		-- Sử dụng CAST để so sánh ngày chính xác hơn
+		WHERE CAST(d.ngayThamGia AS DATE) = @NgayMai
+		  AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
       -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
       AND NOT EXISTS (
           SELECT 1 FROM ThongBao tb 
