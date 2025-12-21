@@ -333,20 +333,22 @@ BEGIN
     
     -- Tạo thông báo cho những học viên có lịch học vào ngày mai
     INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
-    SELECT DISTINCT
-        d.maHocVien,
-        N'🔔 Lớp học sắp diễn ra',
-        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
-            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
-            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
-            + N'. Hãy chuẩn bị sẵn sàng nhé!',
-        N'NhacNho',
-        kh.hinhAnh
-    FROM DatLich d
-    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
-    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
-    WHERE d.ngayThamGia = @NgayMai
-      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+			SELECT DISTINCT
+			d.maHocVien,
+			N'🔔 Lớp học sắp diễn ra',
+			N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+				+ CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+				-- Đảm bảo ép kiểu về TIME trước khi format
+				+ LEFT(CAST(lt.gioBatDau AS TIME), 5) + N' tại ' + lt.diaDiem 
+				+ N'. Hãy chuẩn bị sẵn sàng nhé!',
+			N'NhacNho',
+			kh.hinhAnh
+		FROM DatLich d
+		JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+		JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+		-- Sử dụng CAST để so sánh ngày chính xác hơn
+		WHERE CAST(d.ngayThamGia AS DATE) = @NgayMai
+		  AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
       -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
       AND NOT EXISTS (
           SELECT 1 FROM ThongBao tb 
@@ -638,60 +640,139 @@ INSERT INTO GiaoVien (maNguoiDung, chuyenMon, kinhNghiem, lichSuKinhNghiem, moTa
  N'Chuyên về bánh Pháp, bánh Âu và các món tráng miệng hiện đại. Từng đoạt huy chương Vàng tại cuộc thi "Pastry Chef of the Year 2018" khu vực Đông Nam Á. Đam mê sáng tạo các món bánh kết hợp hương vị Á - Âu.', 
  N'giaovien1.png');
 
--- 3. KHÓA HỌC (Nội dung lớp học)
+ -- 3.KHÓA HỌC
 INSERT INTO KhoaHoc (tenKhoaHoc, moTa, gioiThieu, giaTriSauBuoiHoc, giaTien, hinhAnh, coUuDai) VALUES
 -- HÀ NỘI
-(N'Ẩm thực phố cổ Hà Nội', N'Khám phá hương vị đặc trưng của ẩm thực phố cổ với phở, bún chả, chả cá', N'Trải nghiệm nấu các món ăn đường phố nổi tiếng nhất Hà Nội', N'• Nắm vững kỹ thuật nấu phở Hà Nội chính gốc
-• Hiểu về văn hóa ẩm thực phố cổ
-• Tự tin làm bún chả và chả cá Lã Vọng', 650000, N'phobo.png', 1),
-(N'Bún và miến Hà Nội', N'Học cách làm các món bún đặc sản: bún thang, bún ốc, bún riêu', N'Khóa học chuyên sâu về các món bún truyền thống Hà Nội', N'• Làm chủ nghệ thuật nấu nước dùng trong
-• Kỹ thuật chế biến ốc và cua đồng
-• Bí quyết làm bún thang chuẩn vị', 580000, N'phobo.png', 0),
-(N'Bánh dân gian Hà Nội', N'Học làm bánh cuốn, bánh đúc, bánh khúc - đặc sản làng nghề', N'Khám phá nghệ thuật làm bánh truyền thống của người Hà Nội', N'• Kỹ thuật tráng bánh cuốn mỏng như giấy
-• Bí quyết làm nhân thơm ngon
-• Hiểu về nguồn gốc các loại bánh', 520000, N'phobo.png', 1),
-(N'Món nhậu Hà Nội', N'Các món nhậu đặc trưng: nem chua rán, chả rươi, bún đậu mắm tôm', N'Trải nghiệm văn hóa nhậu nhẹt đặc trưng của người Hà Nội', N'• Làm nem chua rán giòn tan
-• Kỹ thuật chế biến rươi đồng
-• Pha chế mắm tôm chuẩn vị', 600000, N'phobo.png', 0),
+(N'Ẩm thực phố cổ Hà Nội', 
+ N'Khám phá hương vị đặc trưng của ẩm thực phố cổ với phở, bún chả, chè khúc bạch', 
+ N'Đến với khóa học này, bạn sẽ được đắm mình trong không gian hoài cổ của Hà Nội. Không chỉ đơn thuần là nấu ăn, đây là hành trình tìm lại những nét tinh túy nhất. Bạn sẽ được hướng dẫn tỉ mỉ từ cách chọn xương bò nấu Phở, kỹ thuật nướng thịt Bún Chả bằng than hoa, và kết thúc bằng món tráng miệng Chè khúc bạch thanh mát đúng điệu người Hà Nội.', 
+ N'• Nắm vững kỹ thuật nấu phở Hà Nội chính gốc
+• Tự tin làm bún chả chấm nước mắm tỏi ớt
+• Bí quyết nấu chè ngon', 
+ 650000, N'am_thuc_pho_co_ha_noi_1.jpg', 1),
+
+(N'Bún và Món Cuốn Hà Thành', 
+ N'Sự kết hợp giữa các món bún nước thanh tao và món cuốn tươi mát', 
+ N'Khóa học này mang đến sự cân bằng hoàn hảo. Bạn sẽ học cách nấu Bún Thang cầu kỳ "đệ nhất bát trân", Bún Ốc chua dịu vị giấm bỗng. Đặc biệt, lớp học giới thiệu món Phở cuốn Hà Nội (biến tấu thanh cảnh) và Chè hạt sen long nhãn - thức quà quý tiến vua, giúp giải nhiệt và cân bằng vị giác.', 
+ N'• Làm chủ nghệ thuật nấu nước dùng trong
+• Kỹ thuật cuốn gỏi đẹp mắt, chặt tay
+• Nấu chè hạt sen không bị nát', 
+ 580000, N'bun_va_mon_cuon_ha_thanh_1.jpg', 0),
+
+(N'Bánh Dân Gian & Quà Quê Bắc Bộ', 
+ N'Học làm bánh cuốn, bánh đúc, bánh khúc - những thức quà sáng trứ danh', 
+ N'Tái hiện không khí những gánh hàng rong xưa cũ. Bạn sẽ tự tay tráng lớp Bánh cuốn mỏng tang, quấy nồi Bánh đúc lạc dẻo quánh chấm tương bần, và đồ xôi làm Bánh khúc thơm mùi lá. Kết thúc buổi học là bát Bánh trôi nước gừng ấm nóng, mang đậm hồn quê Bắc Bộ.', 
+ N'• Kỹ thuật tráng bánh mỏng không bị rách
+• Bí quyết xử lý vôi tôi cho bánh đúc
+• Làm nhân đậu xanh thơm bùi', 
+ 520000, N'banh_dan_gian_va_qua_que_bac_bo_1.jpg', 1),
+
+(N'Món Nhậu & Lai Rai Hà Nội', 
+ N'Các món "mồi" bén đặc trưng: nem chua rán, chả rươi, bún đậu', 
+ N'Văn hóa nhậu vỉa hè là một nét độc đáo. Khóa học hướng dẫn làm Nem chua rán giòn tan, Chả rươi (đặc sản mùa thu), và đặc biệt là mẹt Bún đậu mắm tôm đầy đặn. Kèm theo đó là món Chè lam nếp gừng để nhâm nhi cùng trà nóng sau bữa ăn.', 
+ N'• Làm nem chua rán an toàn tại nhà
+• Kỹ thuật chế biến rươi (nếu đúng mùa)
+• Pha mắm tôm sủi bọt chuẩn vị', 
+ 600000, N'mon_nhau_va_lai_rai_ha_noi_1.jpg', 0),
+
 -- HUẾ
-(N'Ẩm thực cung đình Huế', N'Khám phá tinh hoa ẩm thực hoàng gia với bún bò, cơm hến, bánh bèo', N'Trải nghiệm nấu các món ăn cung đình tinh tế và cầu kỳ', N'• Nắm vững kỹ thuật nấu bún bò Huế chính gốc
-• Hiểu về văn hóa ẩm thực cung đình
-• Làm chủ nghệ thuật trang trí món ăn', 715000, N'phobo.png', 1),
-(N'Bánh Huế truyền thống', N'Học làm bánh bèo, bánh nậm, bánh lọc - đặc sản xứ Huế', N'Khóa học chuyên sâu về các loại bánh đặc trưng Huế', N'• Kỹ thuật tráng bánh bèo mịn màng
-• Bí quyết gói bánh nậm đẹp mắt
-• Làm bánh lọc trong vắt', 550000, N'phobo.png', 0),
-(N'Món chay Huế', N'Ẩm thực chay tinh tế: bún chay, bánh bột lọc chay, chè sen', N'Khám phá nghệ thuật nấu món chay theo phong cách Huế', N'• Nấu món chay đậm đà không thua món mặn
-• Kỹ thuật chế biến rau củ sáng tạo
-• Làm nước dùng chay thơm ngon', 480000, N'phobo.png', 1),
-(N'Chè và tráng miệng Huế', N'Học làm chè Huế, bánh ít, bánh ram - món ngọt đặc sản', N'Trải nghiệm làm các món tráng miệng truyền thống Huế', N'• Nấu chè Huế thanh mát
-• Làm bánh ít nhân đậu xanh
-• Kỹ thuật ram bánh giòn rụm', 520000, N'phobo.png', 0),
+(N'Tinh Hoa Cung Đình Huế', 
+ N'Những món ăn tiến vua cầu kỳ: Bún bò, Cơm hến, Bánh bèo', 
+ N'Ẩm thực Huế là đỉnh cao của sự tinh tế. Bạn sẽ học cách nấu Bún bò Huế chuẩn vị ruốc sả, làm Cơm hến với hàng chục loại gia vị, và tỉ mẩn đổ từng chén Bánh bèo tôm chấy. Tráng miệng bằng Chè Huế ngọt ngào để kết thúc một bữa ăn đậm chất hoàng gia.', 
+ N'• Nấu nước dùng bún bò trong và đậm đà
+• Xử lý hến và các loại rau sống
+• Đổ bánh bèo chén mỏng và xoáy', 
+ 715000, N'tinh_hoa_cung_dinh_hue_1.jpg', 1),
+
+(N'Bánh Huế Truyền Thống', 
+ N'Bộ sưu tập các loại bánh gói lá: Nậm, Lọc, Ít, Ram', 
+ N'Chuyên đề về các loại bánh bột nổi tiếng. Bạn sẽ phân biệt và thực hành làm Bánh nậm (bột gạo), Bánh lọc (bột năng), Bánh ít (bột nếp) và Bánh ram ít (kết hợp chiên và hấp). Kỹ thuật gói lá chuối/lá dong xanh mướt là trọng tâm của lớp học này.', 
+ N'• Kỹ thuật pha các loại bột không bị cứng
+• Gói bánh đẹp, đều tay
+• Làm nhân tôm thịt đậm đà', 
+ 550000, N'banh_hue_truyen_thong_1.jpg', 0),
+
+(N'Ẩm Thực Chay Xứ Huế', 
+ N'Nghệ thuật nấu món chay giả mặn tinh tế và thanh tịnh', 
+ N'Huế là cái nôi của Phật giáo, nên món chay ở đây rất phát triển. Bạn sẽ học làm Gỏi cuốn chay, Bún chay Huế với nước dùng rau củ ngọt tự nhiên, Bánh bột lọc chay nhân đậu xanh nấm mèo. Tráng miệng bằng Chè sen thanh khiết.', 
+ N'• Nấu nước dùng chay ngọt lừ
+• Kỹ thuật chế biến đồ chay giả mặn
+• Trình bày món chay đẹp mắt', 
+ 480000, N'am_thuc_chay_xu_hue_1.jpg', 1),
+
+(N'Bánh Trái & Quà Chiều Cố Đô', 
+ N'Sự kết hợp độc đáo giữa các loại bánh mặn và chè ngọt ăn xế', 
+ N'Người Huế có thói quen ăn quà chiều (ăn xế) rất phong phú. Khóa học này giới thiệu combo độc đáo: Bánh lọc lá và Bánh ram ít (bánh mặn) ăn kèm nước mắm cay, sau đó tráng miệng bằng Chè khoai tía dẻo thơm và Chè bột lọc heo quay độc đáo. Một trải nghiệm ẩm thực đa chiều thú vị.', 
+ N'• Làm bánh lọc gói lá chuối chuẩn vị
+• Bí quyết nấu chè khoai tía màu đẹp
+• Làm heo quay rim ăn chè', 
+ 520000, N'banh_trai_va_qua_chieu_co_do_1.jpg', 0),
+
 -- ĐÀ NẴNG
-(N'Hải sản Đà Nẵng', N'Chế biến hải sản tươi sống: mì Quảng, bánh tráng cuốn thịt heo', N'Học cách chế biến hải sản theo phong cách miền Trung', N'• Kỹ thuật chọn và sơ chế hải sản tươi
-• Nấu mì Quảng đậm đà
-• Làm bánh tráng cuốn đặc biệt', 680000, N'phobo.png', 1),
-(N'Bánh xèo và nem lụi Đà Nẵng', N'Học làm bánh xèo giòn tan và nem lụi thơm lừng', N'Khám phá món ăn đường phố nổi tiếng Đà Nẵng', N'• Bí quyết làm bánh xèo giòn rụm
-• Kỹ thuật nướng nem lụi thơm phức
-• Pha chế nước chấm chuẩn vị', 590000, N'phobo.png', 0),
-(N'Bún mắm và bún cá Đà Nẵng', N'Nấu bún mắm nêm đậm đà và bún cá ngọt thanh', N'Học cách nấu các món bún đặc trưng miền Trung', N'• Nấu nước mắm nêm thơm ngon
-• Kỹ thuật làm chả cá tươi
-• Bí quyết nấu nước dùng ngọt', 620000, N'phobo.png', 1),
-(N'Bánh canh và cao lầu', N'Học làm bánh canh cua và cao lầu Hội An', N'Khám phá món ăn đặc sản Đà Nẵng - Hội An', N'• Làm bánh canh dai ngon
-• Nấu nước dùng cua đậm đà
-• Kỹ thuật làm cao lầu truyền thống', 650000, N'phobo.png', 0),
+(N'Đặc Sản Biển Đà Nẵng', 
+ N'Hương vị biển miền Trung: Gỏi cá, Mì Quảng, Bánh tráng cuốn', 
+ N'Đà Nẵng nổi tiếng với hải sản và các món cuốn. Bạn sẽ học làm Gỏi cá Nam Ô (biến tấu an toàn), nấu Mì Quảng tôm thịt đậm đà ít nước, và Bánh tráng cuốn thịt heo hai đầu da chấm mắm nêm. Kết thúc bằng ly Chè bắp Cẩm Nam ngọt dẻo.', 
+ N'• Kỹ thuật làm gỏi cá không tanh
+• Nấu nước nhưn Mì Quảng đúng điệu
+• Pha mắm nêm chấm bánh tráng cuốn', 
+ 680000, N'dac_san_bien_da_nang_1.jpg', 1),
+
+(N'Bánh Xèo & Nem Lụi Đà Nẵng', 
+ N'Cặp đôi hoàn hảo của ẩm thực đường phố Đà Nẵng', 
+ N'Bánh xèo miền Trung nhỏ, vỏ giòn tan, ăn kèm Nem lụi nướng sả thơm phức. Điểm nhấn của lớp học là công thức pha nước chấm gan đậu phộng (nước lèo) béo ngậy thần thánh. Ngoài ra còn có Bánh tráng thịt heo và Chè xoa xoa hạt lựu mát lạnh.', 
+ N'• Đổ bánh xèo giòn lâu, không ngấm dầu
+• Quết thịt nem lụi dai ngon
+• Nấu nước chấm gan đặc biệt', 
+ 590000, N'banh_xeo_va_nem_lui_da_nang_1.jpg', 0),
+
+(N'Bún Mắm & Chả Cá Miền Trung', 
+ N'Những món bún đậm đà hương vị biển: Bún chả cá, Bún mắm nêm', 
+ N'Học cách quết Chả cá thu dai ngon không hàn the, nấu nước dùng Bún chả cá ngọt thanh từ bí đỏ. Bên cạnh đó là Bún mắm nêm thịt quay giòn bì đậm vị. Tráng miệng với Chè khoai môn dẻo bùi cốt dừa béo ngậy.', 
+ N'• Kỹ thuật quết chả cá dai
+• Làm heo quay giòn bì bằng chảo
+• Nấu chè khoai môn dẻo quánh', 
+ 620000, N'bun_mam_va_cha_ca_mien_trung_1.jpg', 1),
+
+(N'Sợi Bánh Thủ Công & Cao Lầu', 
+ N'Khám phá Cao lầu Hội An, Bánh canh cua và các món sợi', 
+ N'Đi sâu vào kỹ thuật làm sợi bánh. Bạn sẽ làm quen với Ram tôm đất giòn rụm, nấu Bánh canh cua với sợi bánh dai trong, và đặc biệt là món Cao lầu Hội An trứ danh với thịt xíu và sợi mì vàng ươm. Tráng miệng bằng Chè Thái sầu riêng thơm nức mũi.', 
+ N'• Bí quyết làm thịt xíu Cao Lầu
+• Nấu nước dùng bánh canh cua sánh sệt
+• Pha trộn các loại bột làm sợi bánh', 
+ 650000, N'soi_banh_thu_cong_va_cao_lau_1.jpg', 0),
+
 -- CẦN THƠ
-(N'Ẩm thực miệt vườn Cần Thơ', N'Món ăn đồng quê: lẩu mắm, cá lóc nướng trui, gỏi cá', N'Trải nghiệm nấu các món ăn đặc trưng miệt vườn', N'• Nấu lẩu mắm chuẩn vị miền Tây
-• Kỹ thuật nướng cá lóc thơm phức
-• Làm gỏi cá tươi ngon', 580000, N'phobo.png', 1),
-(N'Bánh và bún miền Tây', N'Học làm bánh xèo, bánh khọt, bún riêu cua đồng', N'Khám phá món ăn dân dã miền sông nước', N'• Làm bánh xèo miền Tây to và giòn
-• Kỹ thuật làm bánh khọt nhỏ xinh
-• Nấu bún riêu cua đồng đậm đà', 550000, N'phobo.png', 0),
-(N'Hủ tiếu và hủ tiếu Nam Vang', N'Nấu hủ tiếu Sa Đéc và hủ tiếu Nam Vang', N'Học cách nấu món hủ tiếu đặc trưng miền Tây', N'• Nấu nước dùng hủ tiếu ngọt thanh
-• Kỹ thuật chế biến sườn, gan, tim
-• Bí quyết làm hủ tiếu Nam Vang', 600000, N'phobo.png', 1),
-(N'Chè và tráng miệng miền Tây', N'Học làm chè chuối, chè đậu xanh, bánh chuối nướng', N'Trải nghiệm làm món ngọt dân dã miền sông nước', N'• Nấu chè chuối thơm ngon
-• Làm chè đậu xanh mát lạnh
-• Kỹ thuật nướng bánh chuối', 480000, N'phobo.png', 0);
+(N'Hương Vị Miền Tây Sông Nước', 
+ N'Đặc sản mùa nước nổi: Lẩu mắm, Cá lóc nướng trui', 
+ N'Mang cả miền Tây vào bếp với Lẩu mắm đậm đà ăn kèm rau đồng nội. Học cách nướng Cá lóc trui thơm mùi rơm/khói, làm Gỏi xoài khô cá lóc lạ miệng. Kết thúc bữa ăn bằng món Chuối nếp nướng nước cốt dừa béo ngậy.', 
+ N'• Nấu lẩu mắm không bị mặn chát
+• Nướng cá lóc giữ được độ ngọt
+• Kỹ thuật nấu nước cốt dừa béo', 
+ 580000, N'huong_vi_mien_tay_song_nuoc_1.jpg', 1),
+
+(N'Bánh Xèo & Bánh Khọt Nam Bộ', 
+ N'Cặp đôi bánh chiên giòn rụm, vàng ươm của miền Nam', 
+ N'Phân biệt Bánh xèo miền Tây chảo lớn mỏng tang với Bánh khọt Vũng Tàu nhỏ xinh. Lớp học cũng hướng dẫn nấu Bún riêu cua kiểu miền Nam với huyết và chả lụa. Tráng miệng bằng Bánh tằm bì nước cốt dừa.', 
+ N'• Pha bột bánh xèo giòn rụm, viền mỏng
+• Đổ bánh khọt nhân tôm tươi
+• Nấu riêu cua đóng tảng đẹp mắt', 
+ 550000, N'banh_xeo_va_banh_khot_nam_bo_1.jpg', 0),
+
+(N'Hủ Tiếu & Món Ngon Phương Nam', 
+ N'Chuyên đề về các món sợi và gỏi đặc trưng Nam Bộ', 
+ N'Khám phá thế giới Hủ tiếu: Hủ tiếu Sa Đéc với nước sốt trộn khô đặc biệt, Hủ tiếu Nam Vang nước lèo ngọt xương ống. Kèm theo là món Gỏi củ hủ dừa tôm thịt giòn sần sật và Sâm bổ lượng giải nhiệt mùa hè.', 
+ N'• Hầm nước lèo hủ tiếu trong vắt
+• Làm sốt trộn hủ tiếu khô
+• Sơ chế củ hủ dừa trắng giòn', 
+ 600000, N'hu_tieu_va_mon_ngon_phuong_nam_1.jpg', 1),
+
+(N'Biến Tấu Chuối & Chè Nam Bộ', 
+ N'Thế giới các món ngon từ Chuối: Hấp, Nướng, Chè', 
+ N'Chuối là nguyên liệu vàng của bánh trái miền Tây. Khóa học này sẽ dạy bạn làm Bánh da lợn dẻo dai nhiều lớp, Bánh chuối nướng đỏ au thơm lừng, và Chè bà ba (chè thưng) béo ngậy. Thêm món Chè bưởi An Giang để cân bằng lại khẩu vị.', 
+ N'• Đổ bánh da lợn tách lớp đẹp
+• Nướng bánh chuối lên màu đỏ đẹp tự nhiên
+• Nấu chè bà ba chuẩn vị', 
+ 480000, N'bien_tau_chuoi_va_che_nam_bo_1.jpg', 0);
 
 -- 4. LỊCH TRÌNH LỚP HỌC (ĐÃ CHỈNH GIỜ)
 INSERT INTO LichTrinhLopHoc (maKhoaHoc, maGiaoVien, thuTrongTuan, gioBatDau, gioKetThuc, diaDiem, soLuongToiDa) VALUES
@@ -874,22 +955,29 @@ INSERT INTO HinhAnhMonAn (maMonAn, duongDan, thuTu) VALUES
 
 -- 8. HÌNH ẢNH KHÓA HỌC (48 dòng)
 INSERT INTO HinhAnhKhoaHoc (maKhoaHoc, duongDan, thuTu) VALUES
-(1, N'phobo.png', 1), (1, N'phobo.png', 2), (1, N'phobo.png', 3),
-(2, N'phobo.png', 1), (2, N'phobo.png', 2), (2, N'phobo.png', 3),
-(3, N'phobo.png', 1), (3, N'phobo.png', 2), (3, N'phobo.png', 3),
-(4, N'phobo.png', 1), (4, N'phobo.png', 2), (4, N'phobo.png', 3),
-(5, N'phobo.png', 1), (5, N'phobo.png', 2), (5, N'phobo.png', 3),
-(6, N'phobo.png', 1), (6, N'phobo.png', 2), (6, N'phobo.png', 3),
-(7, N'phobo.png', 1), (7, N'phobo.png', 2), (7, N'phobo.png', 3),
-(8, N'phobo.png', 1), (8, N'phobo.png', 2), (8, N'phobo.png', 3),
-(9, N'phobo.png', 1), (9, N'phobo.png', 2), (9, N'phobo.png', 3),
-(10, N'phobo.png', 1), (10, N'phobo.png', 2), (10, N'phobo.png', 3),
-(11, N'phobo.png', 1), (11, N'phobo.png', 2), (11, N'phobo.png', 3),
-(12, N'phobo.png', 1), (12, N'phobo.png', 2), (12, N'phobo.png', 3),
-(13, N'phobo.png', 1), (13, N'phobo.png', 2), (13, N'phobo.png', 3),
-(14, N'phobo.png', 1), (14, N'phobo.png', 2), (14, N'phobo.png', 3),
-(15, N'phobo.png', 1), (15, N'phobo.png', 2), (15, N'phobo.png', 3),
-(16, N'phobo.png', 1), (16, N'phobo.png', 2), (16, N'phobo.png', 3);
+-- Hà Nội
+(1, N'am_thuc_pho_co_ha_noi_2.jpg', 1),           (1, N'am_thuc_pho_co_ha_noi_3.jpg', 2),
+(2, N'bun_va_mon_cuon_ha_thanh_2.jpg', 1),        (2, N'bun_va_mon_cuon_ha_thanh_3.jpg', 2),
+(3, N'banh_dan_gian_va_qua_que_bac_bo_2.jpg', 1), (3, N'banh_dan_gian_va_qua_que_bac_bo_3.jpg', 2),
+(4, N'mon_nhau_va_lai_rai_ha_noi_2.jpg', 1),      (4, N'mon_nhau_va_lai_rai_ha_noi_3.jpg', 2),
+
+-- Huế
+(5, N'tinh_hoa_cung_dinh_hue_2.jpg', 1),          (5, N'tinh_hoa_cung_dinh_hue_3.jpg', 2),
+(6, N'banh_hue_truyen_thong_2.jpg', 1),           (6, N'banh_hue_truyen_thong_3.jpg', 2),
+(7, N'am_thuc_chay_xu_hue_2.jpg', 1),             (7, N'am_thuc_chay_xu_hue_3.jpg', 2),
+(8, N'banh_trai_va_qua_chieu_co_do_2.jpg', 1),    (8, N'banh_trai_va_qua_chieu_co_do_3.jpg', 2),
+
+-- Đà Nẵng
+(9, N'dac_san_bien_da_nang_2.jpg', 1),            (9, N'dac_san_bien_da_nang_3.jpg', 2),
+(10, N'banh_xeo_va_nem_lui_da_nang_2.jpg', 1),    (10, N'banh_xeo_va_nem_lui_da_nang_3.jpg', 2),
+(11, N'bun_mam_va_cha_ca_mien_trung_2.jpg', 1),   (11, N'bun_mam_va_cha_ca_mien_trung_3.jpg', 2),
+(12, N'soi_banh_thu_cong_va_cao_lau_2.jpg', 1),   (12, N'soi_banh_thu_cong_va_cao_lau_3.jpg', 2),
+
+-- Cần Thơ
+(13, N'huong_vi_mien_tay_song_nuoc_2.jpg', 1),    (13, N'huong_vi_mien_tay_song_nuoc_3.jpg', 2),
+(14, N'banh_xeo_va_banh_khot_nam_bo_2.jpg', 1),   (14, N'banh_xeo_va_banh_khot_nam_bo_3.jpg', 2),
+(15, N'hu_tieu_va_mon_ngon_phuong_nam_2.jpg', 1), (15, N'hu_tieu_va_mon_ngon_phuong_nam_3.jpg', 2),
+(16, N'bien_tau_chuoi_va_che_nam_bo_2.jpg', 1),   (16, N'bien_tau_chuoi_va_che_nam_bo_3.jpg', 2);
 
 
 
@@ -898,13 +986,121 @@ INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, nga
 ('KHACHHANGMOI', N'Ưu đãi tài khoản mới', N'Giảm 30% cho đơn hàng đầu tiên', 'PhanTram', 30, '2024-01-01', '2025-12-31', N'Hoạt Động', 'NEWUSER', NULL, 'uudai1.jpg'),
 ('THAMGIANHOM', N'Ưu đãi nhóm', N'Giảm 20% khi đặt từ 5 người', 'PhanTram', 20, '2024-01-01', '2025-12-31', N'Hoạt Động', 'GROUP', 5, 'uudai2.jpg');
 
+---------------------------------------------------------------------
+-- THÔNG BÁO NHẮC NHỞ LỚP HỌC
+-- 1. Trước 1 ngày: "Lớp học sắp diễn ra"
+-- 2. Trước 30 phút: "Còn 30 phút nữa sẽ bắt đầu lớp học"
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 1 ngày
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc1Ngay', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc1Ngay;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc1Ngay
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NgayMai DATE = DATEADD(DAY, 1, CAST(GETDATE() AS DATE));
+    
+    -- Tạo thông báo cho những học viên có lịch học vào ngày mai
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'🔔 Lớp học sắp diễn ra',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy chuẩn bị sẵn sàng nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @NgayMai
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'🔔 Lớp học sắp diễn ra'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%' 
+            AND tb.noiDung LIKE N'%' + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N'%'
+            AND CAST(tb.ngayTao AS DATE) = CAST(GETDATE() AS DATE)
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 30 phút
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc30Phut', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc30Phut;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc30Phut
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @HomNay DATE = CAST(GETDATE() AS DATE);
+    DECLARE @GioHienTai TIME = CAST(GETDATE() AS TIME);
+    DECLARE @GioSau30Phut TIME = DATEADD(MINUTE, 30, @GioHienTai);
+    
+    -- Tạo thông báo cho những học viên có lớp học bắt đầu trong 30 phút tới
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'⏰ Còn 30 phút nữa!',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ bắt đầu lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy đến đúng giờ nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @HomNay
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Lớp bắt đầu trong khoảng 25-35 phút tới (để có buffer)
+      AND lt.gioBatDau >= @GioHienTai
+      AND lt.gioBatDau <= DATEADD(MINUTE, 35, @GioHienTai)
+      AND lt.gioBatDau >= DATEADD(MINUTE, 25, @GioHienTai)
+      -- Kiểm tra chưa có thông báo 30 phút cho lịch này hôm nay
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'⏰ Còn 30 phút nữa!'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%'
+            AND CAST(tb.ngayTao AS DATE) = @HomNay
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- HƯỚNG DẪN SỬ DỤNG
+---------------------------------------------------------------------
+-- Backend Spring Boot sẽ tự động gọi các stored procedure này:
+-- - sp_ThongBaoTruoc1Ngay: Chạy mỗi ngày lúc 8:00 sáng
+-- - sp_ThongBaoTruoc30Phut: Chạy mỗi 5 phút
+-- 
+-- Hoặc có thể test thủ công:
+-- EXEC sp_ThongBaoTruoc1Ngay;
+-- EXEC sp_ThongBaoTruoc30Phut;
+---------------------------------------------------------------------
+
 PRINT N'✓ Đã thực thi xong!';
 GO
 ---------------------------- Trigger đặt lịch---------------------------
----------------------------------------------------------------------
--- PHẦN 1: TRIGGERS
----------------------------------------------------------------------
-
 ---------------------------------------------------------------------
 -- TRIGGER 1: Tự động thêm thông báo khi bấm nút thanh toán
 ---------------------------------------------------------------------
@@ -1403,3 +1599,12 @@ END;
 GO
 select * from DatLich
 select * from ThanhToan
+
+--select * from GiaoVien
+--select * from NguoiDung
+--select * from DatLich
+--select * from KhoaHoc
+--SELECT * FROM UuDai;
+--select * from YeuThich
+--select * from LichTrinhLopHoc
+

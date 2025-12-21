@@ -30,4 +30,7 @@ public class KhoaHocDTO {
     
     // Thông tin món ăn
     private List<DanhMucMonAnDTO> danhMucMonAnList;
+    
+    // THÊM MỚI: Danh sách hình ảnh slide
+    private List<HinhAnhKhoaHocDTO> hinhAnhList;
 }
