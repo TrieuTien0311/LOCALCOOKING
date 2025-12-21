@@ -46,19 +46,21 @@ public class ThongBaoSchedulerService {
             logger.info("Bắt đầu tạo thông báo nhắc nhở trước 1 ngày...");
             
             LocalDate ngayMai = LocalDate.now().plusDays(1);
-            java.sql.Date sqlDate = java.sql.Date.valueOf(ngayMai);
             logger.info("Tìm lớp học vào ngày: {}", ngayMai);
             
-            String sql = "SELECT DISTINCT d.maHocVien, kh.tenKhoaHoc, d.ngayThamGia, " +
-                        "lt.gioBatDau, lt.diaDiem, kh.hinhAnh " +
+            // Sử dụng CONVERT để format ngày và giờ thành string trong SQL
+            String sql = "SELECT DISTINCT d.maHocVien, kh.tenKhoaHoc, " +
+                        "CONVERT(VARCHAR(10), d.ngayThamGia, 103) as ngayThamGiaStr, " +
+                        "CONVERT(VARCHAR(5), lt.gioBatDau, 108) as gioBatDauStr, " +
+                        "lt.diaDiem, kh.hinhAnh " +
                         "FROM DatLich d " +
                         "JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
                         "JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc " +
-                        "WHERE d.ngayThamGia = ?1 " +
+                        "WHERE CAST(d.ngayThamGia AS DATE) = ?1 " +
                         "AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')";
             
             Query query = entityManager.createNativeQuery(sql);
-            query.setParameter(1, sqlDate);
+            query.setParameter(1, java.sql.Date.valueOf(ngayMai));
             
             @SuppressWarnings("unchecked")
             List<Object[]> results = query.getResultList();
@@ -70,8 +72,8 @@ public class ThongBaoSchedulerService {
                 try {
                     Integer maHocVien = (Integer) row[0];
                     String tenKhoaHoc = (String) row[1];
-                    LocalDate ngayThamGia = ((java.sql.Date) row[2]).toLocalDate();
-                    LocalTime gioBatDau = ((java.sql.Time) row[3]).toLocalTime();
+                    String ngayThamGiaStr = (String) row[2]; // Đã format sẵn dd/MM/yyyy
+                    String gioBatDauStr = (String) row[3]; // Đã format sẵn HH:mm
                     String diaDiem = (String) row[4];
                     String hinhAnh = (String) row[5];
                     
@@ -83,8 +85,7 @@ public class ThongBaoSchedulerService {
                         tb.setMaNguoiNhan(maHocVien);
                         tb.setTieuDe("🔔 Lớp học sắp diễn ra");
                         tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ diễn ra vào ngày mai (" +
-                                ngayThamGia.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                                ") lúc " + gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
+                                ngayThamGiaStr + ") lúc " + gioBatDauStr +
                                 " tại " + diaDiem + ". Hãy chuẩn bị sẵn sàng nhé!");
                         tb.setLoaiThongBao("NhacNho");
                         tb.setHinhAnh(hinhAnh);
@@ -219,19 +220,21 @@ public class ThongBaoSchedulerService {
     @Transactional
     public int taoThongBaoTruoc1NgayKhongKiemTra() {
         LocalDate ngayMai = LocalDate.now().plusDays(1);
-        String ngayMaiStr = ngayMai.toString(); // Format: yyyy-MM-dd
-        logger.info("TEST: Tìm lớp học vào ngày: {}", ngayMaiStr);
+        logger.info("TEST: Tìm lớp học vào ngày: {}", ngayMai);
         
-        String sql = "SELECT DISTINCT d.maHocVien, kh.tenKhoaHoc, d.ngayThamGia, " +
-                    "lt.gioBatDau, lt.diaDiem, kh.hinhAnh " +
+        // Sử dụng CONVERT thay vì FORMAT để tương thích tốt hơn
+        String sql = "SELECT DISTINCT d.maHocVien, kh.tenKhoaHoc, " +
+                    "CONVERT(VARCHAR(10), d.ngayThamGia, 103) as ngayThamGiaStr, " +
+                    "CONVERT(VARCHAR(5), lt.gioBatDau, 108) as gioBatDauStr, " +
+                    "lt.diaDiem, kh.hinhAnh " +
                     "FROM DatLich d " +
                     "JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
                     "JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc " +
-                    "WHERE CAST(d.ngayThamGia AS DATE) = CAST(?1 AS DATE) " +
+                    "WHERE CAST(d.ngayThamGia AS DATE) = ?1 " +
                     "AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')";
         
         Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, ngayMaiStr);
+        query.setParameter(1, java.sql.Date.valueOf(ngayMai));
         
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
@@ -243,30 +246,18 @@ public class ThongBaoSchedulerService {
             try {
                 Integer maHocVien = (Integer) row[0];
                 String tenKhoaHoc = (String) row[1];
-                
-                // Xử lý ngayThamGia - có thể là Date hoặc LocalDate
-                LocalDate ngayThamGia;
-                if (row[2] instanceof java.sql.Date) {
-                    ngayThamGia = ((java.sql.Date) row[2]).toLocalDate();
-                } else if (row[2] instanceof LocalDate) {
-                    ngayThamGia = (LocalDate) row[2];
-                } else {
-                    logger.warn("Không xác định được kiểu ngày: {}", row[2].getClass());
-                    continue;
-                }
-                
-                LocalTime gioBatDau = ((java.sql.Time) row[3]).toLocalTime();
+                String ngayThamGiaStr = (String) row[2]; // Đã format sẵn dd/MM/yyyy
+                String gioBatDauStr = (String) row[3]; // Đã format sẵn HH:mm
                 String diaDiem = (String) row[4];
                 String hinhAnh = (String) row[5];
                 
-                logger.info("TEST: Tạo thông báo cho User {}, Khóa học: {}", maHocVien, tenKhoaHoc);
+                logger.info("TEST: Tạo thông báo cho User {}, Khóa học: {}, Giờ: {}", maHocVien, tenKhoaHoc, gioBatDauStr);
                 
                 ThongBao tb = new ThongBao();
                 tb.setMaNguoiNhan(maHocVien);
                 tb.setTieuDe("🔔 Lớp học sắp diễn ra");
                 tb.setNoiDung("Lớp \"" + tenKhoaHoc + "\" sẽ diễn ra vào ngày mai (" +
-                        ngayThamGia.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                        ") lúc " + gioBatDau.format(DateTimeFormatter.ofPattern("HH:mm")) +
+                        ngayThamGiaStr + ") lúc " + gioBatDauStr +
                         " tại " + diaDiem + ". Hãy chuẩn bị sẵn sàng nhé!");
                 tb.setLoaiThongBao("NhacNho");
                 tb.setHinhAnh(hinhAnh);
@@ -277,7 +268,7 @@ public class ThongBaoSchedulerService {
                 count++;
                 logger.info("TEST: Đã tạo thông báo #{}", count);
             } catch (Exception e) {
-                logger.error("TEST: Lỗi xử lý row: {}", e.getMessage());
+                logger.error("TEST: Lỗi xử lý row: {}", e.getMessage(), e);
             }
         }
         

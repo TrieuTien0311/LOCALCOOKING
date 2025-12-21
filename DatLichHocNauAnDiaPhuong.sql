@@ -283,20 +283,22 @@ BEGIN
     
     -- Tạo thông báo cho những học viên có lịch học vào ngày mai
     INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
-    SELECT DISTINCT
-        d.maHocVien,
-        N'🔔 Lớp học sắp diễn ra',
-        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
-            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
-            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
-            + N'. Hãy chuẩn bị sẵn sàng nhé!',
-        N'NhacNho',
-        kh.hinhAnh
-    FROM DatLich d
-    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
-    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
-    WHERE d.ngayThamGia = @NgayMai
-      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+			SELECT DISTINCT
+			d.maHocVien,
+			N'🔔 Lớp học sắp diễn ra',
+			N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+				+ CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+				-- Đảm bảo ép kiểu về TIME trước khi format
+				+ LEFT(CAST(lt.gioBatDau AS TIME), 5) + N' tại ' + lt.diaDiem 
+				+ N'. Hãy chuẩn bị sẵn sàng nhé!',
+			N'NhacNho',
+			kh.hinhAnh
+		FROM DatLich d
+		JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+		JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+		-- Sử dụng CAST để so sánh ngày chính xác hơn
+		WHERE CAST(d.ngayThamGia AS DATE) = @NgayMai
+		  AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
       -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
       AND NOT EXISTS (
           SELECT 1 FROM ThongBao tb 
@@ -937,6 +939,118 @@ INSERT INTO DatLich (maHocVien, maLichTrinh, ngayThamGia, soLuongNguoi, tongTien
 INSERT INTO UuDai (maCode, tenUuDai, moTa, loaiGiam, giaTriGiam, ngayBatDau, ngayKetThuc, trangThai, loaiUuDai, dieuKienSoLuong, hinhAnh) VALUES 
 ('KHACHHANGMOI', N'Ưu đãi tài khoản mới', N'Giảm 30% cho đơn hàng đầu tiên', 'PhanTram', 30, '2024-01-01', '2025-12-31', N'Hoạt Động', 'NEWUSER', NULL, 'uudai1.jpg'),
 ('THAMGIANHOM', N'Ưu đãi nhóm', N'Giảm 20% khi đặt từ 5 người', 'PhanTram', 20, '2024-01-01', '2025-12-31', N'Hoạt Động', 'GROUP', 5, 'uudai2.jpg');
+
+---------------------------------------------------------------------
+-- THÔNG BÁO NHẮC NHỞ LỚP HỌC
+-- 1. Trước 1 ngày: "Lớp học sắp diễn ra"
+-- 2. Trước 30 phút: "Còn 30 phút nữa sẽ bắt đầu lớp học"
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 1 ngày
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc1Ngay', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc1Ngay;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc1Ngay
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NgayMai DATE = DATEADD(DAY, 1, CAST(GETDATE() AS DATE));
+    
+    -- Tạo thông báo cho những học viên có lịch học vào ngày mai
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'🔔 Lớp học sắp diễn ra',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ diễn ra vào ngày mai (' 
+            + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N') lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy chuẩn bị sẵn sàng nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @NgayMai
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Kiểm tra chưa có thông báo nhắc nhở 1 ngày cho lịch này
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'🔔 Lớp học sắp diễn ra'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%' 
+            AND tb.noiDung LIKE N'%' + CONVERT(NVARCHAR, d.ngayThamGia, 103) + N'%'
+            AND CAST(tb.ngayTao AS DATE) = CAST(GETDATE() AS DATE)
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- STORED PROCEDURE: Tạo thông báo nhắc nhở trước 30 phút
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_ThongBaoTruoc30Phut', 'P') IS NOT NULL
+    DROP PROCEDURE sp_ThongBaoTruoc30Phut;
+GO
+
+CREATE PROCEDURE sp_ThongBaoTruoc30Phut
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @HomNay DATE = CAST(GETDATE() AS DATE);
+    DECLARE @GioHienTai TIME = CAST(GETDATE() AS TIME);
+    DECLARE @GioSau30Phut TIME = DATEADD(MINUTE, 30, @GioHienTai);
+    
+    -- Tạo thông báo cho những học viên có lớp học bắt đầu trong 30 phút tới
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT DISTINCT
+        d.maHocVien,
+        N'⏰ Còn 30 phút nữa!',
+        N'Lớp "' + kh.tenKhoaHoc + N'" sẽ bắt đầu lúc ' 
+            + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem 
+            + N'. Hãy đến đúng giờ nhé!',
+        N'NhacNho',
+        kh.hinhAnh
+    FROM DatLich d
+    JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE d.ngayThamGia = @HomNay
+      AND d.trangThai NOT IN (N'Đã Hủy', N'Hoàn Thành')
+      -- Lớp bắt đầu trong khoảng 25-35 phút tới (để có buffer)
+      AND lt.gioBatDau >= @GioHienTai
+      AND lt.gioBatDau <= DATEADD(MINUTE, 35, @GioHienTai)
+      AND lt.gioBatDau >= DATEADD(MINUTE, 25, @GioHienTai)
+      -- Kiểm tra chưa có thông báo 30 phút cho lịch này hôm nay
+      AND NOT EXISTS (
+          SELECT 1 FROM ThongBao tb 
+          WHERE tb.maNguoiNhan = d.maHocVien 
+            AND tb.loaiThongBao = N'NhacNho'
+            AND tb.tieuDe = N'⏰ Còn 30 phút nữa!'
+            AND tb.noiDung LIKE N'%' + kh.tenKhoaHoc + N'%'
+            AND CAST(tb.ngayTao AS DATE) = @HomNay
+      );
+    
+    SELECT @@ROWCOUNT AS SoThongBaoTao;
+END;
+GO
+
+---------------------------------------------------------------------
+-- HƯỚNG DẪN SỬ DỤNG
+---------------------------------------------------------------------
+-- Backend Spring Boot sẽ tự động gọi các stored procedure này:
+-- - sp_ThongBaoTruoc1Ngay: Chạy mỗi ngày lúc 8:00 sáng
+-- - sp_ThongBaoTruoc30Phut: Chạy mỗi 5 phút
+-- 
+-- Hoặc có thể test thủ công:
+-- EXEC sp_ThongBaoTruoc1Ngay;
+-- EXEC sp_ThongBaoTruoc30Phut;
+---------------------------------------------------------------------
 
 PRINT N'✓ Đã thực thi xong!';
 GO
