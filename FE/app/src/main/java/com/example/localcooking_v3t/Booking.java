@@ -29,6 +29,7 @@ import com.example.localcooking_v3t.utils.SessionManager;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -682,12 +683,30 @@ public class Booking extends AppCompatActivity {
         
         Log.d("BOOKING_UI", "=== Displaying KhoaHoc Info ===");
         Log.d("BOOKING_UI", "KhoaHoc: " + khoaHoc.getTenKhoaHoc());
+        Log.d("BOOKING_UI", "hinhAnh (banner): " + khoaHoc.getHinhAnh());
         Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // THAY ĐỔI: Hiển thị slide ảnh thay vì 1 ảnh
+        // Tạo danh sách ảnh mới: ảnh banner (hinhAnh) + ảnh từ HinhAnhKhoaHoc
+        List<HinhAnhKhoaHoc> combinedImageList = new ArrayList<>();
+        
+        // 1. Thêm ảnh banner (hinhAnh từ KhoaHoc) làm ảnh đầu tiên
+        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+            HinhAnhKhoaHoc bannerImage = new HinhAnhKhoaHoc();
+            bannerImage.setDuongDan(khoaHoc.getHinhAnh());
+            bannerImage.setMaKhoaHoc(khoaHoc.getMaKhoaHoc());
+            combinedImageList.add(bannerImage);
+            Log.d("BOOKING_UI", "Added banner image: " + khoaHoc.getHinhAnh());
+        }
+        
+        // 2. Thêm các ảnh từ HinhAnhKhoaHoc
         if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
-            // Có danh sách ảnh slide -> hiển thị slide
-            hinhAnhList = khoaHoc.getHinhAnhList();
+            combinedImageList.addAll(khoaHoc.getHinhAnhList());
+            Log.d("BOOKING_UI", "Added " + khoaHoc.getHinhAnhList().size() + " images from HinhAnhKhoaHoc");
+        }
+        
+        // Hiển thị slide ảnh
+        if (!combinedImageList.isEmpty()) {
+            hinhAnhList = combinedImageList;
             currentImageIndex = 0;
             displayCurrentImage();
             
@@ -701,22 +720,14 @@ public class Booking extends AppCompatActivity {
                 Log.d("BOOKING_UI", "Show btnNext");
             }
             
-            Log.d("BOOKING_UI", "Loaded " + hinhAnhList.size() + " images for slide");
+            Log.d("BOOKING_UI", "Total images for slide: " + hinhAnhList.size());
         } else {
-            Log.w("BOOKING_UI", "No hinhAnhList found, showing banner only");
+            Log.w("BOOKING_UI", "No images found for slide");
             
-            if (khoaHoc.getHinhAnh() != null) {
-                // Không có slide -> hiển thị ảnh banner
-                int resId = khoaHoc.getHinhAnhResId(this);
-                if (imMonAn != null) {
-                    imMonAn.setImageResource(resId);
-                }
-                
-                Log.d("BOOKING_UI", "Set banner image: " + khoaHoc.getHinhAnh());
+            // Fallback: hiển thị ảnh mặc định
+            if (imMonAn != null) {
+                imMonAn.setImageResource(R.drawable.hue);
             }
-            
-            // KHÔNG ẨN NÚT NỮA - để user vẫn thấy (có thể sẽ disable sau)
-            Log.d("BOOKING_UI", "Keeping buttons visible (no slide images)");
         }
         
         // Giới thiệu lớp học

@@ -249,5 +249,19 @@ public interface ApiService {
     @POST("api/momo/simulate-success/{orderId}")
     Call<java.util.Map<String, Object>> simulateMomoSuccess(@Path("orderId") String orderId);
 
+    // ========== API LỊCH SỬ ĐẶT LỊCH ==========
+
+    // Lấy danh sách đơn đã hoàn thành
+    @GET("api/don-dat-lich/hoan-thanh/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonHoanThanh(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy danh sách đơn đặt trước
+    @GET("api/don-dat-lich/dat-truoc/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDatTruoc(@Path("maHocVien") Integer maHocVien);
+
+    // Lấy danh sách đơn đã hủy
+    @GET("api/don-dat-lich/da-huy/{maHocVien}")
+    Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDaHuy(@Path("maHocVien") Integer maHocVien);
+
 
 }

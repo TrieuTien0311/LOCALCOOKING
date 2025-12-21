@@ -430,14 +430,80 @@ public class KhoaHoc implements Serializable {
     }
     public int getHinhAnhResId(android.content.Context context) {
         if (hinhAnh == null || hinhAnh.isEmpty()) {
+            android.util.Log.d("KhoaHoc", "hinhAnh is null or empty, using default");
             return context.getResources().getIdentifier("hue", "drawable", context.getPackageName());
         }
 
-        // Loại bỏ extension
-        String name = hinhAnh.replace(".png", "").replace(".jpg", "");
+        // Loại bỏ extension (.png, .jpg, .jpeg)
+        String name = hinhAnh.toLowerCase()
+                             .replace(".png", "")
+                             .replace(".jpg", "")
+                             .replace(".jpeg", "");
+
+        // Log để debug
+        android.util.Log.d("KhoaHoc", "hinhAnh gốc: " + hinhAnh + ", name sau xử lý: " + name);
 
         // Lấy resource ID
         int resId = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
-        return resId != 0 ? resId : context.getResources().getIdentifier("hue", "drawable", context.getPackageName());
+        
+        android.util.Log.d("KhoaHoc", "resId cho '" + name + "': " + resId);
+        
+        if (resId != 0) {
+            return resId;
+        }
+        
+        // Fallback 1: thử với tên không có số cuối (VD: am_thuc_pho_co_ha_noi_1 -> am_thuc_pho_co_ha_noi)
+        if (name.matches(".*_\\d+$")) {
+            String nameWithoutNumber = name.replaceAll("_\\d+$", "");
+            resId = context.getResources().getIdentifier(nameWithoutNumber, "drawable", context.getPackageName());
+            android.util.Log.d("KhoaHoc", "Thử fallback (bỏ số): " + nameWithoutNumber + ", resId: " + resId);
+            if (resId != 0) {
+                return resId;
+            }
+        }
+        
+        // Fallback 2: thử map theo tên khóa học
+        if (tenKhoaHoc != null) {
+            String mappedName = mapTenKhoaHocToDrawable(tenKhoaHoc);
+            if (mappedName != null) {
+                resId = context.getResources().getIdentifier(mappedName, "drawable", context.getPackageName());
+                android.util.Log.d("KhoaHoc", "Thử fallback (map tên): " + mappedName + ", resId: " + resId);
+                if (resId != 0) {
+                    return resId;
+                }
+            }
+        }
+        
+        // Default fallback
+        android.util.Log.d("KhoaHoc", "Sử dụng hình mặc định: hue");
+        return context.getResources().getIdentifier("hue", "drawable", context.getPackageName());
+    }
+    
+    /**
+     * Map tên khóa học sang tên drawable
+     */
+    private String mapTenKhoaHocToDrawable(String tenKhoaHoc) {
+        if (tenKhoaHoc == null) return null;
+        
+        String ten = tenKhoaHoc.toLowerCase();
+        
+        if (ten.contains("phố cổ hà nội")) return "am_thuc_pho_co_ha_noi_1";
+        if (ten.contains("bún") && ten.contains("cuốn") && ten.contains("hà")) return "bun_va_mon_cuon_ha_thanh_1";
+        if (ten.contains("bánh dân gian")) return "banh_dan_gian_va_qua_que_bac_bo_1";
+        if (ten.contains("nhậu") && ten.contains("hà nội")) return "mon_nhau_va_lai_rai_ha_noi_1";
+        if (ten.contains("cung đình huế")) return "tinh_hoa_cung_dinh_hue_1";
+        if (ten.contains("bánh huế")) return "banh_hue_truyen_thong_1";
+        if (ten.contains("chay") && ten.contains("huế")) return "am_thuc_chay_xu_hue_1";
+        if (ten.contains("bánh xèo") && ten.contains("đà nẵng")) return "banh_xeo_va_nem_lui_da_nang_1";
+        if (ten.contains("sợi bánh") && ten.contains("cao lầu")) return "soi_banh_thu_cong_va_cao_lau_1";
+        if (ten.contains("bún mắm") && ten.contains("chả cá")) return "bun_mam_va_cha_ca_mien_trung_1";
+        if (ten.contains("đặc sản biển") && ten.contains("đà nẵng")) return "dac_san_bien_da_nang_1";
+        if (ten.contains("bánh xèo") && ten.contains("bánh khọt")) return "banh_xeo_va_banh_khot_nam_bo_1";
+        if (ten.contains("hủ tiếu")) return "hu_tieu_va_mon_ngon_phuong_nam_1";
+        if (ten.contains("miền tây sông nước")) return "huong_vi_mien_tay_song_nuoc_1";
+        if (ten.contains("chuối") && ten.contains("chè")) return "bien_tau_chuoi_va_che_nam_bo_1";
+        if (ten.contains("bánh trái") && ten.contains("cố đô")) return "banh_trai_va_qua_chieu_co_do_1";
+        
+        return null;
     }
 }

@@ -9,6 +9,11 @@ public class OrderHistory {
     private  String gia;
     private String thoiGianHuy;
     private String trangThai;
+    
+    // Thêm các field mới để hỗ trợ đánh giá
+    private Integer maDatLich;
+    private Integer maKhoaHoc;
+    private boolean daDanhGia;
 
     public OrderHistory(int hinhAnh, String tieuDe, String soLuongNguoi, String lich,
                         String diaDiem, String gia, String thoiGianHuy, String trangThai) {
@@ -53,4 +58,14 @@ public class OrderHistory {
 
     public void setThoiGianHuy(String thoiGianHuy) { this.thoiGianHuy = thoiGianHuy; }
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
+    
+    // Getters và Setters cho các field mới
+    public Integer getMaDatLich() { return maDatLich; }
+    public void setMaDatLich(Integer maDatLich) { this.maDatLich = maDatLich; }
+    
+    public Integer getMaKhoaHoc() { return maKhoaHoc; }
+    public void setMaKhoaHoc(Integer maKhoaHoc) { this.maKhoaHoc = maKhoaHoc; }
+    
+    public boolean isDaDanhGia() { return daDanhGia; }
+    public void setDaDanhGia(boolean daDanhGia) { this.daDanhGia = daDanhGia; }
 }

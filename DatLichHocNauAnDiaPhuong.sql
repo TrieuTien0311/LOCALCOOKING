@@ -782,10 +782,10 @@ INSERT INTO LichTrinhLopHoc (maKhoaHoc, maGiaoVien, thuTrongTuan, gioBatDau, gio
 (3, 2, '3,5,7',          '08:30', '11:30', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 15),
 (4, 1, '7,CN',            '14:00', '17:00', N'45 Hàng Bạc, Hoàn Kiếm, Hà Nội', 20),
 -- HUẾ
-(5, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
-(6, 2, '2,4,6',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
+(5, 1, '7,CN',					 '17:30', '20:30', N'23 Lê Duẩn, Huế', 20),
+(6, 2, '2,3,4,5,6,7,CN',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 18),
 (7, 1, '3,5,7',          '08:30', '11:30', N'23 Lê Duẩn, Huế', 15),
-(8, 2, '7,CN',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
+(8, 2, '2,4,6',            '14:00', '17:00', N'23 Lê Duẩn, Huế', 15),
 -- ĐÀ NẴNG
 (9, 1, '2,3,4,5,6,7,CN', '17:30', '20:30', N'78 Trần Phú, Đà Nẵng', 20),
 (10, 2, '2,4,6',         '08:30', '11:30', N'78 Trần Phú, Đà Nẵng', 18),
@@ -1597,14 +1597,36 @@ BEGIN
     ORDER BY d.ngayDat DESC;
 END;
 GO
+
+---------------------------------------------------------------------
+-- DỮ LIỆU TEST: ĐƠN ĐÃ HOÀN THÀNH (cho user maHocVien = 5)
+---------------------------------------------------------------------
+
+-- Đơn 1: Ẩm thực phố cổ Hà Nội
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, 1300000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 1300000, N'Momo', 1, 'ORDER_TEST_001', 'TRANS_TEST_001', '2024-11-10 10:05:00', '2024-11-10 10:00:00');
+
+-- Đơn 2: Tinh Hoa Cung Đình Huế
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 5, 1, '2024-10-20', N'Đã hoàn thành', '2024-10-15 14:00:00', NULL, 715000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 715000, N'Momo', 1, 'ORDER_TEST_002', 'TRANS_TEST_002', '2024-10-15 14:05:00', '2024-10-15 14:00:00');
+
+-- Đơn 3: Bánh Xèo và Nem Lụi Đà Nẵng
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
+VALUES (5, 10, 3, '2024-09-10', N'Đã hoàn thành', '2024-09-05 09:00:00', NULL, 1770000);
+
+INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
+VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
+
+PRINT N'✅ Đã insert 3 đơn đã hoàn thành cho maHocVien = 4 (ThaoVy)';
 select * from DatLich
 select * from ThanhToan
-
---select * from GiaoVien
---select * from NguoiDung
---select * from DatLich
---select * from KhoaHoc
---SELECT * FROM UuDai;
---select * from YeuThich
---select * from LichTrinhLopHoc
+select * from NguoiDung
+select * from HinhAnhKhoaHoc
+select * from KhoaHoc
 

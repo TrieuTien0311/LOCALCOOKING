@@ -241,6 +241,7 @@ public class HomeFragment extends Fragment {
                         Log.d(TAG, "KhoaHoc: " + kh.getTenKhoaHoc() + 
                               ", Gia: " + kh.getGiaTien() + 
                               ", UuDai: " + kh.getCoUuDai() +
+                              ", HinhAnh: " + kh.getHinhAnh() +
                               ", LichTrinh: " + (kh.getLichTrinhList() != null ? kh.getLichTrinhList().size() : 0));
                     }
                     
