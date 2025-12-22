@@ -28,6 +28,11 @@ public class DonDatLichDTO {
     private Boolean daThanhToan;
     private String ngayThanhToan;
     
+    // Thông tin người đặt
+    private String tenNguoiDat;
+    private String emailNguoiDat;
+    private String sdtNguoiDat;
+    
     // Thông tin hủy (nếu có)
     private String thoiGianHuy;
     private String lyDoHuy;
@@ -83,6 +88,15 @@ public class DonDatLichDTO {
     
     public String getNgayThanhToan() { return ngayThanhToan; }
     public void setNgayThanhToan(String ngayThanhToan) { this.ngayThanhToan = ngayThanhToan; }
+    
+    public String getTenNguoiDat() { return tenNguoiDat; }
+    public void setTenNguoiDat(String tenNguoiDat) { this.tenNguoiDat = tenNguoiDat; }
+    
+    public String getEmailNguoiDat() { return emailNguoiDat; }
+    public void setEmailNguoiDat(String emailNguoiDat) { this.emailNguoiDat = emailNguoiDat; }
+    
+    public String getSdtNguoiDat() { return sdtNguoiDat; }
+    public void setSdtNguoiDat(String sdtNguoiDat) { this.sdtNguoiDat = sdtNguoiDat; }
     
     public String getThoiGianHuy() { return thoiGianHuy; }
     public void setThoiGianHuy(String thoiGianHuy) { this.thoiGianHuy = thoiGianHuy; }
