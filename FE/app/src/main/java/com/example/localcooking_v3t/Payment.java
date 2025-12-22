@@ -54,6 +54,7 @@ public class Payment extends AppCompatActivity {
     private TextView txtTenLop, txtGiaTien, txtSoLuongDat, txtThoiGian, txtNgay, txtDiaDiem;
     private TextView txtTongTien, txtTongTien_CTiet, txtTongThanhToan, txtTienGiam;
     private TextView txtVoucherName; // Sử dụng txtChonUuDai trong layout
+    private TextView txtTotalAmount, txtVAT; // Bottom bar
     private Button btnConfirmPayment;
     private ImageView btnBack;
     private RadioGroup rdGroupPayment;
@@ -66,6 +67,10 @@ public class Payment extends AppCompatActivity {
     private KhoaHoc lopHoc;
     private int soLuongDat = 1;
     private double tongTien = 0;
+    
+    // Thanh toán lại
+    private boolean isRePayment = false;
+    private Integer maDatLich = null;
 
     // Ưu đãi
     private Integer selectedMaUuDai;
@@ -153,6 +158,10 @@ public class Payment extends AppCompatActivity {
 
         // Sử dụng txtChonUuDai để hiển thị tên voucher đã chọn
         txtVoucherName = findViewById(R.id.txtChonUuDai);
+        
+        // Bottom bar
+        txtTotalAmount = findViewById(R.id.txtTotalAmount);
+        txtVAT = findViewById(R.id.txtVAT);
     }
 
     private void nhanDuLieuTuIntent() {
@@ -160,6 +169,13 @@ public class Payment extends AppCompatActivity {
         soLuongDat = getIntent().getIntExtra("soLuongDat", 1);
         tongTien = getIntent().getDoubleExtra("tongTien", 0);
         tongTienSauGiam = tongTien;
+        
+        // Kiểm tra có phải thanh toán lại không
+        isRePayment = getIntent().getBooleanExtra("isRePayment", false);
+        maDatLich = getIntent().getIntExtra("maDatLich", -1);
+        if (maDatLich == -1) maDatLich = null;
+        
+        Log.d(TAG, "isRePayment: " + isRePayment + ", maDatLich: " + maDatLich);
         
         // Kiểm tra dữ liệu
         if (tongTien <= 0) {
@@ -177,6 +193,32 @@ public class Payment extends AppCompatActivity {
         
         // Cập nhật phần bottom (tổng tiền)
         capNhatGiaoBan();
+        
+        // Nếu là thanh toán lại, fill thông tin người đặt
+        if (isRePayment) {
+            fillThongTinNguoiDat();
+        }
+    }
+    
+    /**
+     * Fill thông tin người đặt khi thanh toán lại
+     */
+    private void fillThongTinNguoiDat() {
+        String tenNguoiDat = getIntent().getStringExtra("tenNguoiDat");
+        String emailNguoiDat = getIntent().getStringExtra("emailNguoiDat");
+        String sdtNguoiDat = getIntent().getStringExtra("sdtNguoiDat");
+        
+        if (idName != null && tenNguoiDat != null && !tenNguoiDat.isEmpty()) {
+            idName.setText(tenNguoiDat);
+        }
+        if (idEmail != null && emailNguoiDat != null && !emailNguoiDat.isEmpty()) {
+            idEmail.setText(emailNguoiDat);
+        }
+        if (idPhone != null && sdtNguoiDat != null && !sdtNguoiDat.isEmpty()) {
+            idPhone.setText(sdtNguoiDat);
+        }
+        
+        Log.d(TAG, "Filled thông tin người đặt: " + tenNguoiDat + ", " + emailNguoiDat + ", " + sdtNguoiDat);
     }
     
     /**
@@ -205,6 +247,14 @@ public class Payment extends AppCompatActivity {
         
         if (txtTienGiam != null) {
             txtTienGiam.setText("-0đ");
+        }
+        
+        // Cập nhật bottom bar
+        if (txtTotalAmount != null) {
+            txtTotalAmount.setText(formatTien(tongTienSauGiam) + "đ");
+        }
+        if (txtVAT != null) {
+            txtVAT.setText("Tiết kiệm 0đ");
         }
         
         // Không set txtSoLuongDat ở đây nữa vì đã set trong hienThiThongTinLopHoc()
@@ -361,6 +411,13 @@ public class Payment extends AppCompatActivity {
         if (txtTongThanhToan != null) {
             txtTongThanhToan.setText(formatTien(tongTienSauGiam) + "đ");
         }
+        // Cập nhật bottom bar
+        if (txtTotalAmount != null) {
+            txtTotalAmount.setText(formatTien(tongTienSauGiam) + "đ");
+        }
+        if (txtVAT != null) {
+            txtVAT.setText("Tiết kiệm " + formatTien(soTienGiam) + "đ");
+        }
     }
 
     private void resetUuDai() {
@@ -372,6 +429,9 @@ public class Payment extends AppCompatActivity {
         if (txtTienGiam != null) txtTienGiam.setText("-0đ");
         if (txtTongThanhToan != null) txtTongThanhToan.setText(formatTien(tongTien) + "đ");
         if (txtVoucherName != null) txtVoucherName.setText("Chọn để khám phá nhiều ưu đãi");
+        // Reset bottom bar
+        if (txtTotalAmount != null) txtTotalAmount.setText(formatTien(tongTien) + "đ");
+        if (txtVAT != null) txtVAT.setText("Tiết kiệm 0đ");
     }
 
     private void xuLySuKien() {
@@ -449,6 +509,12 @@ public class Payment extends AppCompatActivity {
         request.setTenNguoiDat(name);
         request.setEmailNguoiDat(email);
         request.setSdtNguoiDat(phone);
+        
+        // Nếu là thanh toán lại, truyền maDatLich để không tạo đơn mới
+        if (isRePayment && maDatLich != null) {
+            request.setMaDatLich(maDatLich);
+            Log.d(TAG, "Re-payment for maDatLich: " + maDatLich);
+        }
         
         if (selectedMaUuDai != null) {
             request.setMaUuDai(selectedMaUuDai);

@@ -271,6 +271,7 @@ public interface ApiService {
     @GET("api/don-dat-lich/da-huy/{maHocVien}")
     Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDaHuy(@Path("maHocVien") Integer maHocVien);
 
+
     // ========== API ĐÁNH GIÁ ==========
 
     // Kiểm tra trạng thái đánh giá của đơn đặt lịch
@@ -308,4 +309,16 @@ public interface ApiService {
     @Multipart
     @POST("api/upload/images")
     Call<UploadResponse> uploadImages(@Part List<MultipartBody.Part> files);
+  // ========== API HUYDON =========
+    // Xóa đơn chưa thanh toán (xóa vĩnh viễn)
+    @DELETE("api/don-dat-lich/{maDatLich}/xoa")
+    Call<Void> xoaDonChuaThanhToan(@Path("maDatLich") Integer maDatLich);
+
+    // Hủy đơn đã thanh toán (chuyển sang "Đã huỷ")
+    @PUT("api/don-dat-lich/{maDatLich}/huy")
+    Call<Void> huyDonDaThanhToan(@Path("maDatLich") Integer maDatLich);
+
+    // Lấy thông tin đơn để thanh toán lại
+    @GET("api/don-dat-lich/{maDatLich}")
+    Call<com.example.localcooking_v3t.model.DonDatLichDTO> getDonDatLichById(@Path("maDatLich") Integer maDatLich);
 }

@@ -51,24 +51,57 @@ public class MomoService {
         try {
             log.info("Creating Momo payment for request: {}", request);
             
-            // 1. Tạo DatLich trước
-            DatLich datLich = new DatLich();
-            datLich.setMaHocVien(request.getMaHocVien());
-            datLich.setMaLichTrinh(request.getMaLichTrinh());
-            datLich.setNgayThamGia(LocalDate.parse(request.getNgayThamGia()));
-            datLich.setSoLuongNguoi(request.getSoLuongNguoi() != null ? request.getSoLuongNguoi() : 1);
-            datLich.setTongTien(request.getSoTien());
-            datLich.setTenNguoiDat(request.getTenNguoiDat());
-            datLich.setEmailNguoiDat(request.getEmailNguoiDat());
-            datLich.setSdtNguoiDat(request.getSdtNguoiDat());
-            datLich.setMaUuDai(request.getMaUuDai());
-            datLich.setSoTienGiam(request.getSoTienGiam());
-            datLich.setTrangThai("Đặt trước");
-            datLich.setNgayDat(LocalDateTime.now());
-            datLich.setThoiGianHetHan(LocalDateTime.now().plusMinutes(10)); // Hết hạn sau 10 phút
+            DatLich datLich;
             
-            DatLich savedDatLich = datLichRepository.save(datLich);
-            log.info("Created DatLich with ID: {}", savedDatLich.getMaDatLich());
+            // Kiểm tra có phải thanh toán lại không
+            if (request.getMaDatLich() != null && request.getMaDatLich() > 0) {
+                // Thanh toán lại - lấy đơn cũ
+                datLich = datLichRepository.findById(request.getMaDatLich()).orElse(null);
+                if (datLich == null) {
+                    MomoPaymentResponse errorResponse = new MomoPaymentResponse();
+                    errorResponse.setSuccess(false);
+                    errorResponse.setMessage("Không tìm thấy đơn đặt lịch");
+                    errorResponse.setResultCode(-1);
+                    return errorResponse;
+                }
+                
+                // Cập nhật thông tin người đặt nếu có thay đổi
+                if (request.getTenNguoiDat() != null) datLich.setTenNguoiDat(request.getTenNguoiDat());
+                if (request.getEmailNguoiDat() != null) datLich.setEmailNguoiDat(request.getEmailNguoiDat());
+                if (request.getSdtNguoiDat() != null) datLich.setSdtNguoiDat(request.getSdtNguoiDat());
+                datLich.setThoiGianHetHan(LocalDateTime.now().plusMinutes(10)); // Reset thời gian hết hạn
+                
+                datLich = datLichRepository.save(datLich);
+                log.info("Re-payment for existing DatLich ID: {}", datLich.getMaDatLich());
+                
+                // Xóa ThanhToan cũ nếu có (chưa thanh toán)
+                ThanhToan oldThanhToan = thanhToanRepository.findByMaDatLich(datLich.getMaDatLich());
+                if (oldThanhToan != null && (oldThanhToan.getTrangThai() == null || !oldThanhToan.getTrangThai())) {
+                    thanhToanRepository.delete(oldThanhToan);
+                    log.info("Deleted old unpaid ThanhToan for maDatLich: {}", datLich.getMaDatLich());
+                }
+            } else {
+                // Tạo DatLich mới
+                datLich = new DatLich();
+                datLich.setMaHocVien(request.getMaHocVien());
+                datLich.setMaLichTrinh(request.getMaLichTrinh());
+                datLich.setNgayThamGia(LocalDate.parse(request.getNgayThamGia()));
+                datLich.setSoLuongNguoi(request.getSoLuongNguoi() != null ? request.getSoLuongNguoi() : 1);
+                datLich.setTongTien(request.getSoTien());
+                datLich.setTenNguoiDat(request.getTenNguoiDat());
+                datLich.setEmailNguoiDat(request.getEmailNguoiDat());
+                datLich.setSdtNguoiDat(request.getSdtNguoiDat());
+                datLich.setMaUuDai(request.getMaUuDai());
+                datLich.setSoTienGiam(request.getSoTienGiam());
+                datLich.setTrangThai("Đặt trước");
+                datLich.setNgayDat(LocalDateTime.now());
+                datLich.setThoiGianHetHan(LocalDateTime.now().plusMinutes(10)); // Hết hạn sau 10 phút
+                
+                datLich = datLichRepository.save(datLich);
+                log.info("Created new DatLich with ID: {}", datLich.getMaDatLich());
+            }
+            
+            DatLich savedDatLich = datLich;
             
             // 2. Tạo request Momo
             String requestId = UUID.randomUUID().toString();

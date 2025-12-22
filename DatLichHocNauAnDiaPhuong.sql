@@ -193,11 +193,12 @@ CREATE TABLE DatLich (
     -- Thời gian
     ngayDat DATETIME DEFAULT GETDATE(),
     thoiGianHetHan DATETIME NULL, -- Hết hạn thanh toán (10 phút sau khi đặt)
+    thoiGianHuy DATETIME NULL, -- Thời gian hủy đơn (nếu có)
     
     -- Trạng thái đơn
     -- 'Đặt trước' - Mới đặt, chưa thanh toán (giữ chỗ 10 phút), hoặc thanh toán rồi nhưng lớp học chưa diễn ra
     -- 'Đã hoàn thành'  - Đã thanh toán, và lớp học đã diễn ra
-    -- 'Đã Hủy' - Đã hủy (chỉ được huỷ với đơn đã thanh toán và vào lúc trước thời gian lớp diễn ra 15 phút)
+    -- 'Đã huỷ' - Đã hủy (chỉ được huỷ với đơn đã thanh toán và vào lúc trước thời gian lớp diễn ra 15 phút)
     trangThai NVARCHAR(30) DEFAULT N'Đặt trước',
     
     ghiChu NVARCHAR(MAX),
@@ -1760,8 +1761,8 @@ GO
 ---------------------------------------------------------------------
 
 -- Đơn 1: Ẩm thực phố cổ Hà Nội
-INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
-VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, 1300000);
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, thoiGianHuy, tongTien)
+VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, NULL, 1300000);
 
 INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
 VALUES (SCOPE_IDENTITY(), 1300000, N'Momo', 1, 'ORDER_TEST_001', 'TRANS_TEST_001', '2024-11-10 10:05:00', '2024-11-10 10:00:00');

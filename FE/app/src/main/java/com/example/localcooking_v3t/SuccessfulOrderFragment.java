@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class SuccessfulOrderFragment extends Fragment {
     private OrderHistoryAdapter adapter;
     private List<OrderHistory> danhSachLichSuDatLich;
     private TextView txtEmpty;
+    private ProgressBar progressBar;
     
     private SessionManager sessionManager;
     private ApiService apiService;
@@ -54,6 +56,8 @@ public class SuccessfulOrderFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_successful_order, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerViewNotices);
+        txtEmpty = view.findViewById(R.id.txtEmpty);
+        progressBar = view.findViewById(R.id.progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         
         // Khởi tạo
@@ -90,6 +94,11 @@ public class SuccessfulOrderFragment extends Fragment {
                 intent.putExtra("isViewMode", lichSuDatLich.isDaDanhGia());
                 startActivity(intent);
             }
+            
+            @Override
+            public void onThanhToanClick(OrderHistory lichSuDatLich) {
+                // Không cần xử lý cho đơn đã hoàn thành
+            }
         });
         
         // Load dữ liệu từ API
@@ -111,6 +120,7 @@ public class SuccessfulOrderFragment extends Fragment {
     private void loadDonHoanThanh() {
         if (!sessionManager.isLoggedIn()) {
             Log.w(TAG, "User not logged in");
+            showEmpty("Vui lòng đăng nhập để xem lịch sử");
             return;
         }
         
@@ -120,6 +130,7 @@ public class SuccessfulOrderFragment extends Fragment {
             return;
         }
         
+        showLoading(true);
         Log.d(TAG, "Loading đơn hoàn thành for maHocVien: " + maHocVien);
         
         apiService.getDonHoanThanh(maHocVien).enqueue(new Callback<List<DonDatLichDTO>>() {
@@ -127,25 +138,29 @@ public class SuccessfulOrderFragment extends Fragment {
             public void onResponse(Call<List<DonDatLichDTO>> call, Response<List<DonDatLichDTO>> response) {
                 if (!isAdded() || getContext() == null) return;
                 
+                showLoading(false);
+                
                 if (response.isSuccessful() && response.body() != null) {
                     List<DonDatLichDTO> donList = response.body();
                     Log.d(TAG, "Loaded " + donList.size() + " đơn hoàn thành");
                     
-                    // Chuyển đổi sang OrderHistory
+                    // Chuyển đổi sang OrderHistory sử dụng constructor mới
                     danhSachLichSuDatLich.clear();
                     for (DonDatLichDTO don : donList) {
-                        OrderHistory order = convertToOrderHistory(don);
-                        danhSachLichSuDatLich.add(order);
+                        danhSachLichSuDatLich.add(new OrderHistory(don, getContext()));
                     }
                     
                     adapter.notifyDataSetChanged();
                     
                     // Hiển thị empty state nếu không có dữ liệu
                     if (danhSachLichSuDatLich.isEmpty()) {
-                        Log.d(TAG, "No completed orders found");
+                        showEmpty("Chưa có đơn hoàn thành nào");
+                    } else {
+                        hideEmpty();
                     }
                 } else {
                     Log.e(TAG, "Error loading đơn hoàn thành: " + response.code());
+                    showEmpty("Không thể tải dữ liệu");
                 }
             }
 
@@ -153,12 +168,14 @@ public class SuccessfulOrderFragment extends Fragment {
             public void onFailure(Call<List<DonDatLichDTO>> call, Throwable t) {
                 if (!isAdded() || getContext() == null) return;
                 
+                showLoading(false);
                 Log.e(TAG, "Failed to load đơn hoàn thành", t);
-                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showEmpty("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
     
+
     /**
      * Chuyển đổi DonDatLichDTO sang OrderHistory
      */
@@ -183,5 +200,34 @@ public class SuccessfulOrderFragment extends Fragment {
         order.setHinhAnhUrl(don.getHinhAnh()); // URL hình ảnh từ server
         
         return order;
+
+    // Helper methods
+    private void showLoading(boolean show) {
+        if (progressBar != null) {
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+    
+    private void showEmpty(String message) {
+        if (txtEmpty != null) {
+            txtEmpty.setText(message);
+            txtEmpty.setVisibility(View.VISIBLE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
+    
+    private void hideEmpty() {
+        if (txtEmpty != null) {
+            txtEmpty.setVisibility(View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+
     }
 }

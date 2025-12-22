@@ -11,10 +11,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewNotices"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </LinearLayout>
+    
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+    
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/txtEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Chưa có đơn đã hủy nào"
+        android:textColor="#757575"
+        android:textSize="16sp"
+        android:visibility="gone" />
 </FrameLayout>
