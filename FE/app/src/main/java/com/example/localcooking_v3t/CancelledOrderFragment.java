@@ -1,23 +1,43 @@
 package com.example.localcooking_v3t;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+
+import com.example.localcooking_v3t.api.ApiService;
+import com.example.localcooking_v3t.api.RetrofitClient;
+import com.example.localcooking_v3t.model.DonDatLichDTO;
+import com.example.localcooking_v3t.utils.SessionManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CancelledOrderFragment extends Fragment {
 
+    private static final String TAG = "CancelledOrderFragment";
+    
     private RecyclerView recyclerView;
     private OrderHistoryAdapter adapter;
     private List<OrderHistory> danhSachLichSuDatLich;
+    private ProgressBar progressBar;
+    private TextView txtEmpty;
+    
+    private SessionManager sessionManager;
+    private ApiService apiService;
 
     public CancelledOrderFragment() {}
 
@@ -33,35 +53,132 @@ public class CancelledOrderFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_cancelled_order, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerViewNotices);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        taoDuLieuMau();
-
-        adapter = new OrderHistoryAdapter(danhSachLichSuDatLich);
-        recyclerView.setAdapter(adapter);
-
-        adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
-            @Override public void onHuyDatClick(OrderHistory lichSuDatLich) {}
-            @Override public void onDatLaiClick(OrderHistory lichSuDatLich) {}
-            @Override public void onDanhGiaClick(OrderHistory lichSuDatLich) {}
-        });
-
+        initViews(view);
+        initServices();
+        setupRecyclerView();
+        
         return view;
     }
-
-    private void taoDuLieuMau() {
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadDonDaHuy();
+    }
+    
+    private void initViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerViewNotices);
+        progressBar = view.findViewById(R.id.progressBar);
+        txtEmpty = view.findViewById(R.id.txtEmpty);
+    }
+    
+    private void initServices() {
+        sessionManager = new SessionManager(getContext());
+        apiService = RetrofitClient.getApiService();
+    }
+    
+    private void setupRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         danhSachLichSuDatLich = new ArrayList<>();
+        adapter = new OrderHistoryAdapter(danhSachLichSuDatLich);
+        recyclerView.setAdapter(adapter);
+        
+        adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onHuyDatClick(OrderHistory order) {
+                // Không cần xử lý
+            }
 
-        danhSachLichSuDatLich.add(new OrderHistory(
-                R.drawable.phuyen_h,
-                "Ẩm thực địa phương Đà Nẵng",
-                "1 người",
-                "08:00 - 11:00, 12/11/2024",
-                "84 Phố Hàng Mã, Hà Nội",
-                "830.000₫",
-                "10:52 - T3, 11/11/2024",
-                "Đã hủy"
-        ));
+            @Override
+            public void onDatLaiClick(OrderHistory order) {
+                // Không cần xử lý
+            }
+
+            @Override
+            public void onDanhGiaClick(OrderHistory order) {
+                // Không cần xử lý
+            }
+            
+            @Override
+            public void onThanhToanClick(OrderHistory order) {
+                // Không cần xử lý
+            }
+        });
+    }
+    
+    /**
+     * Load danh sách đơn đã hủy từ API
+     */
+    private void loadDonDaHuy() {
+        Integer maHocVien = sessionManager.getMaNguoiDung();
+        if (maHocVien == null || maHocVien == -1) {
+            showEmpty("Vui lòng đăng nhập để xem lịch sử");
+            return;
+        }
+        
+        showLoading(true);
+        
+        apiService.getDonDaHuy(maHocVien).enqueue(new Callback<List<DonDatLichDTO>>() {
+            @Override
+            public void onResponse(Call<List<DonDatLichDTO>> call, Response<List<DonDatLichDTO>> response) {
+                showLoading(false);
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    List<DonDatLichDTO> dtoList = response.body();
+                    Log.d(TAG, "Loaded " + dtoList.size() + " đơn đã hủy");
+                    
+                    danhSachLichSuDatLich.clear();
+                    for (DonDatLichDTO dto : dtoList) {
+                        danhSachLichSuDatLich.add(new OrderHistory(dto, getContext()));
+                    }
+                    adapter.notifyDataSetChanged();
+                    
+                    if (danhSachLichSuDatLich.isEmpty()) {
+                        showEmpty("Chưa có đơn đã hủy nào");
+                    } else {
+                        hideEmpty();
+                    }
+                } else {
+                    Log.e(TAG, "API error: " + response.code());
+                    showEmpty("Không thể tải dữ liệu");
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<List<DonDatLichDTO>> call, Throwable t) {
+                showLoading(false);
+                Log.e(TAG, "API failure", t);
+                showEmpty("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+    
+    // Helper methods
+    private void showLoading(boolean show) {
+        if (progressBar != null) {
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+    
+    private void showEmpty(String message) {
+        if (txtEmpty != null) {
+            txtEmpty.setText(message);
+            txtEmpty.setVisibility(View.VISIBLE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
+    
+    private void hideEmpty() {
+        if (txtEmpty != null) {
+            txtEmpty.setVisibility(View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 }

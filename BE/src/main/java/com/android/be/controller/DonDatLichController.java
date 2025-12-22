@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/don-dat-lich")
@@ -43,5 +44,33 @@ public class DonDatLichController {
     public ResponseEntity<List<DonDatLichDTO>> getDonDaHuy(@PathVariable Integer maHocVien) {
         List<DonDatLichDTO> result = donDatLichService.getDonDaHuy(maHocVien);
         return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * Xóa đơn chưa thanh toán (xóa vĩnh viễn)
+     * DELETE /api/don-dat-lich/{maDatLich}/xoa
+     */
+    @DeleteMapping("/{maDatLich}/xoa")
+    public ResponseEntity<Map<String, Object>> xoaDonChuaThanhToan(@PathVariable Integer maDatLich) {
+        boolean success = donDatLichService.xoaDonChuaThanhToan(maDatLich);
+        if (success) {
+            return ResponseEntity.ok(Map.of("success", true, "message", "Đã xóa đơn thành công"));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Không thể xóa đơn"));
+        }
+    }
+    
+    /**
+     * Hủy đơn đã thanh toán (chuyển sang "Đã hủy")
+     * PUT /api/don-dat-lich/{maDatLich}/huy
+     */
+    @PutMapping("/{maDatLich}/huy")
+    public ResponseEntity<Map<String, Object>> huyDonDaThanhToan(@PathVariable Integer maDatLich) {
+        boolean success = donDatLichService.huyDonDaThanhToan(maDatLich);
+        if (success) {
+            return ResponseEntity.ok(Map.of("success", true, "message", "Đã hủy đơn thành công"));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Không thể hủy đơn"));
+        }
     }
 }

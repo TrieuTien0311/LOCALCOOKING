@@ -59,6 +59,9 @@ public class DonDatLichService {
                 d.soLuongNguoi,
                 d.ngayThamGia,
                 d.trangThai,
+                d.tenNguoiDat,
+                d.emailNguoiDat,
+                d.sdtNguoiDat,
                 
                 k.maKhoaHoc,
                 k.tenKhoaHoc,
@@ -98,6 +101,7 @@ public class DonDatLichService {
                 d.soLuongNguoi,
                 d.ngayThamGia,
                 d.trangThai,
+                d.thoiGianHuy,
                 
                 k.maKhoaHoc,
                 k.tenKhoaHoc,
@@ -118,11 +122,77 @@ public class DonDatLichService {
             JOIN KhoaHoc k ON lt.maKhoaHoc = k.maKhoaHoc
             LEFT JOIN ThanhToan tt ON d.maDatLich = tt.maDatLich
             WHERE d.maHocVien = ?
-              AND d.trangThai = N'Đã hủy'
-            ORDER BY d.ngayDat DESC
+              AND d.trangThai = N'Đã huỷ'
+            ORDER BY d.thoiGianHuy DESC
             """;
 
         return jdbcTemplate.query(sql, new Object[]{maHocVien}, (rs, rowNum) -> mapToDonDatLichDTO(rs));
+    }
+
+    /**
+     * Xóa đơn chưa thanh toán (xóa vĩnh viễn)
+     */
+    public boolean xoaDonChuaThanhToan(Integer maDatLich) {
+        try {
+            // Kiểm tra đơn có tồn tại và chưa thanh toán không
+            String checkSql = """
+                SELECT d.maDatLich, ISNULL(tt.trangThai, 0) AS daThanhToan
+                FROM DatLich d
+                LEFT JOIN ThanhToan tt ON d.maDatLich = tt.maDatLich
+                WHERE d.maDatLich = ?
+                """;
+            
+            var result = jdbcTemplate.queryForMap(checkSql, maDatLich);
+            Object daThanhToanObj = result.get("daThanhToan");
+            
+            // Xử lý cả Boolean và Integer (bit trong SQL Server)
+            boolean daThanhToan = false;
+            if (daThanhToanObj instanceof Boolean) {
+                daThanhToan = (Boolean) daThanhToanObj;
+            } else if (daThanhToanObj instanceof Number) {
+                daThanhToan = ((Number) daThanhToanObj).intValue() == 1;
+            }
+            
+            if (daThanhToan) {
+                // Đã thanh toán, không được xóa
+                return false;
+            }
+            
+            // Xóa ThanhToan trước (nếu có)
+            jdbcTemplate.update("DELETE FROM ThanhToan WHERE maDatLich = ?", maDatLich);
+            
+            // Xóa DatLich
+            int deleted = jdbcTemplate.update("DELETE FROM DatLich WHERE maDatLich = ?", maDatLich);
+            return deleted > 0;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Hủy đơn đã thanh toán (chuyển sang "Đã huỷ")
+     * Lưu ý: Dùng "huỷ" với dấu hỏi để khớp với CHECK constraint trong DB
+     */
+    public boolean huyDonDaThanhToan(Integer maDatLich) {
+        try {
+            // Kiểm tra đơn có tồn tại không
+            String checkSql = "SELECT COUNT(*) FROM DatLich WHERE maDatLich = ?";
+            Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, maDatLich);
+            
+            if (count == null || count == 0) {
+                return false;
+            }
+            
+            // Cập nhật trạng thái sang "Đã huỷ" và ghi nhận thời gian hủy
+            String sql = "UPDATE DatLich SET trangThai = N'Đã huỷ', thoiGianHuy = GETDATE() WHERE maDatLich = ?";
+            int updated = jdbcTemplate.update(sql, maDatLich);
+            return updated > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private DonDatLichDTO mapToDonDatLichDTO(ResultSet rs) throws java.sql.SQLException {
@@ -150,6 +220,27 @@ public class DonDatLichService {
         dto.setNgayThanhToan(rs.getString("ngayThanhToan"));
         
         dto.setDaDanhGia(rs.getBoolean("daDanhGia"));
+        
+        // Thông tin người đặt (nếu có trong query)
+        try {
+            dto.setTenNguoiDat(rs.getString("tenNguoiDat"));
+            dto.setEmailNguoiDat(rs.getString("emailNguoiDat"));
+            dto.setSdtNguoiDat(rs.getString("sdtNguoiDat"));
+        } catch (Exception e) {
+            // Ignore nếu không có column này
+        }
+        
+        // Thời gian hủy (nếu có trong query)
+        try {
+            java.sql.Timestamp thoiGianHuy = rs.getTimestamp("thoiGianHuy");
+            if (thoiGianHuy != null) {
+                // Format: "HH:mm - dd/MM/yyyy"
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm - dd/MM/yyyy");
+                dto.setThoiGianHuy(sdf.format(thoiGianHuy));
+            }
+        } catch (Exception e) {
+            // Ignore nếu không có column này
+        }
         
         return dto;
     }
