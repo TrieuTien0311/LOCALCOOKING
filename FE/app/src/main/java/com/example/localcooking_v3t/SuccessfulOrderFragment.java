@@ -174,32 +174,6 @@ public class SuccessfulOrderFragment extends Fragment {
             }
         });
     }
-    
-
-    /**
-     * Chuyển đổi DonDatLichDTO sang OrderHistory
-     */
-    private OrderHistory convertToOrderHistory(DonDatLichDTO don) {
-        // Lấy resource ID của hình ảnh
-        int hinhAnhResId = don.getHinhAnhResId(requireContext());
-        
-        OrderHistory order = new OrderHistory(
-                hinhAnhResId,
-                don.getTenKhoaHoc(),
-                don.getSoLuongNguoiFormatted(),
-                don.getLichFormatted(),
-                don.getDiaDiem(),
-                don.getTongTienFormatted(),
-                don.getTrangThai()
-        );
-        
-        // Set thêm thông tin để dùng khi đánh giá
-        order.setMaDatLich(don.getMaDatLich());
-        order.setMaKhoaHoc(don.getMaKhoaHoc());
-        order.setDaDanhGia(don.getDaDanhGia() != null && don.getDaDanhGia());
-        order.setHinhAnhUrl(don.getHinhAnh()); // URL hình ảnh từ server
-        
-        return order;
 
     // Helper methods
     private void showLoading(boolean show) {
@@ -228,6 +202,5 @@ public class SuccessfulOrderFragment extends Fragment {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);
         }
-
     }
 }

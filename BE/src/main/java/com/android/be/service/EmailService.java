@@ -99,8 +99,6 @@ public class EmailService {
             </body>
             </html>
             """.formatted(otp);
->>>>>>> 1594e96da0fda153ff03845215264da05ce802d3
-
         helper.setText(htmlContent, true);
         helper.addInline("logo", new ClassPathResource("static/images/logo.png"));
         mailSender.send(message);

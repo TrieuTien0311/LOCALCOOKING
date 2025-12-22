@@ -166,10 +166,8 @@ public class OrderHistory {
     public boolean isDaDanhGia() { return daDanhGia; }
     public void setDaDanhGia(boolean daDanhGia) { this.daDanhGia = daDanhGia; }
     
-<<<<<<< HEAD
     public String getHinhAnhUrl() { return hinhAnhUrl; }
     public void setHinhAnhUrl(String hinhAnhUrl) { this.hinhAnhUrl = hinhAnhUrl; }
-=======
     public Boolean getDaThanhToan() { return daThanhToan; }
     public void setDaThanhToan(Boolean daThanhToan) { this.daThanhToan = daThanhToan; }
     
@@ -199,5 +197,4 @@ public class OrderHistory {
     
     public String getSdtNguoiDat() { return sdtNguoiDat; }
     public void setSdtNguoiDat(String sdtNguoiDat) { this.sdtNguoiDat = sdtNguoiDat; }
->>>>>>> 1594e96da0fda153ff03845215264da05ce802d3
 }

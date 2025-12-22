@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
@@ -56,50 +55,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         holder.txtDiaDiem.setText(order.getDiaDiem());
         holder.txtGia.setText(order.getGia());
 
-        switch (order.getTrangThai()) {
-            case "Đặt trước":
-                holder.btnHuy.setVisibility(View.VISIBLE);
-                holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia2.setVisibility(View.GONE);
-                holder.txtThoiGianHuy.setVisibility(View.GONE);
-                break;
-
-            case "Đã hoàn thành":
-                holder.btnHuy.setVisibility(View.GONE);
-                holder.txtDatLai.setVisibility(View.VISIBLE);
-                holder.txtDanhGia2.setVisibility(View.VISIBLE);
-                holder.txtThoiGianHuy.setVisibility(View.GONE);
-                
-                // Kiểm tra đã đánh giá chưa để hiển thị text phù hợp
-                if (order.isDaDanhGia()) {
-                    holder.txtDanhGia2.setText("Xem đánh giá");
-                } else {
-                    holder.txtDanhGia2.setText("Đánh giá");
-                }
-                break;
-
-            case "Đã hủy":
-                holder.btnHuy.setVisibility(View.GONE);
-                holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia2.setVisibility(View.GONE);
-                holder.txtThoiGianHuy.setVisibility(View.VISIBLE);
-                break;
-
-            default:
-                holder.btnHuy.setVisibility(View.GONE);
-                holder.txtDatLai.setVisibility(View.GONE);
-                holder.txtDanhGia2.setVisibility(View.GONE);
-                holder.txtThoiGianHuy.setVisibility(View.GONE);
-                break;
-
         // Xử lý theo trạng thái
         String trangThai = order.getTrangThai();
         
         if ("Đặt trước".equals(trangThai)) {
             setupPreOrderItem(holder, order);
-        } else if ("Đã hoàn thành".equals(trangThai)) {
+        } else if ("Đã hoàn thành".equals(trangThai) || "Hoàn Thành".equals(trangThai)) {
             setupCompletedOrderItem(holder, order);
-        } else if ("Đã hủy".equals(trangThai) || "Đã huỷ".equals(trangThai)) {
+        } else if ("Đã hủy".equals(trangThai) || "Đã huỷ".equals(trangThai) || "Đã Hủy".equals(trangThai)) {
             setupCancelledOrderItem(holder, order);
         } else {
             // Mặc định ẩn hết
