@@ -130,19 +130,7 @@ CREATE TABLE HinhAnhKhoaHoc (
     FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
 );
 
--- 10. ĐÁNH GIÁ
-CREATE TABLE DanhGia (
-    maDanhGia INT PRIMARY KEY IDENTITY(1,1),
-    maHocVien INT NOT NULL,
-    maKhoaHoc INT NOT NULL,
-    diemDanhGia INT CHECK (diemDanhGia BETWEEN 1 AND 5),
-    binhLuan NVARCHAR(MAX),
-    ngayDanhGia DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
-    FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc)
-);
-
--- 11. THÔNG BÁO
+-- 10. THÔNG BÁO
 CREATE TABLE ThongBao (
     maThongBao INT PRIMARY KEY IDENTITY(1,1),
     maNguoiNhan INT,
@@ -155,7 +143,7 @@ CREATE TABLE ThongBao (
     FOREIGN KEY (maNguoiNhan) REFERENCES NguoiDung(maNguoiDung)
 );
 
--- 12. YÊU THÍCH
+-- 11. YÊU THÍCH
 CREATE TABLE YeuThich (
     maYeuThich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -166,7 +154,7 @@ CREATE TABLE YeuThich (
     CONSTRAINT UQ_YeuThich UNIQUE (maHocVien, maKhoaHoc)
 );
 
--- 13. ƯU ĐÃI
+-- 12. ƯU ĐÃI
 CREATE TABLE UuDai (
     maUuDai INT PRIMARY KEY IDENTITY(1,1),
     maCode VARCHAR(50) UNIQUE NOT NULL,
@@ -186,9 +174,7 @@ CREATE TABLE UuDai (
     ngayTao DATETIME DEFAULT GETDATE()
 );
 
----------------------------------------------------------------------
--- BẢNG ĐẶT LỊCH - Đã điều chỉnh
----------------------------------------------------------------------
+-- 13. ĐẶT LỊCH
 CREATE TABLE DatLich (
     maDatLich INT PRIMARY KEY IDENTITY(1,1),
     maHocVien INT NOT NULL,
@@ -226,9 +212,32 @@ CREATE TABLE DatLich (
     )
 );
 
----------------------------------------------------------------------
--- BẢNG THANH TOÁN - Đã điều chỉnh đầy đủ cho Momo
----------------------------------------------------------------------
+-- 14. ĐÁNH GIÁ
+CREATE TABLE DanhGia (
+    maDanhGia INT PRIMARY KEY IDENTITY(1,1),
+	maDatLich INT NULL,
+    maHocVien INT NOT NULL,
+    maKhoaHoc INT NOT NULL,
+    diemDanhGia INT CHECK (diemDanhGia BETWEEN 1 AND 5),
+    binhLuan NVARCHAR(MAX),
+    ngayDanhGia DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (maHocVien) REFERENCES NguoiDung(maNguoiDung),
+    FOREIGN KEY (maKhoaHoc) REFERENCES KhoaHoc(maKhoaHoc),
+	FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
+);
+
+-- 15. HÌNH ẢNH ĐÁNH GIÁ
+CREATE TABLE HinhAnhDanhGia (
+        maHinhAnh INT PRIMARY KEY IDENTITY(1,1),
+        maDanhGia INT NOT NULL,
+        duongDan VARCHAR(500) NOT NULL,
+        loaiFile NVARCHAR(20) DEFAULT N'image',
+        thuTu INT DEFAULT 1,
+        ngayTao DATETIME DEFAULT GETDATE(),
+        FOREIGN KEY (maDanhGia) REFERENCES DanhGia(maDanhGia) ON DELETE CASCADE
+    );
+
+-- 16. THANH TOÁN
 CREATE TABLE ThanhToan (
     maThanhToan INT PRIMARY KEY IDENTITY(1,1),
     maDatLich INT NOT NULL,
@@ -271,7 +280,7 @@ CREATE TABLE ThanhToan (
     CONSTRAINT UQ_OrderId UNIQUE (orderId)
 );
 
--- 16. LỊCH SỬ ƯU ĐÃI
+-- 17. LỊCH SỬ ƯU ĐÃI
 CREATE TABLE LichSuUuDai (
     maLichSu INT PRIMARY KEY IDENTITY(1,1),
     maUuDai INT NOT NULL,
@@ -282,7 +291,7 @@ CREATE TABLE LichSuUuDai (
     FOREIGN KEY (maDatLich) REFERENCES DatLich(maDatLich)
 );
 
--- 17. HÓA ĐƠN
+-- 18. HÓA ĐƠN
 CREATE TABLE HoaDon (
     maHoaDon INT PRIMARY KEY IDENTITY(1,1),
     maThanhToan INT NOT NULL,
@@ -1098,8 +1107,6 @@ GO
 -- EXEC sp_ThongBaoTruoc30Phut;
 ---------------------------------------------------------------------
 
-PRINT N'✓ Đã thực thi xong!';
-GO
 ---------------------------- Trigger đặt lịch---------------------------
 ---------------------------------------------------------------------
 -- TRIGGER 1: Tự động thêm thông báo khi bấm nút thanh toán
@@ -1185,10 +1192,6 @@ BEGIN
     END
 END;
 GO
-
-
-
-
 
 ---------------------------------------------------------------------
 -- SP 2: Cập nhật thông tin Momo sau khi tạo payment request
@@ -1599,6 +1602,160 @@ END;
 GO
 
 ---------------------------------------------------------------------
+-- 3. FUNCTION: Kiểm tra đơn đặt lịch đã được đánh giá chưa
+-- Trả về: 1 = đã đánh giá, 0 = chưa đánh giá
+---------------------------------------------------------------------
+IF OBJECT_ID('fn_DaDanhGia', 'FN') IS NOT NULL
+    DROP FUNCTION fn_DaDanhGia;
+GO
+
+CREATE FUNCTION fn_DaDanhGia(@maDatLich INT)
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @result BIT = 0;
+    
+    IF EXISTS (SELECT 1 FROM DanhGia WHERE maDatLich = @maDatLich)
+        SET @result = 1;
+    
+    RETURN @result;
+END;
+GO
+
+---------------------------------------------------------------------
+-- 4. STORED PROCEDURE: Kiểm tra trạng thái đánh giá của đơn
+-- Trả về thông tin chi tiết
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_KiemTraDaDanhGia', 'P') IS NOT NULL
+    DROP PROCEDURE sp_KiemTraDaDanhGia;
+GO
+
+CREATE PROCEDURE sp_KiemTraDaDanhGia
+    @maDatLich INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        dl.maDatLich,
+        dl.trangThai AS trangThaiDon,
+        CASE 
+            WHEN dg.maDanhGia IS NOT NULL THEN 1 
+            ELSE 0 
+        END AS daDanhGia,
+        dg.maDanhGia,
+        dg.diemDanhGia,
+        dg.binhLuan,
+        dg.ngayDanhGia,
+        CASE 
+            WHEN dl.trangThai = N'Đã hoàn thành' AND dg.maDanhGia IS NULL THEN N'CHƯA ĐÁNH GIÁ'
+            WHEN dl.trangThai = N'Đã hoàn thành' AND dg.maDanhGia IS NOT NULL THEN N'ĐÃ ĐÁNH GIÁ'
+            ELSE N'KHÔNG THỂ ĐÁNH GIÁ'
+        END AS trangThaiDanhGia
+    FROM DatLich dl
+    LEFT JOIN DanhGia dg ON dl.maDatLich = dg.maDatLich
+    WHERE dl.maDatLich = @maDatLich;
+END;
+GO
+
+---------------------------------------------------------------------
+-- 5. STORED PROCEDURE: Lấy đánh giá theo maDatLich
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_LayDanhGiaTheoDatLich', 'P') IS NOT NULL
+    DROP PROCEDURE sp_LayDanhGiaTheoDatLich;
+GO
+
+CREATE PROCEDURE sp_LayDanhGiaTheoDatLich
+    @maDatLich INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        dg.maDanhGia,
+        dg.maHocVien,
+        nd.hoTen AS tenHocVien,
+        dg.maKhoaHoc,
+        kh.tenKhoaHoc,
+        dg.maDatLich,
+        dg.diemDanhGia,
+        dg.binhLuan,
+        dg.ngayDanhGia,
+        (SELECT duongDan, loaiFile, thuTu 
+         FROM HinhAnhDanhGia 
+         WHERE maDanhGia = dg.maDanhGia 
+         ORDER BY thuTu
+         FOR JSON PATH) AS hinhAnhJson
+    FROM DanhGia dg
+    JOIN NguoiDung nd ON dg.maHocVien = nd.maNguoiDung
+    JOIN KhoaHoc kh ON dg.maKhoaHoc = kh.maKhoaHoc
+    WHERE dg.maDatLich = @maDatLich;
+END;
+GO
+
+---------------------------------------------------------------------
+-- 6. STORED PROCEDURE: Tạo đánh giá mới
+---------------------------------------------------------------------
+IF OBJECT_ID('sp_TaoDanhGia', 'P') IS NOT NULL
+    DROP PROCEDURE sp_TaoDanhGia;
+GO
+
+CREATE PROCEDURE sp_TaoDanhGia
+    @maDatLich INT,
+    @diemDanhGia INT,
+    @binhLuan NVARCHAR(MAX),
+    @maDanhGia INT OUTPUT,
+    @ketQua NVARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Kiểm tra đơn đặt lịch tồn tại
+    IF NOT EXISTS (SELECT 1 FROM DatLich WHERE maDatLich = @maDatLich)
+    BEGIN
+        SET @ketQua = N'Đơn đặt lịch không tồn tại';
+        SET @maDanhGia = 0;
+        RETURN;
+    END
+    
+    -- Kiểm tra trạng thái đơn
+    DECLARE @trangThai NVARCHAR(30);
+    DECLARE @maHocVien INT;
+    DECLARE @maKhoaHoc INT;
+    
+    SELECT 
+        @trangThai = dl.trangThai,
+        @maHocVien = dl.maHocVien,
+        @maKhoaHoc = lt.maKhoaHoc
+    FROM DatLich dl
+    JOIN LichTrinhLopHoc lt ON dl.maLichTrinh = lt.maLichTrinh
+    WHERE dl.maDatLich = @maDatLich;
+    
+    IF @trangThai <> N'Đã hoàn thành'
+    BEGIN
+        SET @ketQua = N'Chỉ được đánh giá khi lớp học đã hoàn thành';
+        SET @maDanhGia = 0;
+        RETURN;
+    END
+    
+    -- Kiểm tra đã đánh giá chưa
+    IF EXISTS (SELECT 1 FROM DanhGia WHERE maDatLich = @maDatLich)
+    BEGIN
+        SET @ketQua = N'Lớp học này đã được đánh giá';
+        SET @maDanhGia = 0;
+        RETURN;
+    END
+    
+    -- Tạo đánh giá
+    INSERT INTO DanhGia (maHocVien, maKhoaHoc, maDatLich, diemDanhGia, binhLuan, ngayDanhGia)
+    VALUES (@maHocVien, @maKhoaHoc, @maDatLich, @diemDanhGia, @binhLuan, GETDATE());
+    
+    SET @maDanhGia = SCOPE_IDENTITY();
+    SET @ketQua = N'Đánh giá lớp học thành công';
+END;
+GO
+
+---------------------------------------------------------------------
 -- DỮ LIỆU TEST: ĐƠN ĐÃ HOÀN THÀNH (cho user maHocVien = 5)
 ---------------------------------------------------------------------
 
@@ -1623,10 +1780,5 @@ VALUES (5, 10, 3, '2024-09-10', N'Đã hoàn thành', '2024-09-05 09:00:00', NUL
 INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
 VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
 
-PRINT N'✅ Đã insert 3 đơn đã hoàn thành cho maHocVien = 4 (ThaoVy)';
-select * from DatLich
-select * from ThanhToan
-select * from NguoiDung
-select * from HinhAnhKhoaHoc
-select * from KhoaHoc
+PRINT N'✅ Đã thực thi thành công !';
 

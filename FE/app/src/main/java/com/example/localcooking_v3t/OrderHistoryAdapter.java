@@ -67,6 +67,13 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                 holder.txtDatLai.setVisibility(View.VISIBLE);
                 holder.txtDanhGia2.setVisibility(View.VISIBLE);
                 holder.txtThoiGianHuy.setVisibility(View.GONE);
+                
+                // Kiểm tra đã đánh giá chưa để hiển thị text phù hợp
+                if (order.isDaDanhGia()) {
+                    holder.txtDanhGia2.setText("Xem đánh giá");
+                } else {
+                    holder.txtDanhGia2.setText("Đánh giá");
+                }
                 break;
 
             case "Đã hủy":

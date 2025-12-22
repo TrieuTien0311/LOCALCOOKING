@@ -14,6 +14,7 @@ public class OrderHistory {
     private Integer maDatLich;
     private Integer maKhoaHoc;
     private boolean daDanhGia;
+    private String hinhAnhUrl; // URL hình ảnh từ server
 
     public OrderHistory(int hinhAnh, String tieuDe, String soLuongNguoi, String lich,
                         String diaDiem, String gia, String thoiGianHuy, String trangThai) {
@@ -68,4 +69,7 @@ public class OrderHistory {
     
     public boolean isDaDanhGia() { return daDanhGia; }
     public void setDaDanhGia(boolean daDanhGia) { this.daDanhGia = daDanhGia; }
+    
+    public String getHinhAnhUrl() { return hinhAnhUrl; }
+    public void setHinhAnhUrl(String hinhAnhUrl) { this.hinhAnhUrl = hinhAnhUrl; }
 }

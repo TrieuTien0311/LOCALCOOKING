@@ -35,7 +35,7 @@ public class DonDatLichService {
                 "tt.soTien AS tongTien, " +
                 "tt.trangThai AS daThanhToan, " +
                 "tt.ngayThanhToan, " +
-                "CASE WHEN EXISTS(SELECT 1 FROM DanhGia dg WHERE dg.maHocVien = d.maHocVien AND dg.maKhoaHoc = k.maKhoaHoc) THEN 1 ELSE 0 END AS daDanhGia " +
+                "CASE WHEN EXISTS(SELECT 1 FROM DanhGia dg WHERE dg.maDatLich = d.maDatLich) THEN 1 ELSE 0 END AS daDanhGia " +
                 "FROM DatLich d " +
                 "JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
                 "JOIN KhoaHoc k ON lt.maKhoaHoc = k.maKhoaHoc " +

@@ -82,11 +82,12 @@ public class SuccessfulOrderFragment extends Fragment {
                 // Xử lý chuyển sang trang đánh giá
                 Intent intent = new Intent(getActivity(), Review.class);
                 intent.putExtra("orderTitle", lichSuDatLich.getTieuDe());
-                intent.putExtra("orderImage", lichSuDatLich.getHinhAnh());
+                intent.putExtra("hinhAnhUrl", lichSuDatLich.getHinhAnhUrl());
                 intent.putExtra("maDatLich", lichSuDatLich.getMaDatLich());
                 intent.putExtra("maKhoaHoc", lichSuDatLich.getMaKhoaHoc());
                 intent.putExtra("lich", lichSuDatLich.getLich());
                 intent.putExtra("diaDiem", lichSuDatLich.getDiaDiem());
+                intent.putExtra("isViewMode", lichSuDatLich.isDaDanhGia());
                 startActivity(intent);
             }
         });
@@ -179,6 +180,7 @@ public class SuccessfulOrderFragment extends Fragment {
         order.setMaDatLich(don.getMaDatLich());
         order.setMaKhoaHoc(don.getMaKhoaHoc());
         order.setDaDanhGia(don.getDaDanhGia() != null && don.getDaDanhGia());
+        order.setHinhAnhUrl(don.getHinhAnh()); // URL hình ảnh từ server
         
         return order;
     }

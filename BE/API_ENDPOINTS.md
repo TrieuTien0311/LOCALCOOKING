@@ -133,10 +133,20 @@ http://localhost:8080/api
 - **DELETE** `/thanhtoan/{id}` - Xóa thanh toán
 
 ## 13. Đánh Giá (DanhGia)
-- **GET** `/danhgia` - Lấy tất cả đánh giá (trả về DanhGiaDTO)
-- **GET** `/danhgia/{id}` - Lấy đánh giá theo ID (trả về DanhGiaDTO)
-- **POST** `/danhgia` - Tạo đánh giá mới
-- **PUT** `/danhgia/{id}` - Cập nhật đánh giá
+
+### Luồng đánh giá:
+1. Khi xem lịch sử đặt lịch, gọi API kiểm tra trạng thái đánh giá: `GET /api/danhgia/kiemtra/{maDatLich}`
+2. Nếu `trangThaiDanhGia = "CÓ THỂ ĐÁNH GIÁ"` → Hiển thị nút "Đánh giá"
+3. Nếu `trangThaiDanhGia = "ĐÃ ĐÁNH GIÁ"` → Hiển thị nút "Xem đánh giá"
+4. Nếu `trangThaiDanhGia = "KHÔNG THỂ ĐÁNH GIÁ"` → Ẩn nút đánh giá (đơn chưa hoàn thành)
+
+### Endpoints:
+- **GET** `/danhgia` - Lấy tất cả đánh giá
+- **GET** `/danhgia/{id}` - Lấy đánh giá theo ID
+- **GET** `/danhgia/kiemtra/{maDatLich}` - Kiểm tra trạng thái đánh giá của đơn đặt lịch
+- **GET** `/danhgia/datlich/{maDatLich}` - Lấy đánh giá theo mã đặt lịch
+- **GET** `/danhgia/khoahoc/{maKhoaHoc}` - Lấy danh sách đánh giá theo khóa học
+- **POST** `/danhgia/tao` - Tạo đánh giá mới (kèm hình ảnh/video)
 - **DELETE** `/danhgia/{id}` - Xóa đánh giá
 
 ## 14. Thông Báo (ThongBao)
@@ -406,6 +416,107 @@ http://localhost:8080/api
   "emailNguoiDat": "user@example.com",
   "sdtNguoiDat": "0123456789",
   "ghiChu": "Không có"
+}
+```
+
+### 13. Kiểm tra trạng thái đánh giá
+**GET** `/api/danhgia/kiemtra/{maDatLich}`
+
+**Response khi chưa đánh giá (đơn đã hoàn thành):**
+```json
+{
+  "maDatLich": 1,
+  "trangThaiDon": "Đã hoàn thành",
+  "daDanhGia": false,
+  "maDanhGia": null,
+  "trangThaiDanhGia": "CÓ THỂ ĐÁNH GIÁ",
+  "danhGia": null
+}
+```
+
+**Response khi đã đánh giá:**
+```json
+{
+  "maDatLich": 1,
+  "trangThaiDon": "Đã hoàn thành",
+  "daDanhGia": true,
+  "maDanhGia": 5,
+  "trangThaiDanhGia": "ĐÃ ĐÁNH GIÁ",
+  "danhGia": {
+    "maDanhGia": 5,
+    "maHocVien": 4,
+    "tenHocVien": "Ngô Thị Thảo Vy",
+    "maKhoaHoc": 1,
+    "tenKhoaHoc": "Ẩm thực phố cổ Hà Nội",
+    "maDatLich": 1,
+    "diemDanhGia": 5,
+    "binhLuan": "Lớp học rất tuyệt vời!",
+    "ngayDanhGia": "22/12/2024 15:30",
+    "hinhAnhList": [
+      {
+        "maHinhAnh": 1,
+        "maDanhGia": 5,
+        "duongDan": "https://example.com/image1.jpg",
+        "loaiFile": "image",
+        "thuTu": 1
+      }
+    ]
+  }
+}
+```
+
+**Response khi đơn chưa hoàn thành:**
+```json
+{
+  "maDatLich": 2,
+  "trangThaiDon": "Đặt trước",
+  "daDanhGia": false,
+  "maDanhGia": null,
+  "trangThaiDanhGia": "KHÔNG THỂ ĐÁNH GIÁ",
+  "danhGia": null
+}
+```
+
+### 14. Tạo đánh giá mới
+**POST** `/api/danhgia/tao`
+```json
+{
+  "maDatLich": 1,
+  "diemDanhGia": 5,
+  "binhLuan": "Không gian lớp thoải mái, đầy đủ dụng cụ và nguyên liệu. Giáo viên hướng dẫn chi tiết, luôn hỗ trợ khi gặp khó khăn.",
+  "hinhAnhUrls": [
+    "https://example.com/image1.jpg",
+    "https://example.com/image2.jpg",
+    "https://example.com/video1.mp4"
+  ]
+}
+```
+
+**Response Success:**
+```json
+{
+  "success": true,
+  "message": "Đánh giá thành công",
+  "data": {
+    "maDanhGia": 5,
+    "maHocVien": 4,
+    "tenHocVien": "Ngô Thị Thảo Vy",
+    "maKhoaHoc": 1,
+    "tenKhoaHoc": "Ẩm thực phố cổ Hà Nội",
+    "maDatLich": 1,
+    "diemDanhGia": 5,
+    "binhLuan": "Không gian lớp thoải mái...",
+    "ngayDanhGia": "22/12/2024 15:30",
+    "hinhAnhList": [...]
+  }
+}
+```
+
+**Response Error:**
+```json
+{
+  "success": false,
+  "message": "Chỉ được đánh giá khi đơn đã hoàn thành"
 }
 ```
 

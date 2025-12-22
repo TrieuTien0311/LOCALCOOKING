@@ -83,4 +83,23 @@ public class RetrofitClient {
     public static String getBaseUrl() {
         return BASE_URL;
     }
+    
+    /**
+     * Lấy URL đầy đủ cho hình ảnh
+     */
+    public static String getFullImageUrl(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
+        }
+        // Nếu đã là URL đầy đủ thì trả về luôn
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            return imagePath;
+        }
+        // Nếu bắt đầu bằng /uploads/ (ảnh đánh giá) thì ghép trực tiếp
+        if (imagePath.startsWith("/uploads/")) {
+            return BASE_URL.substring(0, BASE_URL.length() - 1) + imagePath;
+        }
+        // Nếu là đường dẫn tương đối thì ghép với BASE_URL + images/
+        return BASE_URL + "images/" + imagePath;
+    }
 }

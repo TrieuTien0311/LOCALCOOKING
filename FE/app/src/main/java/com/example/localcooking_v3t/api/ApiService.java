@@ -36,15 +36,23 @@ import com.example.localcooking_v3t.model.ApDungUuDaiRequest;
 import com.example.localcooking_v3t.model.ApDungUuDaiResponse;
 import com.example.localcooking_v3t.model.MomoPaymentRequest;
 import com.example.localcooking_v3t.model.MomoPaymentResponse;
+import com.example.localcooking_v3t.model.DanhGiaDTO;
+import com.example.localcooking_v3t.model.KiemTraDanhGiaResponse;
+import com.example.localcooking_v3t.model.TaoDanhGiaRequest;
+import com.example.localcooking_v3t.model.TaoDanhGiaResponse;
+import com.example.localcooking_v3t.model.UploadResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -263,5 +271,41 @@ public interface ApiService {
     @GET("api/don-dat-lich/da-huy/{maHocVien}")
     Call<List<com.example.localcooking_v3t.model.DonDatLichDTO>> getDonDaHuy(@Path("maHocVien") Integer maHocVien);
 
+    // ========== API ĐÁNH GIÁ ==========
 
+    // Kiểm tra trạng thái đánh giá của đơn đặt lịch
+    @GET("api/danhgia/kiemtra/{maDatLich}")
+    Call<KiemTraDanhGiaResponse> kiemTraDaDanhGia(@Path("maDatLich") Integer maDatLich);
+
+    // Tạo đánh giá mới
+    @POST("api/danhgia/tao")
+    Call<TaoDanhGiaResponse> taoDanhGia(@Body TaoDanhGiaRequest request);
+
+    // Lấy đánh giá theo mã đặt lịch
+    @GET("api/danhgia/datlich/{maDatLich}")
+    Call<DanhGiaDTO> getDanhGiaByDatLich(@Path("maDatLich") Integer maDatLich);
+
+    // Lấy danh sách đánh giá theo khóa học
+    @GET("api/danhgia/khoahoc/{maKhoaHoc}")
+    Call<List<DanhGiaDTO>> getDanhGiaByKhoaHoc(@Path("maKhoaHoc") Integer maKhoaHoc);
+
+    // Lấy tất cả đánh giá
+    @GET("api/danhgia")
+    Call<List<DanhGiaDTO>> getAllDanhGia();
+
+    // Lấy đánh giá theo ID
+    @GET("api/danhgia/{id}")
+    Call<DanhGiaDTO> getDanhGiaById(@Path("id") Integer id);
+
+    // ========== API UPLOAD ==========
+
+    // Upload một file
+    @Multipart
+    @POST("api/upload/image")
+    Call<UploadResponse> uploadImage(@Part MultipartBody.Part file);
+
+    // Upload nhiều file
+    @Multipart
+    @POST("api/upload/images")
+    Call<UploadResponse> uploadImages(@Part List<MultipartBody.Part> files);
 }
