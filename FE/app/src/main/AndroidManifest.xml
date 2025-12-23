@@ -43,6 +43,7 @@
         
         <activity
             android:name=".Login"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".CalendarActivity"
@@ -52,21 +53,26 @@
             android:exported="false" />
         <activity
             android:name=".Payment"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Classes"
             android:exported="false" />
         <activity
             android:name=".ChangePassword"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ChangePasswordOtp"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ForgotPassword"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".OtpVerification"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Splash"
@@ -79,12 +85,19 @@
         </activity>
         <activity
             android:name=".Review"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
+            android:name=".MediaViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
             android:name=".Register"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Vouchers"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
@@ -101,6 +114,7 @@
             android:exported="false" />
         <activity
             android:name=".UpdateProfileActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <meta-data

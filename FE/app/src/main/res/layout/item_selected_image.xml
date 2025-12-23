@@ -14,6 +14,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/RoundedImage" />
 
+    <!-- Icon play cho video -->
+    <ImageView
+        android:id="@+id/iconVideo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_play_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/imgSelected"
+        app:layout_constraintEnd_toEndOf="@+id/imgSelected"
+        app:layout_constraintStart_toStartOf="@+id/imgSelected"
+        app:layout_constraintTop_toTopOf="@+id/imgSelected"
+        app:tint="@android:color/white" />
+
     <ImageView
         android:id="@+id/btnRemove"
         android:layout_width="24dp"
