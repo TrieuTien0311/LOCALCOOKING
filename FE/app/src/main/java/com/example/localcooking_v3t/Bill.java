@@ -31,6 +31,10 @@ public class Bill extends AppCompatActivity {
     private ImageView imAnhHoc, imMaCodeBill;
     private TextView txtTenLopHoc, txtDiaDiemBill, txtNguoiDatBill, txtSDTBill;
     private TextView txtThoiGianHocBill, txtNgayHocBill, txtSoPaxBill, txtNoiDungBill;
+    
+    // Views - Header
+    private TextView txtTieuDeHeader, txtSubtitleHeader;
+    private View view26; // Đường kẻ ngang trước mã vạch
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +50,10 @@ public class Bill extends AppCompatActivity {
         initViews();
         loadDataFromIntent();
 
-        // Xử lý nút quay lại - về trang chủ (Header)
+        // Xử lý nút quay lại - về trang OrderHistory (lịch sử đặt lịch)
         ImageView btnBack = findViewById(R.id.imageView6);
         btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(Bill.this, Header.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
+            finish(); // Chỉ cần finish() để quay lại Activity trước đó (OrderHistory)
         });
     }
 
@@ -77,6 +78,11 @@ public class Bill extends AppCompatActivity {
         txtNgayHocBill = findViewById(R.id.txtNgayHocBill);
         txtSoPaxBill = findViewById(R.id.txtSoPaxBill);
         txtNoiDungBill = findViewById(R.id.txtNoiDungBill);
+        
+        // Header
+        txtTieuDeHeader = findViewById(R.id.txtDiaDiem); // "Hóa đơn của tôi"
+        txtSubtitleHeader = findViewById(R.id.txtThoiGian); // "Chi tiết hóa đơn đặt lịch"
+        view26 = findViewById(R.id.view26); // Đường kẻ ngang trước mã vạch
     }
 
     private void loadDataFromIntent() {
@@ -207,7 +213,22 @@ public class Bill extends AppCompatActivity {
         if (trangThai.contains("huỷ") || trangThai.contains("hủy") || trangThai.contains("Hủy")) {
             // === TRẠNG THÁI ĐÃ HỦY ===
             
-            // 1. Đổi button thành "Đã hủy" với màu đỏ nhạt
+            // 1. Đổi tiêu đề header (txtDiaDiem) thành "Chi tiết đặt lịch"
+            if (txtTieuDeHeader != null) {
+                txtTieuDeHeader.setText("Chi tiết đặt lịch");
+            }
+            
+            // 2. Đổi subtitle header (txtThoiGian) thành "Hóa đơn của lịch đã hủy"
+            if (txtSubtitleHeader != null) {
+                txtSubtitleHeader.setText("Hóa đơn của lịch đã hủy");
+            }
+            
+            // 3. Ẩn đường kẻ ngang trước mã vạch (view26)
+            if (view26 != null) {
+                view26.setVisibility(View.GONE);
+            }
+            
+            // 4. Đổi button thành "Đã hủy" với màu đỏ nhạt
             if (btnTrangThai != null) {
                 btnTrangThai.setText("Đã hủy");
                 btnTrangThai.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
@@ -215,12 +236,12 @@ public class Bill extends AppCompatActivity {
                     android.graphics.Color.parseColor("#FFCDD2"))); // Đỏ nhạt
             }
             
-            // 2. Ẩn mã vạch
+            // 5. Ẩn mã vạch
             if (imMaCodeBill != null) {
                 imMaCodeBill.setVisibility(View.GONE);
             }
             
-            // 3. Hiển thị thời gian hủy (thêm vào TableLayout)
+            // 6. Hiển thị thời gian hủy (thêm vào TableLayout)
             if (thoiGianHuy != null && !thoiGianHuy.isEmpty()) {
                 addThoiGianHuyRow(thoiGianHuy);
             }
@@ -272,9 +293,9 @@ public class Bill extends AppCompatActivity {
         // Value
         TextView value = new TextView(this);
         String[] parts = parseDateTime(thoiGianHuy);
-        value.setText(parts[0] + " - " + parts[1]); // "HH:mm - dd/MM/yyyy"
+        value.setText(parts[0] + " " + parts[1]); // "HH:mm dd/MM/yyyy" (bỏ dấu gạch ngang)
         value.setTextColor(android.graphics.Color.parseColor("#D32F2F")); // Màu đỏ
-        value.setTypeface(null, android.graphics.Typeface.BOLD);
+        value.setTypeface(null, android.graphics.Typeface.ITALIC); // Định dạng Italic
         
         row.addView(label);
         row.addView(spacer);
