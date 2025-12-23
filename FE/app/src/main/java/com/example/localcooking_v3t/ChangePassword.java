@@ -2,11 +2,13 @@ package com.example.localcooking_v3t;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,11 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.localcooking_v3t.api.ApiService;
 import com.example.localcooking_v3t.api.RetrofitClient;
@@ -46,15 +45,10 @@ public class ChangePassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
-
-        // Cấu hình EdgeToEdge
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        
+        // Set màu status bar giống với background (#F5E6D3)
+        setStatusBarColor();
 
         // Ánh xạ view
         mainLayout = findViewById(R.id.main);
@@ -381,5 +375,19 @@ public class ChangePassword extends AppCompatActivity {
                 Toast.makeText(ChangePassword.this, errorMsg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+    
+    /**
+     * Set màu status bar để đồng bộ với background
+     */
+    private void setStatusBarColor() {
+        Window window = getWindow();
+        // Màu #F5E6D3 (màu background của màn hình)
+        window.setStatusBarColor(0xFFF5E6D3);
+        
+        // Đặt icon status bar màu tối (vì background sáng)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
 }
