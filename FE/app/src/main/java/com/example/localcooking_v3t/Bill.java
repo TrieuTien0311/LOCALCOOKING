@@ -2,6 +2,7 @@ package com.example.localcooking_v3t;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -19,9 +22,13 @@ public class Bill extends AppCompatActivity {
 
     // Views - Thông tin thanh toán
     private TextView txtSoTienCard, txtSoTien, txtGioHoc, txtNgayHoc, txtMaGiaoDic, txtPhuongThuc;
+    private MaterialButton btnTrangThai;
+    
+    // Views - Thông tin hủy (thêm mới)
+    private TextView txtLabelThoiGianHuy, txtThoiGianHuy;
     
     // Views - Thông tin đặt vé
-    private ImageView imAnhHoc;
+    private ImageView imAnhHoc, imMaCodeBill;
     private TextView txtTenLopHoc, txtDiaDiemBill, txtNguoiDatBill, txtSDTBill;
     private TextView txtThoiGianHocBill, txtNgayHocBill, txtSoPaxBill, txtNoiDungBill;
 
@@ -57,9 +64,11 @@ public class Bill extends AppCompatActivity {
         txtNgayHoc = findViewById(R.id.txtNgayHoc);
         txtMaGiaoDic = findViewById(R.id.txtMaGiaoDic);
         txtPhuongThuc = findViewById(R.id.txtPhuongThuc);
+        btnTrangThai = findViewById(R.id.button3);
         
         // Thông tin đặt vé
         imAnhHoc = findViewById(R.id.imAnhHoc);
+        imMaCodeBill = findViewById(R.id.imMaCodeBill);
         txtTenLopHoc = findViewById(R.id.txtTenLopHoc);
         txtDiaDiemBill = findViewById(R.id.txtDiaDiemBill);
         txtNguoiDatBill = findViewById(R.id.txtNguoiDatBill);
@@ -73,9 +82,14 @@ public class Bill extends AppCompatActivity {
     private void loadDataFromIntent() {
         Intent intent = getIntent();
         
+        // Lấy trạng thái đơn
+        String trangThai = intent.getStringExtra("trangThai");
+        String thoiGianHuy = intent.getStringExtra("thoiGianHuy");
+        
         // Thông tin thanh toán
         double tongTienThanhToan = intent.getDoubleExtra("tongTienThanhToan", 0);
         String transId = intent.getStringExtra("transId");
+        String ngayThanhToan = intent.getStringExtra("ngayThanhToan");
         
         // Hiển thị số tiền
         String formattedMoney = formatTien(tongTienThanhToan) + "₫";
@@ -86,21 +100,38 @@ public class Bill extends AppCompatActivity {
             txtSoTien.setText(formattedMoney);
         }
         
-        // Thời gian thanh toán (hiện tại)
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date now = new Date();
+        // Xử lý hiển thị theo trạng thái
+        setupTrangThai(trangThai, thoiGianHuy);
         
-        if (txtGioHoc != null) {
-            txtGioHoc.setText(timeFormat.format(now));
-        }
-        if (txtNgayHoc != null) {
-            txtNgayHoc.setText(dateFormat.format(now));
+        // Thời gian thanh toán
+        if (ngayThanhToan != null && !ngayThanhToan.isEmpty()) {
+            // Parse từ ngayThanhToan (format: "yyyy-MM-dd HH:mm:ss" hoặc tương tự)
+            String[] parts = parseDateTime(ngayThanhToan);
+            if (txtGioHoc != null) {
+                txtGioHoc.setText(parts[0]); // Giờ
+            }
+            if (txtNgayHoc != null) {
+                txtNgayHoc.setText(parts[1]); // Ngày
+            }
+        } else {
+            // Dùng thời gian hiện tại nếu không có
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date now = new Date();
+            
+            if (txtGioHoc != null) {
+                txtGioHoc.setText(timeFormat.format(now));
+            }
+            if (txtNgayHoc != null) {
+                txtNgayHoc.setText(dateFormat.format(now));
+            }
         }
         
         // Mã giao dịch
         if (txtMaGiaoDic != null && transId != null) {
             txtMaGiaoDic.setText(transId);
+        } else if (txtMaGiaoDic != null) {
+            txtMaGiaoDic.setText("N/A");
         }
         
         // Phương thức thanh toán
@@ -163,6 +194,126 @@ public class Bill extends AppCompatActivity {
                 imAnhHoc.setImageResource(resId);
             }
         }
+    }
+    
+    /**
+     * Xử lý hiển thị theo trạng thái đơn
+     */
+    private void setupTrangThai(String trangThai, String thoiGianHuy) {
+        if (trangThai == null) {
+            trangThai = "Đã hoàn thành"; // Mặc định
+        }
+        
+        if (trangThai.contains("huỷ") || trangThai.contains("hủy") || trangThai.contains("Hủy")) {
+            // === TRẠNG THÁI ĐÃ HỦY ===
+            
+            // 1. Đổi button thành "Đã hủy" với màu đỏ nhạt
+            if (btnTrangThai != null) {
+                btnTrangThai.setText("Đã hủy");
+                btnTrangThai.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                btnTrangThai.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor("#FFCDD2"))); // Đỏ nhạt
+            }
+            
+            // 2. Ẩn mã vạch
+            if (imMaCodeBill != null) {
+                imMaCodeBill.setVisibility(View.GONE);
+            }
+            
+            // 3. Hiển thị thời gian hủy (thêm vào TableLayout)
+            if (thoiGianHuy != null && !thoiGianHuy.isEmpty()) {
+                addThoiGianHuyRow(thoiGianHuy);
+            }
+            
+        } else {
+            // === TRẠNG THÁI THÀNH CÔNG (Đã hoàn thành / Đặt trước đã thanh toán) ===
+            
+            // Button mặc định: "Thành công" màu xanh
+            if (btnTrangThai != null) {
+                btnTrangThai.setText("Thành công");
+                btnTrangThai.setTextColor(android.graphics.Color.parseColor("#28C533"));
+                btnTrangThai.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor("#C2F9C9"))); // Xanh nhạt
+            }
+            
+            // Hiển thị mã vạch
+            if (imMaCodeBill != null) {
+                imMaCodeBill.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    
+    /**
+     * Thêm dòng thời gian hủy vào TableLayout
+     */
+    private void addThoiGianHuyRow(String thoiGianHuy) {
+        // Tìm TableLayout chứa thông tin thanh toán
+        android.widget.TableLayout tableLayout = findViewById(R.id.tableLayoutThanhToan);
+        if (tableLayout == null) {
+            // Nếu không có ID, tìm theo cách khác hoặc bỏ qua
+            return;
+        }
+        
+        // Tạo TableRow mới
+        android.widget.TableRow row = new android.widget.TableRow(this);
+        row.setPadding(0, 12, 0, 12);
+        
+        // Label
+        TextView label = new TextView(this);
+        label.setText("Thời gian hủy");
+        label.setTextColor(android.graphics.Color.parseColor("#7F7F7F"));
+        label.setTextSize(15);
+        
+        // Spacer
+        View spacer = new View(this);
+        android.widget.TableRow.LayoutParams spacerParams = new android.widget.TableRow.LayoutParams(0, 0, 1f);
+        spacer.setLayoutParams(spacerParams);
+        
+        // Value
+        TextView value = new TextView(this);
+        String[] parts = parseDateTime(thoiGianHuy);
+        value.setText(parts[0] + " - " + parts[1]); // "HH:mm - dd/MM/yyyy"
+        value.setTextColor(android.graphics.Color.parseColor("#D32F2F")); // Màu đỏ
+        value.setTypeface(null, android.graphics.Typeface.BOLD);
+        
+        row.addView(label);
+        row.addView(spacer);
+        row.addView(value);
+        
+        tableLayout.addView(row);
+    }
+    
+    /**
+     * Parse datetime string thành [giờ, ngày]
+     */
+    private String[] parseDateTime(String dateTimeStr) {
+        String gio = "";
+        String ngay = "";
+        
+        try {
+            if (dateTimeStr.contains("T")) {
+                // Format ISO: "2024-12-20T10:30:00"
+                String[] parts = dateTimeStr.split("T");
+                ngay = formatNgay(parts[0]);
+                if (parts.length > 1) {
+                    gio = parts[1].substring(0, 5); // "HH:mm"
+                }
+            } else if (dateTimeStr.contains(" ")) {
+                // Format: "2024-12-20 10:30:00"
+                String[] parts = dateTimeStr.split(" ");
+                ngay = formatNgay(parts[0]);
+                if (parts.length > 1) {
+                    gio = parts[1].substring(0, 5); // "HH:mm"
+                }
+            } else {
+                // Chỉ có ngày
+                ngay = formatNgay(dateTimeStr);
+            }
+        } catch (Exception e) {
+            ngay = dateTimeStr;
+        }
+        
+        return new String[]{gio, ngay};
     }
 
     /**

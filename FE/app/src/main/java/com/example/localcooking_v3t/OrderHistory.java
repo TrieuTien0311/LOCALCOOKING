@@ -36,6 +36,11 @@ public class OrderHistory {
     private String tenNguoiDat;
     private String emailNguoiDat;
     private String sdtNguoiDat;
+    
+    // Thông tin thanh toán
+    private String ngayThanhToan;
+    private String transId;
+    private String orderId;
 
 
     // Constructor cũ (giữ nguyên để tương thích)
@@ -90,6 +95,11 @@ public class OrderHistory {
         this.tenNguoiDat = dto.getTenNguoiDat();
         this.emailNguoiDat = dto.getEmailNguoiDat();
         this.sdtNguoiDat = dto.getSdtNguoiDat();
+        
+        // Thông tin thanh toán
+        this.ngayThanhToan = dto.getNgayThanhToan();
+        this.transId = dto.getTransId();
+        this.orderId = dto.getOrderId();
         
         // Convert hình ảnh từ tên file sang resource ID
         this.hinhAnh = getImageResId(dto.getHinhAnh(), context);
@@ -197,4 +207,13 @@ public class OrderHistory {
     
     public String getSdtNguoiDat() { return sdtNguoiDat; }
     public void setSdtNguoiDat(String sdtNguoiDat) { this.sdtNguoiDat = sdtNguoiDat; }
+    
+    public String getNgayThanhToan() { return ngayThanhToan; }
+    public void setNgayThanhToan(String ngayThanhToan) { this.ngayThanhToan = ngayThanhToan; }
+    
+    public String getTransId() { return transId; }
+    public void setTransId(String transId) { this.transId = transId; }
+    
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
 }

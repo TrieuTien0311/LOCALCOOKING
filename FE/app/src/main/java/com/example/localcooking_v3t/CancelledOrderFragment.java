@@ -1,5 +1,6 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -84,6 +85,12 @@ public class CancelledOrderFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         
         adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(OrderHistory order) {
+                // Chuyển sang trang Bill để xem chi tiết hóa đơn (đơn đã hủy)
+                goToBill(order);
+            }
+            
             @Override
             public void onHuyDatClick(OrderHistory order) {
                 // Không cần xử lý
@@ -180,5 +187,35 @@ public class CancelledOrderFragment extends Fragment {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);
         }
+    }
+    
+    /**
+     * Chuyển sang trang Bill để xem chi tiết hóa đơn (đơn đã hủy)
+     */
+    private void goToBill(OrderHistory order) {
+        Intent intent = new Intent(getActivity(), Bill.class);
+        
+        // Thông tin thanh toán
+        intent.putExtra("tongTienThanhToan", order.getTongTienGoc() != null ? order.getTongTienGoc().doubleValue() : 0);
+        intent.putExtra("transId", order.getTransId());
+        intent.putExtra("orderId", order.getOrderId());
+        intent.putExtra("ngayThanhToan", order.getNgayThanhToan());
+        intent.putExtra("trangThai", order.getTrangThai()); // "Đã huỷ"
+        intent.putExtra("thoiGianHuy", order.getThoiGianHuy()); // Thời gian hủy
+        
+        // Thông tin lớp học
+        intent.putExtra("tenKhoaHoc", order.getTieuDe());
+        intent.putExtra("diaDiem", order.getDiaDiem());
+        intent.putExtra("thoiGian", order.getThoiGian());
+        intent.putExtra("ngayThamGia", order.getNgayThamGia());
+        intent.putExtra("hinhAnh", order.getHinhAnhPath());
+        intent.putExtra("moTa", order.getMoTa());
+        intent.putExtra("soLuongDat", order.getSoLuongNguoiInt());
+        
+        // Thông tin người đặt
+        intent.putExtra("tenNguoiDat", order.getTenNguoiDat());
+        intent.putExtra("sdtNguoiDat", order.getSdtNguoiDat());
+        
+        startActivity(intent);
     }
 }
