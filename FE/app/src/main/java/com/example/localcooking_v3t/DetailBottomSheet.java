@@ -3,6 +3,7 @@ package com.example.localcooking_v3t;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +16,25 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.KhoaHoc;
+import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DetailBottomSheet extends BottomSheetDialogFragment {
+
+    private static final String TAG = "DetailBottomSheet";
 
     private TextView tvTenLop, tvThoiGian, btnDong;
     private TabLayout tabLayout;
@@ -31,6 +43,17 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
 
     private KhoaHoc lopHoc; // Dữ liệu lớp học
     private String selectedDate; // Ngày được chọn từ calendar
+    
+    // Callback để thông báo khi trạng thái yêu thích thay đổi
+    private OnFavoriteChangedListener favoriteChangedListener;
+    
+    public interface OnFavoriteChangedListener {
+        void onFavoriteChanged(KhoaHoc khoaHoc, boolean isFavorite);
+    }
+    
+    public void setOnFavoriteChangedListener(OnFavoriteChangedListener listener) {
+        this.favoriteChangedListener = listener;
+    }
 
     // Constructor nhận dữ liệu lớp học
     public static DetailBottomSheet newInstance(KhoaHoc lopHoc) {
@@ -216,20 +239,12 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         // Xử lý nút Favorite
         btnFav.setOnClickListener(v -> {
             if (lopHoc != null) {
-                // Toggle trạng thái yêu thích
-                Boolean currentFavorite = lopHoc.getIsFavorite();
-                lopHoc.setIsFavorite(currentFavorite == null ? true : !currentFavorite);
-
-                // Cập nhật icon
-                if (lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()) {
-                    btnFav.setIconResource(R.drawable.ic_heartredfilled);
-                    Toast.makeText(getContext(), "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
-                } else {
-                    btnFav.setIconResource(R.drawable.ic_heart);
-                    Toast.makeText(getContext(), "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
-                }
+                toggleFavorite();
             }
         });
+        
+        // Cập nhật trạng thái yêu thích ban đầu
+        updateFavoriteIcon();
 
         // Xử lý nút Share - Chia sẻ qua Messenger hoặc các app khác
         btnShare.setOnClickListener(v -> {
@@ -286,5 +301,66 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
         public int getItemCount() {
             return 4; // 4 tabs
         }
+    }
+    
+    /**
+     * Cập nhật icon yêu thích dựa trên trạng thái hiện tại
+     */
+    private void updateFavoriteIcon() {
+        if (lopHoc != null && lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()) {
+            btnFav.setIconResource(R.drawable.ic_heartredfilled);
+        } else {
+            btnFav.setIconResource(R.drawable.ic_heart);
+        }
+    }
+    
+    /**
+     * Toggle trạng thái yêu thích và gọi API
+     */
+    private void toggleFavorite() {
+        SessionManager sessionManager = new SessionManager(requireContext());
+        Integer maHocVien = sessionManager.getMaNguoiDung();
+        
+        if (maHocVien == null || maHocVien == -1) {
+            Toast.makeText(getContext(), "Vui lòng đăng nhập để sử dụng chức năng này", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Map<String, Integer> request = new HashMap<>();
+        request.put("maHocVien", maHocVien);
+        request.put("maKhoaHoc", lopHoc.getMaKhoaHoc());
+        
+        RetrofitClient.getApiService().toggleFavorite(request)
+                .enqueue(new Callback<Map<String, Object>>() {
+                    @Override
+                    public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Boolean isFavorite = (Boolean) response.body().get("isFavorite");
+                            String message = (String) response.body().get("message");
+                            
+                            // Cập nhật trạng thái trong model
+                            lopHoc.setIsFavorite(isFavorite);
+                            
+                            // Cập nhật icon
+                            updateFavoriteIcon();
+                            
+                            // Thông báo cho listener (ClassesFragment)
+                            if (favoriteChangedListener != null) {
+                                favoriteChangedListener.onFavoriteChanged(lopHoc, isFavorite != null && isFavorite);
+                            }
+                            
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Favorite toggled: " + isFavorite);
+                        } else {
+                            Toast.makeText(getContext(), "Không thể cập nhật yêu thích", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    
+                    @Override
+                    public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                        Log.e(TAG, "Error toggling favorite", t);
+                        Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

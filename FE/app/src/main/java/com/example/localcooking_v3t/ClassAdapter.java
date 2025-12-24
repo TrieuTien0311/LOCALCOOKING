@@ -223,9 +223,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         
         holder.imgFavorite.setOnClickListener(v -> {
             if (listener != null) {
-                // Toggle favorite
-                lopHoc.setIsFavorite(!(lopHoc.getIsFavorite() != null && lopHoc.getIsFavorite()));
-                notifyItemChanged(position);
+                // Gọi listener để kiểm tra đăng nhập trước khi toggle
+                // Không toggle ở đây, để ClassesFragment xử lý
                 listener.onFavoriteClick(lopHoc);
             }
         });
