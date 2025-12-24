@@ -1782,4 +1782,9 @@ INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transI
 VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
 
 PRINT N'✅ Đã thực thi thành công !';
-
+select * from DanhGia
+select * from KhoaHoc
+select * from LichTrinhLopHoc
+select * from DatLich
+select * from NguoiDung
+select * from HinhAnhDanhGia
