@@ -35,6 +35,9 @@ public class Bill extends AppCompatActivity {
     // Views - Header
     private TextView txtTieuDeHeader, txtSubtitleHeader;
     private View view26; // Đường kẻ ngang trước mã vạch
+    
+    // Flag để biết đây là Bill sau thanh toán thành công
+    private boolean isFromPaymentSuccess = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +53,38 @@ public class Bill extends AppCompatActivity {
         initViews();
         loadDataFromIntent();
 
-        // Xử lý nút quay lại - về trang OrderHistory (lịch sử đặt lịch)
+        // Xử lý nút quay lại
         ImageView btnBack = findViewById(R.id.imageView6);
         btnBack.setOnClickListener(v -> {
-            finish(); // Chỉ cần finish() để quay lại Activity trước đó (OrderHistory)
+            if (isFromPaymentSuccess) {
+                // Nếu từ thanh toán thành công -> quay về trang chủ
+                navigateToHome();
+            } else {
+                // Nếu từ lịch sử đặt lịch -> quay lại Activity trước đó
+                finish();
+            }
         });
+    }
+    
+    /**
+     * Quay về trang chủ (Header) và xóa hết các Activity trước đó
+     */
+    private void navigateToHome() {
+        Intent intent = new Intent(Bill.this, Header.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (isFromPaymentSuccess) {
+            // Nếu từ thanh toán thành công -> quay về trang chủ
+            navigateToHome();
+        } else {
+            // Nếu từ lịch sử đặt lịch -> quay lại Activity trước đó
+            super.onBackPressed();
+        }
     }
 
     private void initViews() {
@@ -87,6 +117,9 @@ public class Bill extends AppCompatActivity {
 
     private void loadDataFromIntent() {
         Intent intent = getIntent();
+        
+        // Kiểm tra xem có phải từ thanh toán thành công không
+        isFromPaymentSuccess = intent.getBooleanExtra("paymentSuccess", false);
         
         // Lấy trạng thái đơn
         String trangThai = intent.getStringExtra("trangThai");
