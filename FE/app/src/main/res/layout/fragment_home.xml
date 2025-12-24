@@ -697,93 +697,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/scrollPopularClasses" />
 
-        <!-- Special Dishes Horizontal ScrollView -->
-        <HorizontalScrollView
-            android:id="@+id/scrollSpecialDishes"
+        <!-- Special Dishes RecyclerView with Infinite Scroll -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSpecialDishes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="20dp"
-            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:paddingStart="16dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvSpecialDishes"
-            app:layout_constraintVertical_bias="0.050000012">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <!-- Dish Card 1 -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="3dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:contentDescription="Dish"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/phobo" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Dish Card 2 -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="3dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:contentDescription="Dish"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/comtam" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Dish Card 3 -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="3dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:contentDescription="Dish"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/banhxeo" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-        </HorizontalScrollView>
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

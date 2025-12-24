@@ -15,6 +15,14 @@ public interface GiaoVienRepository extends JpaRepository<GiaoVien, Integer> {
     // Tìm giáo viên theo maNguoiDung
     Optional<GiaoVien> findByMaNguoiDung(Integer maNguoiDung);
     
+    // Lấy tất cả giáo viên kèm thông tin người dùng
+    @Query(value = "SELECT g.maGiaoVien, g.maNguoiDung, g.chuyenMon, g.kinhNghiem, " +
+                   "g.lichSuKinhNghiem, g.moTa, g.hinhAnh, " +
+                   "n.hoTen, n.email, n.soDienThoai " +
+                   "FROM GiaoVien g " +
+                   "JOIN NguoiDung n ON g.maNguoiDung = n.maNguoiDung", nativeQuery = true)
+    List<Object[]> findAllGiaoVienWithNguoiDung();
+    
     // Lấy thông tin giáo viên kèm thông tin người dùng
     @Query(value = "SELECT g.maGiaoVien, g.maNguoiDung, g.chuyenMon, g.kinhNghiem, " +
                    "g.lichSuKinhNghiem, g.moTa, g.hinhAnh, " +

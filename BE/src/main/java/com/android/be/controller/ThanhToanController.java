@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/thanhtoan")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class ThanhToanController {
     
     private final ThanhToanService thanhToanService;

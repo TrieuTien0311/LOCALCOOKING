@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/lichtrinh")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class LichTrinhLopHocController {
     
     private final LichTrinhLopHocService lichTrinhService;

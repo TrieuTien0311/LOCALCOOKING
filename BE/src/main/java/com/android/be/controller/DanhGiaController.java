@@ -14,11 +14,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/danhgia")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class DanhGiaController {
-    
+
     private final DanhGiaService danhGiaService;
-    
+
     /**
      * Kiểm tra trạng thái đánh giá của đơn đặt lịch
      * GET /api/danhgia/kiemtra/{maDatLich}
@@ -28,7 +27,7 @@ public class DanhGiaController {
         KiemTraDanhGiaResponse response = danhGiaService.kiemTraDaDanhGia(maDatLich);
         return ResponseEntity.ok(response);
     }
-    
+
     /**
      * Tạo đánh giá mới
      * POST /api/danhgia/tao
@@ -49,7 +48,7 @@ public class DanhGiaController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
+
     /**
      * Lấy đánh giá theo mã đặt lịch
      * GET /api/danhgia/datlich/{maDatLich}
@@ -60,7 +59,7 @@ public class DanhGiaController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     /**
      * Lấy danh sách đánh giá theo khóa học
      * GET /api/danhgia/khoahoc/{maKhoaHoc}
@@ -69,7 +68,28 @@ public class DanhGiaController {
     public ResponseEntity<List<DanhGiaDTO>> getDanhGiaByKhoaHoc(@PathVariable Integer maKhoaHoc) {
         return ResponseEntity.ok(danhGiaService.getDanhGiaByKhoaHoc(maKhoaHoc));
     }
-    
+
+    /**
+     * Lấy thống kê đánh giá của khóa học
+     * GET /api/danhgia/thongke/{maKhoaHoc}
+     */
+    @GetMapping("/thongke/{maKhoaHoc}")
+    public ResponseEntity<ThongKeDanhGiaDTO> getThongKeDanhGia(@PathVariable Integer maKhoaHoc) {
+        return ResponseEntity.ok(danhGiaService.getThongKeDanhGia(maKhoaHoc));
+    }
+
+    /**
+     * Lấy danh sách đánh giá với filter
+     * GET /api/danhgia/khoahoc/{maKhoaHoc}/filter?type=co_nhan_xet&sao=5
+     */
+    @GetMapping("/khoahoc/{maKhoaHoc}/filter")
+    public ResponseEntity<List<DanhGiaDTO>> getDanhGiaWithFilter(
+            @PathVariable Integer maKhoaHoc,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Integer sao) {
+        return ResponseEntity.ok(danhGiaService.getDanhGiaByKhoaHocWithFilter(maKhoaHoc, type, sao));
+    }
+
     /**
      * Lấy tất cả đánh giá
      * GET /api/danhgia
@@ -78,7 +98,7 @@ public class DanhGiaController {
     public ResponseEntity<List<DanhGiaDTO>> getAllDanhGia() {
         return ResponseEntity.ok(danhGiaService.getAllDanhGia());
     }
-    
+
     /**
      * Lấy đánh giá theo ID
      * GET /api/danhgia/{id}
@@ -89,7 +109,7 @@ public class DanhGiaController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     /**
      * Xóa đánh giá
      * DELETE /api/danhgia/{id}

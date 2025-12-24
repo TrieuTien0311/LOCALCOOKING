@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Quản Lý Người Dùng</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+    <link rel="stylesheet" href="../assets/css/pages/users.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="../assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="../index.html" data-tooltip="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="users.html" class="active" data-tooltip="Người Dùng">
+                <i class="fas fa-users"></i>
+                <span>Người Dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="teachers.html" data-tooltip="Giáo Viên">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Giáo Viên</span>
+              </a>
+            </li>
+            <li>
+              <a href="courses.html" data-tooltip="Khóa Học">
+                <i class="fas fa-book-open"></i>
+                <span>Khóa Học</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" data-tooltip="Lịch Trình">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch Trình</span>
+              </a>
+            </li>
+            <li>
+              <a href="bookings.html" data-tooltip="Đặt Lịch">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Lịch</span>
+              </a>
+            </li>
+            <li>
+              <a href="dishes.html" data-tooltip="Món Ăn">
+                <i class="fas fa-hamburger"></i>
+                <span>Món Ăn</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1><i class="fas fa-users" style="color: var(--primary); margin-right: 10px;"></i> Quản Lý Người Dùng</h1>
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="../assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area" id="contentArea">
+          <div class="filter-section card" style="margin-bottom: 24px; padding: 20px;">
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end;">
+              <div style="flex: 1; min-width: 250px;">
+                <label class="form-label">Tìm kiếm</label>
+                <div class="search-box">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="searchUser" class="form-control" placeholder="Tìm theo tên, email, sđt..." style="padding-left: 45px;" />
+                </div>
+              </div>
+              <div style="min-width: 180px;">
+                <label class="form-label">Trạng thái</label>
+                <select class="form-control" id="statusFilter">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="active">Hoạt động</option>
+                  <option value="blocked">Đã khóa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Họ Tên</th>
+                    <th>Email</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Trạng Thái</th>
+                    <th>Ngày Tham Gia</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/config/api-config.js"></script>
+    <script src="../assets/js/services/api-service.js"></script>
+    <script src="../assets/js/utils/helpers.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/pages/users.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+    </script>
+  </body>
+</html>

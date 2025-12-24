@@ -1,12 +1,16 @@
 package com.android.be.service;
 
+import com.android.be.dto.DatLichDashboardDTO;
 import com.android.be.model.DatLich;
 import com.android.be.model.LichTrinhLopHoc;
 import com.android.be.repository.DatLichRepository;
 import com.android.be.repository.LichTrinhLopHocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +24,54 @@ public class DatLichService {
     // GET - Lấy tất cả đặt lịch
     public List<DatLich> getAllDatLich() {
         return datLichRepository.findAll();
+    }
+    
+    // GET - Lấy tất cả đặt lịch với thông tin đầy đủ cho dashboard
+    public List<DatLichDashboardDTO> getAllDatLichWithDetails() {
+        List<Object[]> results = datLichRepository.findAllWithDetails();
+        List<DatLichDashboardDTO> dtoList = new ArrayList<>();
+        
+        for (Object[] row : results) {
+            DatLichDashboardDTO dto = new DatLichDashboardDTO();
+            dto.setMaDatLich((Integer) row[0]);
+            dto.setMaHocVien((Integer) row[1]);
+            dto.setMaLichTrinh((Integer) row[2]);
+            
+            // Handle ngayThamGia - có thể là LocalDate hoặc java.sql.Date
+            if (row[3] != null) {
+                if (row[3] instanceof java.sql.Date) {
+                    dto.setNgayThamGia(((java.sql.Date) row[3]).toLocalDate());
+                } else if (row[3] instanceof LocalDate) {
+                    dto.setNgayThamGia((LocalDate) row[3]);
+                }
+            }
+            
+            dto.setSoLuongNguoi((Integer) row[4]);
+            dto.setTongTien(row[5] != null ? (BigDecimal) row[5] : null);
+            dto.setTenNguoiDat((String) row[6]);
+            dto.setEmailNguoiDat((String) row[7]);
+            dto.setSdtNguoiDat((String) row[8]);
+            
+            // Handle ngayDat - có thể là LocalDateTime hoặc java.sql.Timestamp
+            if (row[9] != null) {
+                if (row[9] instanceof java.sql.Timestamp) {
+                    dto.setNgayDat(((java.sql.Timestamp) row[9]).toLocalDateTime());
+                } else if (row[9] instanceof LocalDateTime) {
+                    dto.setNgayDat((LocalDateTime) row[9]);
+                }
+            }
+            
+            dto.setTrangThai((String) row[10]);
+            dto.setGhiChu((String) row[11]);
+            dto.setDaThanhToan(row[12] != null && ((Number) row[12]).intValue() == 1);
+            dto.setTenKhoaHoc((String) row[13]);
+            dto.setHoTenHocVien((String) row[14]);
+            dto.setEmailHocVien((String) row[15]);
+            
+            dtoList.add(dto);
+        }
+        
+        return dtoList;
     }
     
     // GET - Lấy đặt lịch theo ID

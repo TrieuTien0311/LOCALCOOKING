@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Local Cooking Admin</title>
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Side - Visual & Branding -->
+        <div class="login-visual">
+            <div class="visual-content">
+                <div class="visual-icon">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046751.png" alt="Food Icon" />
+                </div>
+                <h1>Local Cooking</h1>
+                <p>Hệ thống quản lý ẩm thực chuyên nghiệp</p>
+
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-chart-line"></i>
+                        <span>Quản lý công thức nấu ăn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-users"></i>
+                        <span>Kết nối cộng đồng đầu bếp</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Bảo mật thông tin</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Truy cập mọi lúc, mọi nơi</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-form-section">
+            <div class="form-header">
+                <h2>Chào mừng trở lại! 👋</h2>
+                <p>Đăng nhập để quản lý hệ thống</p>
+            </div>
+
+            <div id="alertMessage" class="login-alert"></div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="admin@localcooking.vn"
+                        required
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Mật khẩu
+                    </label>
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        placeholder="Nhập mật khẩu"
+                        required
+                    />
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" />
+                    <label class="form-check-label" for="rememberMe">
+                        Ghi nhớ đăng nhập
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+                </button>
+            </form>
+
+            <div class="forgot-password">
+                <a href="#">
+                    <i class="fas fa-question-circle"></i> Quên mật khẩu?
+                </a>
+            </div>
+
+            <div class="login-footer">
+                <p>&copy; 2025 Local Cooking. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="login-loading">
+        <div class="login-loading-content">
+            <div class="login-loading-spinner"></div>
+            <div class="login-loading-text">Đang đăng nhập...</div>
+        </div>
+    </div>
+
+    <script src="assets/js/config/api-config.js"></script>
+    <script src="assets/js/services/api-service.js"></script>
+    <script src="assets/js/utils/helpers.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const alertMessage = document.getElementById("alertMessage");
+
+            alertMessage.classList.remove('show');
+            document.getElementById("loading").classList.add('show');
+
+            try {
+                const response = await apiService.post(API_ENDPOINTS.AUTH.LOGIN, {
+                    email: email,
+                    matKhau: password,
+                });
+
+                if (response.success) {
+                    saveUserSession({
+                        maNguoiDung: response.maNguoiDung,
+                        tenDangNhap: response.tenDangNhap,
+                        hoTen: response.hoTen,
+                        email: response.email,
+                        vaiTro: response.vaiTro,
+                    });
+
+                    alertMessage.className = "login-alert login-alert-success show";
+                    alertMessage.innerHTML = '<i class="fas fa-check-circle"></i> Đăng nhập thành công!';
+                    
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1000);
+                } else {
+                    throw new Error(response.message || "Đăng nhập thất bại");
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                alertMessage.className = "login-alert login-alert-error show";
+                alertMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (error.message || 'Email hoặc mật khẩu không đúng!');
+            } finally {
+                document.getElementById("loading").classList.remove('show');
+            }
+        });
+
+        if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

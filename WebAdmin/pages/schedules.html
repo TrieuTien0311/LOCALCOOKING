@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Quản Lý Lịch Trình</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+    <link rel="stylesheet" href="../assets/css/pages/schedules.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="../assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="../index.html" data-tooltip="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="users.html" data-tooltip="Người Dùng">
+                <i class="fas fa-users"></i>
+                <span>Người Dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="teachers.html" data-tooltip="Giáo Viên">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Giáo Viên</span>
+              </a>
+            </li>
+            <li>
+              <a href="courses.html" data-tooltip="Khóa Học">
+                <i class="fas fa-book-open"></i>
+                <span>Khóa Học</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="active" data-tooltip="Lịch Trình">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch Trình</span>
+              </a>
+            </li>
+            <li>
+              <a href="bookings.html" data-tooltip="Đặt Lịch">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Lịch</span>
+              </a>
+            </li>
+            <li>
+              <a href="dishes.html" data-tooltip="Món Ăn">
+                <i class="fas fa-hamburger"></i>
+                <span>Món Ăn</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1><i class="fas fa-calendar-alt" style="color: var(--primary); margin-right: 10px;"></i> Quản Lý Lịch Trình</h1>
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="../assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area" id="contentArea">
+          <div class="action-bar">
+            <div class="action-bar-left">
+              <select class="form-control" id="filterCourse" style="min-width: 200px;">
+                <option value="">Tất cả khóa học</option>
+              </select>
+              <select class="form-control" id="filterTeacher" style="min-width: 200px;">
+                <option value="">Tất cả giáo viên</option>
+              </select>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" id="btnAddSchedule">
+                <i class="fas fa-plus"></i> Thêm Lịch Trình
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-list"></i> Danh Sách Lịch Trình</h3>
+            </div>
+            <div class="table-container" style="box-shadow: none; border-radius: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Khóa Học</th>
+                    <th>Giáo Viên</th>
+                    <th>Thứ Trong Tuần</th>
+                    <th>Thời Gian</th>
+                    <th>Địa Điểm</th>
+                    <th>Học Viên</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="schedulesTableBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Schedule Form Modal -->
+    <div id="scheduleModal" class="modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle"><i class="fas fa-calendar-plus"></i> Thêm Lịch Trình</h2>
+            <button class="close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="scheduleForm">
+              <input type="hidden" id="scheduleId" />
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Khóa Học <span class="text-danger">*</span></label>
+                    <select name="maKhoaHoc" class="form-control" required>
+                      <option value="">Chọn khóa học...</option>
+                    </select>
+                    <small class="form-text">Món ăn được gán cho khóa học tại trang Quản lý Món Ăn</small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Giáo Viên <span class="text-danger">*</span></label>
+                    <select name="maGiaoVien" class="form-control" required>
+                      <option value="">Chọn giáo viên...</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Giờ Bắt Đầu <span class="text-danger">*</span></label>
+                    <input type="time" name="gioBatDau" class="form-control" required />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Giờ Kết Thúc <span class="text-danger">*</span></label>
+                    <input type="time" name="gioKetThuc" class="form-control" required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Thứ Trong Tuần <span class="text-danger">*</span></label>
+                <input type="text" name="thuTrongTuan" class="form-control" placeholder="VD: Thứ 2, Thứ 4, Thứ 6" required />
+                <small class="form-text">Nhập các thứ cách nhau bởi dấu phẩy</small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Địa Điểm <span class="text-danger">*</span></label>
+                <textarea name="diaDiem" class="form-control" rows="2" placeholder="Nhập địa chỉ đầy đủ..." required></textarea>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Số Lượng Tối Đa <span class="text-danger">*</span></label>
+                    <input type="number" name="soLuongToiDa" class="form-control" value="20" min="1" required />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Trạng Thái</label>
+                    <select name="trangThai" class="form-control">
+                      <option value="true">Đang hoạt động</option>
+                      <option value="false">Tạm dừng</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal">
+              <i class="fas fa-times"></i> Hủy
+            </button>
+            <button type="submit" form="scheduleForm" class="btn btn-primary">
+              <i class="fas fa-save"></i> Lưu Lịch Trình
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Detail Modal -->
+    <div id="scheduleDetailModal" class="modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="detailScheduleTitle"><i class="fas fa-info-circle"></i> Chi Tiết Lịch Trình</h2>
+            <button class="close" onclick="closeScheduleDetailModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+              <span class="badge badge-success" id="detailScheduleStatus">
+                <i class="fas fa-check-circle"></i> Đang hoạt động
+              </span>
+              <span class="badge badge-info" id="detailScheduleSeats">
+                <i class="fas fa-users"></i> 5/20 học viên
+              </span>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-book" style="color: var(--primary);"></i> Khóa Học
+              </label>
+              <p id="detailScheduleCourse" style="margin: 8px 0 0 0; font-size: 16px;">Tên khóa học</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-chalkboard-teacher" style="color: var(--primary);"></i> Giáo Viên
+              </label>
+              <p id="detailScheduleTeacher" style="margin: 8px 0 0 0; font-size: 16px;">Tên giáo viên</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+              <div>
+                <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                  <i class="fas fa-calendar-week" style="color: var(--primary);"></i> Thứ trong tuần
+                </label>
+                <p id="detailScheduleDays" style="margin: 8px 0 0 0;">Thứ 2, Thứ 4, Thứ 6</p>
+              </div>
+              <div>
+                <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                  <i class="fas fa-clock" style="color: var(--primary);"></i> Thời gian
+                </label>
+                <p id="detailScheduleTime" style="margin: 8px 0 0 0;">09:00 - 12:00</p>
+              </div>
+            </div>
+
+            <div>
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Địa Điểm
+              </label>
+              <p id="detailScheduleLocation" style="margin: 8px 0 0 0;">Địa chỉ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/config/api-config.js"></script>
+    <script src="../assets/js/services/api-service.js"></script>
+    <script src="../assets/js/utils/helpers.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/modal.js"></script>
+    <script src="../assets/js/pages/schedules.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+    </script>
+  </body>
+</html>

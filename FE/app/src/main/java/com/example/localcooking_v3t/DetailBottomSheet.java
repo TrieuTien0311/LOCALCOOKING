@@ -272,7 +272,7 @@ public class DetailBottomSheet extends BottomSheetDialogFragment {
                     descFragment.setLopHoc(lopHoc);
                     return descFragment;
                 case 1:
-                    return new DetailEvaluateFragment();
+                    return DetailEvaluateFragment.newInstance(lopHoc != null ? lopHoc.getMaKhoaHoc() : -1);
                 case 2:
                     return new DetailPolicyFragment();
                 case 3:

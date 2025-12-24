@@ -1,0 +1,150 @@
+/* Users Page Specific Styles */
+
+/* Filter Section Refinement */
+.filter-section {
+  padding: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 14px;
+  z-index: 1;
+}
+
+.search-box input {
+  padding-left: 45px !important;
+}
+
+/* User Status Badges */
+.user-status-active {
+  color: #059669;
+  background: #ecfdf5;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-status-active::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #059669;
+  border-radius: 50%;
+}
+
+.user-status-blocked {
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-status-blocked::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #dc2626;
+  border-radius: 50%;
+}
+
+/* Action Buttons */
+.btn-action-lock {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #fee2e2;
+  background: #fff;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-action-lock:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+}
+
+.btn-action-unlock {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+  background: #fff;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-action-unlock:hover {
+  background: #059669;
+  color: #fff;
+  border-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);
+}
+
+/* Layout Utilities for Grid */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-2,
+.col-md-3,
+.col-md-4 {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-md-2 {
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+}
+
+.align-items-end {
+  align-items: flex-end !important;
+}
+
+.w-100 {
+  width: 100% !important;
+}

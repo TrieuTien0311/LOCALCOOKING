@@ -1,5 +1,6 @@
 package com.android.be.controller;
 
+import com.android.be.dto.DatLichDashboardDTO;
 import com.android.be.model.DatLich;
 import com.android.be.service.DatLichService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/datlich")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class DatLichController {
     
     private final DatLichService datLichService;
@@ -23,6 +23,12 @@ public class DatLichController {
     @GetMapping
     public ResponseEntity<List<DatLich>> getAllDatLich() {
         return ResponseEntity.ok(datLichService.getAllDatLich());
+    }
+    
+    // GET - Lấy tất cả đặt lịch với thông tin đầy đủ cho dashboard
+    @GetMapping("/dashboard")
+    public ResponseEntity<List<DatLichDashboardDTO>> getAllDatLichForDashboard() {
+        return ResponseEntity.ok(datLichService.getAllDatLichWithDetails());
     }
     
     // GET - Lấy đặt lịch theo ID

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Quản Trị</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="index.html" class="active" data-tooltip="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/users.html" data-tooltip="Người Dùng">
+                <i class="fas fa-users"></i>
+                <span>Người Dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/teachers.html" data-tooltip="Giáo Viên">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Giáo Viên</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/courses.html" data-tooltip="Khóa Học">
+                <i class="fas fa-book-open"></i>
+                <span>Khóa Học</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/schedules.html" data-tooltip="Lịch Trình">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch Trình</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/bookings.html" data-tooltip="Đặt Lịch">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Lịch</span>
+              </a>
+            </li>
+            <li>
+              <a href="pages/dishes.html" data-tooltip="Món Ăn">
+                <i class="fas fa-hamburger"></i>
+                <span>Món Ăn</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-tooltip="Cài Đặt">
+                <i class="fas fa-cog"></i>
+                <span>Cài Đặt</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1>Today Menu <span class="emoji">😋</span></h1>
+          </div>
+          
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Tìm kiếm khóa học, người dùng..." />
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+          <div class="welcome-content">
+            <h2>Xin chào, Admin! 👋</h2>
+            <p>Chào mừng bạn quay trở lại. Hôm nay có <strong>12 đơn đặt mới</strong> đang chờ xử lý.</p>
+            <button class="btn btn-primary" style="margin-top: 16px;">
+              <i class="fas fa-arrow-right"></i> Xem ngay
+            </button>
+          </div>
+          <div class="welcome-image">
+            <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Delivery" style="height: 140px;" />
+          </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+          <div class="stat-card animate-fade-in-up">
+            <div class="stat-icon bg-blue">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-details">
+              <h3 id="totalUsers">1,234</h3>
+              <p>Người Dùng</p>
+              <div class="stat-trend up">
+                <i class="fas fa-arrow-up"></i>
+                <span>+12% tháng này</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card animate-fade-in-up">
+            <div class="stat-icon bg-green">
+              <i class="fas fa-book-open"></i>
+            </div>
+            <div class="stat-details">
+              <h3 id="totalCourses">56</h3>
+              <p>Khóa Học</p>
+              <div class="stat-trend up">
+                <i class="fas fa-arrow-up"></i>
+                <span>+8% tháng này</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card animate-fade-in-up">
+            <div class="stat-icon bg-orange">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="stat-details">
+              <h3 id="totalBookings">892</h3>
+              <p>Đặt Lịch</p>
+              <div class="stat-trend up">
+                <i class="fas fa-arrow-up"></i>
+                <span>+24% tháng này</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card animate-fade-in-up">
+            <div class="stat-icon bg-purple">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-details">
+              <h3 id="totalRevenue">45.6M</h3>
+              <p>Doanh Thu</p>
+              <div class="stat-trend up">
+                <i class="fas fa-arrow-up"></i>
+                <span>+18% tháng này</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+          <!-- Recent Activities -->
+          <div class="content-section">
+            <div class="section-header">
+              <h3><i class="fas fa-history"></i> Hoạt Động Gần Đây</h3>
+              <a href="pages/bookings.html" class="view-all">
+                Xem tất cả <i class="fas fa-chevron-right"></i>
+              </a>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Người Dùng</th>
+                    <th>Hoạt Động</th>
+                    <th>Thời Gian</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody id="recentActivities">
+                  <tr>
+                    <td colspan="4" class="text-center">Đang tải dữ liệu...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="content-section">
+            <div class="section-header">
+              <h3><i class="fas fa-shopping-cart"></i> Đơn Hàng</h3>
+              <a href="#" class="view-all">
+                Xem tất cả <i class="fas fa-chevron-right"></i>
+              </a>
+            </div>
+            <div class="section-body">
+              <!-- Revenue Card -->
+              <div class="order-card">
+                <div class="order-card-label">Doanh thu hôm nay</div>
+                <div class="order-card-amount">₫ 2,560,000</div>
+                <div class="order-card-name">+15% so với hôm qua</div>
+              </div>
+              
+              <!-- Order List -->
+              <h4 style="margin-bottom: 16px; font-size: 14px;">Đơn hàng mới nhất</h4>
+              <div class="order-list">
+                <div class="order-item">
+                  <img src="https://cdn-icons-png.flaticon.com/512/1046/1046751.png" alt="Food" />
+                  <div class="order-item-info">
+                    <h4>Phở Bò Hà Nội</h4>
+                    <span>x1 người</span>
+                  </div>
+                  <div class="order-item-price">₫350,000</div>
+                </div>
+                <div class="order-item">
+                  <img src="https://cdn-icons-png.flaticon.com/512/1046/1046786.png" alt="Food" />
+                  <div class="order-item-info">
+                    <h4>Bánh Mì Sài Gòn</h4>
+                    <span>x2 người</span>
+                  </div>
+                  <div class="order-item-price">₫280,000</div>
+                </div>
+                <div class="order-item">
+                  <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="Food" />
+                  <div class="order-item-info">
+                    <h4>Bún Chả Hà Nội</h4>
+                    <span>x1 người</span>
+                  </div>
+                  <div class="order-item-price">₫320,000</div>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                Xem tất cả đơn hàng
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll to Top -->
+        <button id="scrollTopBtn" onclick="scrollToTop()">
+          <i class="fas fa-arrow-up"></i>
+        </button>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/config/api-config.js"></script>
+    <script src="assets/js/services/api-service.js"></script>
+    <script src="assets/js/utils/helpers.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script>
+      // Toggle sidebar expanded
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+      
+      // Scroll to top
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // Show scroll button
+      window.onscroll = function() {
+        const btn = document.getElementById('scrollTopBtn');
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          btn.style.display = 'flex';
+        } else {
+          btn.style.display = 'none';
+        }
+      };
+    </script>
+  </body>
+</html>

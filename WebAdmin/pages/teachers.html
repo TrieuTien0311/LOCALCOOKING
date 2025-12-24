@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Quản Lý Giáo Viên</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+    <link rel="stylesheet" href="../assets/css/pages/teachers.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="../assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="../index.html" data-tooltip="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="users.html" data-tooltip="Người Dùng">
+                <i class="fas fa-users"></i>
+                <span>Người Dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="teachers.html" class="active" data-tooltip="Giáo Viên">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Giáo Viên</span>
+              </a>
+            </li>
+            <li>
+              <a href="courses.html" data-tooltip="Khóa Học">
+                <i class="fas fa-book-open"></i>
+                <span>Khóa Học</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" data-tooltip="Lịch Trình">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch Trình</span>
+              </a>
+            </li>
+            <li>
+              <a href="bookings.html" data-tooltip="Đặt Lịch">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Lịch</span>
+              </a>
+            </li>
+            <li>
+              <a href="dishes.html" data-tooltip="Món Ăn">
+                <i class="fas fa-hamburger"></i>
+                <span>Món Ăn</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1><i class="fas fa-chalkboard-teacher" style="color: var(--primary); margin-right: 10px;"></i> Quản Lý Giáo Viên</h1>
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="../assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area" id="contentArea">
+          <div class="action-bar">
+            <div class="action-bar-left">
+              <div class="search-box" style="max-width: 400px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchTeacher" placeholder="Tìm theo tên, email, sđt, chuyên môn..." />
+              </div>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" id="btnAddTeacher">
+                <i class="fas fa-plus"></i> Thêm Giáo Viên
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-list"></i> Danh Sách Giáo Viên</h3>
+            </div>
+            <div class="table-container" style="box-shadow: none; border-radius: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 13%;">Họ Tên</th>
+                    <th style="width: 20%;">Email</th>
+                    <th style="width: 12%;">Số Điện Thoại</th>
+                    <th style="width: 15%;">Chuyên Môn</th>
+                    <th style="width: 28%;">Giới Thiệu</th>
+                    <th style="width: 12%;" class="text-center">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="teachersTableBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Teacher Modal -->
+    <div id="teacherModal" class="modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Thêm Giáo Viên Mới</h2>
+            <button class="close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="teacherForm">
+              <input type="hidden" name="maGiaoVien" id="teacherId" />
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                    <input type="text" name="hoTen" id="hoTen" class="form-control" placeholder="Nhập họ tên giáo viên" required />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Chuyên Môn <span class="text-danger">*</span></label>
+                    <input type="text" name="chuyenMon" id="chuyenMon" class="form-control" placeholder="Ví dụ: Bếp Trưởng, Bánh Âu..." required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="email@example.com" required />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Số Điện Thoại <span class="text-danger">*</span></label>
+                    <input type="tel" name="soDienThoai" id="soDienThoai" class="form-control" placeholder="0123456789" required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Giới Thiệu</label>
+                <textarea name="moTa" id="moTa" class="form-control" rows="4" placeholder="Mô tả về kinh nghiệm, thành tích của giáo viên..."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal">
+              <i class="fas fa-times"></i> Hủy
+            </button>
+            <button type="submit" form="teacherForm" class="btn btn-primary">
+              <i class="fas fa-save"></i> Lưu Thông Tin
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/config/api-config.js"></script>
+    <script src="../assets/js/services/api-service.js"></script>
+    <script src="../assets/js/utils/helpers.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/modal.js"></script>
+    <script src="../assets/js/pages/teachers.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+    </script>
+  </body>
+</html>

@@ -27,6 +27,8 @@ public class DonDatLichDTO {
     // Thông tin thanh toán
     private Boolean daThanhToan;
     private String ngayThanhToan;
+    private String transId;
+    private String orderId;
     
     // Thông tin người đặt
     private String tenNguoiDat;
@@ -88,6 +90,12 @@ public class DonDatLichDTO {
     
     public String getNgayThanhToan() { return ngayThanhToan; }
     public void setNgayThanhToan(String ngayThanhToan) { this.ngayThanhToan = ngayThanhToan; }
+    
+    public String getTransId() { return transId; }
+    public void setTransId(String transId) { this.transId = transId; }
+    
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
     
     public String getTenNguoiDat() { return tenNguoiDat; }
     public void setTenNguoiDat(String tenNguoiDat) { this.tenNguoiDat = tenNguoiDat; }
