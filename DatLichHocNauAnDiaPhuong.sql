@@ -1803,9 +1803,76 @@ INSERT INTO MonAn (maKhoaHoc, maDanhMuc, tenMon, gioiThieu, nguyenLieu) VALUES
 (65, N'nom_hoa_chuoi_tai_heo_1.jpg', 1), (65, N'nom_hoa_chuoi_tai_heo_2.jpg', 2),
 (66, N'cha_ca_la_vong_1.jpg', 1),        (66, N'cha_ca_la_vong_2.jpg', 2),
 (67, N'xoi_com_1.jpg', 1),       (67, N'xoi_com_2.jpg', 2)
+
+INSERT INTO DanhGia (maDatLich, maHocVien, maKhoaHoc, diemDanhGia, binhLuan, ngayDanhGia) VALUES
+-- Khóa học 1: Ẩm thực phố cổ Hà Nội
+(NULL, 4, 1, 5, N'Lớp học tuyệt vời! Thầy dạy rất tận tình, mình đã học được cách nấu phở chuẩn vị Hà Nội. Bún chả cũng ngon xuất sắc!', '2025-11-20 14:30:00'),
+(NULL, 5, 1, 4, N'Không gian học thoải mái, nguyên liệu tươi ngon. Chỉ tiếc là thời gian hơi ngắn, muốn học thêm nhiều món nữa.', '2025-11-22 10:15:00'),
+
+-- Khóa học 2: Bún và Món Cuốn Hà Thành
+(NULL, 6, 2, 5, N'Bún thang nấu ra ngon không tưởng! Cô giáo hướng dẫn chi tiết từng bước, về nhà làm lại được ngay.', '2025-10-15 16:00:00'),
+(NULL, 4, 2, 5, N'Món gỏi cuốn học xong cuốn đẹp như nhà hàng luôn. Rất hài lòng với khóa học này!', '2025-10-18 09:30:00'),
+
+-- Khóa học 3: Bánh Dân Gian & Quà Quê Bắc Bộ
+(NULL, 5, 3, 4, N'Bánh cuốn tráng mỏng như giấy, thầy dạy kỹ thuật rất hay. Bánh khúc thơm mùi lá khúc đúng vị quê.', '2025-09-25 11:00:00'),
+(NULL, 6, 3, 5, N'Lớp học mang lại cảm giác hoài niệm tuổi thơ. Bánh trôi nước gừng ấm bụng, ngon tuyệt!', '2025-09-28 15:45:00'),
+
+-- Khóa học 4: Món Nhậu & Lai Rai Hà Nội
+(NULL, 4, 4, 4, N'Nem chua rán giòn tan, bún đậu mắm tôm chuẩn vị vỉa hè Hà Nội. Rất thích không khí lớp học vui vẻ.', '2025-08-10 18:00:00'),
+(NULL, 5, 4, 5, N'Học xong về làm mẹt bún đậu đãi cả nhà, ai cũng khen ngon. Cảm ơn thầy cô rất nhiều!', '2025-08-12 20:30:00'),
+
+-- Khóa học 5: Tinh Hoa Cung Đình Huế
+(NULL, 6, 5, 5, N'Bún bò Huế cay nồng đúng vị xứ Huế! Cơm hến với hàng chục loại gia vị, học xong mới biết ẩm thực Huế tinh tế thế nào.', '2025-07-20 12:00:00'),
+(NULL, 4, 5, 5, N'Bánh bèo đổ ra đẹp như tranh, tôm chấy thơm phức. Đây là khóa học đáng giá nhất mình từng tham gia!', '2025-07-25 14:15:00'),
+
+-- Khóa học 6: Bánh Huế Truyền Thống
+(NULL, 5, 6, 4, N'Học được cách gói bánh lọc, bánh nậm đẹp mắt. Kỹ thuật gói lá chuối khó nhưng cô giáo hướng dẫn rất kiên nhẫn.', '2025-06-15 10:30:00'),
+(NULL, 6, 6, 4, N'Bánh ít lá gai nhân đậu xanh thơm bùi. Lớp học rất bổ ích cho ai yêu thích bánh truyền thống.', '2025-06-18 16:45:00'),
+
+-- Khóa học 7: Ẩm Thực Chay Xứ Huế
+(NULL, 4, 7, 5, N'Món chay mà ngon không thua gì món mặn! Bún chay Huế nước dùng ngọt tự nhiên từ rau củ, rất thanh tịnh.', '2025-05-10 09:00:00'),
+(NULL, 5, 7, 4, N'Chè sen thanh mát, bánh bột lọc chay nhân nấm rất lạ miệng. Phù hợp cho người ăn chay hoặc muốn đổi vị.', '2025-05-12 11:30:00'),
+
+-- Khóa học 8: Bánh Trái & Quà Chiều Cố Đô
+(NULL, 6, 8, 5, N'Combo bánh lọc lá và chè khoai tía ngon tuyệt! Đúng kiểu ăn xế của người Huế, rất thú vị.', '2025-04-20 15:00:00'),
+(NULL, 4, 8, 4, N'Chè bột lọc heo quay độc đáo, chưa từng ăn ở đâu. Lớp học mang đến trải nghiệm ẩm thực mới lạ.', '2025-04-22 17:30:00'),
+
+-- Khóa học 9: Đặc Sản Biển Đà Nẵng
+(NULL, 5, 9, 5, N'Mì Quảng nấu ra đậm đà, ít nước đúng kiểu miền Trung. Bánh tráng cuốn thịt heo chấm mắm nêm ngon xuất sắc!', '2025-03-15 13:00:00'),
+(NULL, 6, 9, 5, N'Gỏi cá Nam Ô làm theo cách an toàn, không lo tanh. Chè bắp Cẩm Nam ngọt dẻo, rất thích!', '2025-03-18 10:45:00'),
+
+-- Khóa học 10: Bánh Xèo & Nem Lụi Đà Nẵng
+(NULL, 4, 10, 4, N'Bánh xèo miền Trung nhỏ xinh, vỏ giòn tan. Nem lụi nướng sả thơm phức, nước chấm gan đậu phộng béo ngậy!', '2025-02-10 14:30:00'),
+(NULL, 5, 10, 5, N'Học xong về mở tiệc bánh xèo cho cả nhà. Ai cũng khen ngon hơn ngoài hàng. Cảm ơn lớp học!', '2025-02-12 16:00:00'),
+
+-- Khóa học 11: Bún Mắm & Chả Cá Miền Trung
+(NULL, 6, 11, 4, N'Chả cá thu quết dai ngon, không hàn the. Bún chả cá nước dùng ngọt thanh từ bí đỏ, rất lạ và ngon.', '2025-09-20 11:15:00'),
+(NULL, 4, 11, 5, N'Bún mắm nêm thịt quay giòn bì đậm vị miền Trung. Chè khoai môn béo ngậy, tráng miệng hoàn hảo!', '2025-11-22 09:30:00'),
+
+-- Khóa học 12: Sợi Bánh Thủ Công & Cao Lầu
+(NULL, 5, 12, 5, N'Cao lầu Hội An với sợi mì vàng ươm, thịt xíu thơm lừng. Đây là món mình mong chờ nhất và không thất vọng!', '2025-07-15 12:30:00'),
+(NULL, 6, 12, 4, N'Bánh canh cua sợi dai trong, nước dùng sánh sệt. Ram tôm đất giòn rụm, ăn hoài không chán.', '2025-11-18 14:00:00'),
+
+-- Khóa học 13: Hương Vị Miền Tây Sông Nước
+(NULL, 4, 13, 5, N'Lẩu mắm đậm đà, ăn kèm rau đồng nội đúng vị miền Tây. Cá lóc nướng trui thơm mùi rơm, ngon không tả nổi!', '2025-10-10 18:00:00'),
+(NULL, 5, 13, 5, N'Gỏi xoài khô cá lóc lạ miệng, chuối nếp nướng nước cốt dừa béo ngậy. Lớp học mang cả miền Tây vào bếp!', '2025-11-12 10:30:00'),
+
+-- Khóa học 14: Bánh Xèo & Bánh Khọt Nam Bộ
+(NULL, 6, 14, 4, N'Bánh xèo miền Tây chảo lớn mỏng tang, bánh khọt nhỏ xinh nhân tôm tươi. Bún riêu cua đóng tảng đẹp mắt!', '2025-10-20 15:45:00'),
+(NULL, 4, 14, 5, N'Học được bí quyết pha bột bánh xèo giòn rụm. Bánh tằm bì nước cốt dừa ngọt thanh, rất thích!', '2025-10-22 11:00:00'),
+
+-- Khóa học 15:Hủ Tiếu & Món Ngon Phương Nam
+(NULL, 5, 15, 5, N'Hủ tiếu Sa Đéc với sốt trộn khô đặc biệt, hủ tiếu Nam Vang nước lèo ngọt xương ống. Ngon đúng chuẩn!', '2025-09-15 09:00:00'),
+(NULL, 6, 15, 4, N'Gỏi củ hủ dừa giòn sần sật, sâm bổ lượng giải nhiệt mùa hè. Lớp học rất đáng để tham gia!', '2025-09-18 13:30:00'),
+
+-- Khóa học 16: Biến Tấu Chuối & Chè Nam Bộ
+(NULL, 4, 16, 4, N'Bánh da lợn đổ tách lớp đẹp, bánh chuối nướng đỏ au thơm lừng. Chè bà ba béo ngậy đúng vị miền Tây!', '2025-08-10 16:00:00'),
+(NULL, 5, 16, 5, N'Chuối là nguyên liệu vàng thật! Học xong biết làm bao nhiêu món ngon từ chuối. Rất hài lòng!', '2025-08-12 14:15:00');
+
 select * from ThanhToan
 select * from DatLich
 select * from NguoiDung
 select * from MonAn
 select * from KhoaHoc
 select * from LichTrinhLopHoc
+select * from DanhGia
