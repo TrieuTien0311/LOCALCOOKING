@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +25,10 @@ public class Vouchers extends AppCompatActivity {
     public static final String EXTRA_MA_HOC_VIEN = "maHocVien";
     public static final String EXTRA_SO_LUONG_NGUOI = "soLuongNguoi";
     public static final String EXTRA_TONG_TIEN = "tongTien";
+    
+    // Extra keys cho voucher đã chọn trước đó (để giữ trạng thái khi quay lại)
+    public static final String EXTRA_SELECTED_MA_UU_DAI = "selectedMaUuDai";
+    public static final String EXTRA_SELECTED_MA_CODE = "selectedMaCode";
 
     // Result keys
     public static final String RESULT_MA_UU_DAI = "maUuDai";
@@ -29,9 +36,27 @@ public class Vouchers extends AppCompatActivity {
     public static final String RESULT_TEN_UU_DAI = "tenUuDai";
     public static final String RESULT_GIA_TRI_GIAM = "giaTriGiam";
     public static final String RESULT_LOAI_GIAM = "loaiGiam";
+    public static final String RESULT_SO_TIEN_GIAM = "soTienGiam";
 
     private VouchersFragment vouchersFragment;
     private UuDaiDTO selectedUuDai;
+    
+    // Voucher đã chọn trước đó (từ trang thanh toán)
+    private Integer preSelectedMaUuDai;
+    private String preSelectedMaCode;
+    
+    // Views cho frameApDung
+    private FrameLayout frameApDung;
+    private TextView txtVoucherCount;
+    private TextView txtGiamLabel;
+    private TextView txtSoTienGiam;
+    private Button btnApDung;
+    private EditText edtUuDai;
+    private Button btnApDung1;
+    
+    // Dữ liệu
+    private double tongTien = 0;
+    private double soTienGiam = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +65,13 @@ public class Vouchers extends AppCompatActivity {
         
         // Set màu status bar
         setStatusBarColor();
+        
+        // Init views
+        initViews();
 
         // Lấy dữ liệu từ Intent
         Integer maHocVien = null;
         int soLuongNguoi = 1;
-        double tongTien = 0;
 
         if (getIntent() != null) {
             maHocVien = getIntent().getIntExtra(EXTRA_MA_HOC_VIEN, -1);
@@ -54,7 +81,16 @@ public class Vouchers extends AppCompatActivity {
             }
             soLuongNguoi = getIntent().getIntExtra(EXTRA_SO_LUONG_NGUOI, 1);
             tongTien = getIntent().getDoubleExtra(EXTRA_TONG_TIEN, 0);
+            
+            // Lấy thông tin voucher đã chọn trước đó (nếu có)
+            preSelectedMaUuDai = getIntent().getIntExtra(EXTRA_SELECTED_MA_UU_DAI, -1);
+            if (preSelectedMaUuDai == -1) preSelectedMaUuDai = null;
+            preSelectedMaCode = getIntent().getStringExtra(EXTRA_SELECTED_MA_CODE);
         }
+        
+        Log.d(TAG, "tongTien from Intent: " + tongTien);
+        Log.d(TAG, "preSelectedMaUuDai: " + preSelectedMaUuDai);
+        Log.d(TAG, "preSelectedMaCode: " + preSelectedMaCode);
 
         // Xử lý nút quay lại
         ImageView btnBack = findViewById(R.id.imageView6);
@@ -63,8 +99,7 @@ public class Vouchers extends AppCompatActivity {
             finish();
         });
 
-        // Xử lý nút áp dụng
-        Button btnApDung = findViewById(R.id.btnApDung);
+        // Xử lý nút áp dụng (bottom)
         btnApDung.setOnClickListener(v -> {
             if (selectedUuDai != null) {
                 Intent resultIntent = new Intent();
@@ -73,25 +108,128 @@ public class Vouchers extends AppCompatActivity {
                 resultIntent.putExtra(RESULT_TEN_UU_DAI, selectedUuDai.getTieuDe());
                 resultIntent.putExtra(RESULT_GIA_TRI_GIAM, selectedUuDai.getGiaTriGiam());
                 resultIntent.putExtra(RESULT_LOAI_GIAM, selectedUuDai.getLoaiGiam());
+                resultIntent.putExtra(RESULT_SO_TIEN_GIAM, soTienGiam);
                 setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
                 Toast.makeText(this, "Vui lòng chọn một mã ưu đãi", Toast.LENGTH_SHORT).show();
             }
         });
+        
+        // Xử lý nút áp dụng mã nhập tay (trong card)
+        btnApDung1.setOnClickListener(v -> {
+            String maCode = edtUuDai.getText().toString().trim();
+            if (maCode.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập mã ưu đãi", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // TODO: Gọi API kiểm tra mã ưu đãi
+            Toast.makeText(this, "Đang kiểm tra mã: " + maCode, Toast.LENGTH_SHORT).show();
+        });
+
+        // Cập nhật UI ban đầu (chưa chọn voucher)
+        updateBottomBar(false);
 
         // Thêm Fragment vào container
         if (savedInstanceState == null) {
-            vouchersFragment = VouchersFragment.newInstance(maHocVien, soLuongNguoi, tongTien);
+            vouchersFragment = VouchersFragment.newInstance(maHocVien, soLuongNguoi, tongTien, preSelectedMaUuDai, preSelectedMaCode);
             vouchersFragment.setOnVoucherSelectedListener(uuDai -> {
                 selectedUuDai = uuDai;
-                Log.d(TAG, "Selected voucher: " + uuDai.getMaCode());
+                Log.d(TAG, "Selected voucher: " + uuDai.getMaCode() + ", giaTriGiam: " + uuDai.getGiaTriGiam());
+                
+                // Tính số tiền giảm và cập nhật UI
+                calculateDiscount(uuDai);
+                updateBottomBar(true);
+            });
+            
+            // Lắng nghe sự kiện bỏ chọn voucher (untick)
+            vouchersFragment.setOnVoucherDeselectedListener(() -> {
+                selectedUuDai = null;
+                soTienGiam = 0;
+                Log.d(TAG, "Voucher deselected");
+                updateBottomBar(false);
             });
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragmentContainer, vouchersFragment);
             transaction.commit();
         }
+    }
+    
+    private void initViews() {
+        frameApDung = findViewById(R.id.frameApDung);
+        txtVoucherCount = findViewById(R.id.textView32);
+        txtGiamLabel = findViewById(R.id.textView36);
+        txtSoTienGiam = findViewById(R.id.textView37);
+        btnApDung = findViewById(R.id.btnApDung);
+        edtUuDai = findViewById(R.id.edtUuDai);
+        btnApDung1 = findViewById(R.id.btnApDung1);
+    }
+    
+    /**
+     * Tính số tiền giảm dựa trên loại giảm giá
+     */
+    private void calculateDiscount(UuDaiDTO uuDai) {
+        if (uuDai == null || uuDai.getGiaTriGiam() == null) {
+            soTienGiam = 0;
+            return;
+        }
+        
+        double giaTriGiam = uuDai.getGiaTriGiam();
+        String loaiGiam = uuDai.getLoaiGiam();
+        
+        if ("PhanTram".equals(loaiGiam)) {
+            // Giảm theo phần trăm
+            soTienGiam = tongTien * giaTriGiam / 100;
+            
+            // Áp dụng giảm tối đa nếu có
+            if (uuDai.getGiamToiDa() != null && soTienGiam > uuDai.getGiamToiDa()) {
+                soTienGiam = uuDai.getGiamToiDa();
+            }
+        } else {
+            // Giảm số tiền cố định
+            soTienGiam = giaTriGiam;
+        }
+        
+        // Đảm bảo không giảm quá tổng tiền
+        if (soTienGiam > tongTien) {
+            soTienGiam = tongTien;
+        }
+        
+        Log.d(TAG, "Calculated discount: " + soTienGiam + " (loaiGiam: " + loaiGiam + ", giaTriGiam: " + giaTriGiam + ")");
+    }
+    
+    /**
+     * Cập nhật bottom bar hiển thị thông tin voucher đã chọn
+     */
+    private void updateBottomBar(boolean hasSelection) {
+        if (hasSelection && selectedUuDai != null) {
+            // Hiển thị thông tin voucher đã chọn
+            txtVoucherCount.setText("1 Voucher đã được chọn");
+            txtGiamLabel.setVisibility(View.VISIBLE);
+            txtSoTienGiam.setVisibility(View.VISIBLE);
+            txtSoTienGiam.setText("-" + formatCurrency(soTienGiam));
+            
+            // Enable nút áp dụng
+            btnApDung.setEnabled(true);
+            btnApDung.setAlpha(1.0f);
+        } else {
+            // Chưa chọn voucher
+            txtVoucherCount.setText("Chưa chọn voucher");
+            txtGiamLabel.setVisibility(View.GONE);
+            txtSoTienGiam.setVisibility(View.GONE);
+            
+            // Disable nút áp dụng
+            btnApDung.setEnabled(false);
+            btnApDung.setAlpha(0.5f);
+        }
+    }
+    
+    /**
+     * Format số tiền với dấu chấm phân cách
+     */
+    private String formatCurrency(double amount) {
+        return String.format("%,.0f₫", amount).replace(",", ".");
     }
     
     private void setStatusBarColor() {

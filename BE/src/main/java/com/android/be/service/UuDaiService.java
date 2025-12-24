@@ -52,7 +52,12 @@ public class UuDaiService {
     }
     
     /**
-     * Lấy danh sách ưu đãi khả dụng cho user
+     * Lấy danh sách ưu đãi khả dụng cho user (dùng cho Activity Vouchers - chọn áp dụng)
+     * CHỈ hiển thị voucher ĐỦ ĐIỀU KIỆN để áp dụng
+     * 
+     * Logic:
+     * - Khách hàng MỚI (chưa có đơn): NEWUSER + GROUP (nếu đủ số lượng) + NORMAL
+     * - Khách hàng CŨ (đã có đơn): GROUP (nếu đủ số lượng) + NORMAL
      */
     public List<UuDaiDTO> getAvailableUuDaiForUser(Integer maHocVien, Integer soLuongNguoi) {
         LocalDate today = LocalDate.now();
@@ -65,13 +70,45 @@ public class UuDaiService {
             result.addAll(newUserUuDai);
         }
         
-        // Check nếu số lượng >= điều kiện → có thể dùng mã GROUP
+        // Chỉ thêm voucher GROUP nếu đủ điều kiện số lượng
         List<UuDai> groupUuDai = uuDaiRepository.findActiveByLoaiUuDai("GROUP", today);
         for (UuDai uuDai : groupUuDai) {
-            if (uuDai.getDieuKienSoLuong() != null && soLuongNguoi >= uuDai.getDieuKienSoLuong()) {
+            if (uuDai.getDieuKienSoLuong() == null || soLuongNguoi >= uuDai.getDieuKienSoLuong()) {
                 result.add(uuDai);
             }
         }
+        
+        // Thêm các mã NORMAL (không có điều kiện đặc biệt)
+        List<UuDai> normalUuDai = uuDaiRepository.findActiveByLoaiUuDai("NORMAL", today);
+        result.addAll(normalUuDai);
+        
+        return result.stream()
+                .map(uuDaiMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Lấy danh sách ưu đãi để HIỂN THỊ cho user (dùng cho DetailVoucherFragment - xem thông tin)
+     * Hiển thị TẤT CẢ voucher để khách biết có ưu đãi (dù chưa đủ điều kiện)
+     * 
+     * Logic:
+     * - Khách hàng MỚI (chưa có đơn): NEWUSER + GROUP + NORMAL
+     * - Khách hàng CŨ (đã có đơn): GROUP + NORMAL
+     */
+    public List<UuDaiDTO> getDisplayUuDaiForUser(Integer maHocVien) {
+        LocalDate today = LocalDate.now();
+        List<UuDai> result = new ArrayList<>();
+        
+        // Check nếu là đơn đầu tiên → hiển thị mã NEWUSER
+        boolean isFirstOrder = !datLichRepository.existsByMaHocVien(maHocVien);
+        if (isFirstOrder) {
+            List<UuDai> newUserUuDai = uuDaiRepository.findActiveByLoaiUuDai("NEWUSER", today);
+            result.addAll(newUserUuDai);
+        }
+        
+        // Luôn hiển thị voucher GROUP để khách hàng biết có ưu đãi này
+        List<UuDai> groupUuDai = uuDaiRepository.findActiveByLoaiUuDai("GROUP", today);
+        result.addAll(groupUuDai);
         
         // Thêm các mã NORMAL (không có điều kiện đặc biệt)
         List<UuDai> normalUuDai = uuDaiRepository.findActiveByLoaiUuDai("NORMAL", today);

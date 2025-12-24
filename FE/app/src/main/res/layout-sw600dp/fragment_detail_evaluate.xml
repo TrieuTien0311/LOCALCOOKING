@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout cho tablet - fragment_detail_evaluate.xml -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".DetailEvaluateFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp">
+
+        <!-- Header: Đánh giá + Điểm trung bình -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtDanhGia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Đánh giá"
+                android:textColor="#000000"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtSao1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgSao1"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_star" />
+        </LinearLayout>
+
+        <!-- Progress bars cho từng sao -->
+        <LinearLayout
+            android:id="@+id/SoLuongTungDanhGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- 5 sao -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt5sao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="5 sao"
+                    android:textColor="#7A7777"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/prb5sao"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_rounded" />
+            </LinearLayout>
+
+            <!-- 4 sao -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt4sao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="4 sao"
+                    android:textColor="#7A7777"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/prb4sao"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_rounded" />
+            </LinearLayout>
+
+            <!-- 3 sao -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt3sao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="3 sao"
+                    android:textColor="#7A7777"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/prb3sao"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_rounded" />
+            </LinearLayout>
+
+            <!-- 2 sao -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt2sao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="2 sao"
+                    android:textColor="#7A7777"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/prb2sao"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_rounded" />
+            </LinearLayout>
+
+            <!-- 1 sao -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt1sao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="1 sao"
+                    android:textColor="#7A7777"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/prb1sao"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_rounded" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp"
+            android:background="#EEEEEE" />
+
+        <!-- Chi tiết đánh giá header -->
+        <TextView
+            android:id="@+id/txtChiTietDG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:paddingStart="12dp"
+            android:text="Chi tiết đánh giá"
+            android:textColor="#000000"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Filter buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <!-- Có nhận xét -->
+            <LinearLayout
+                android:id="@+id/btnFilterNhanXet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_filter_orange"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/txtCoNhanXet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Có nhận xét"
+                    android:textColor="#734322"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtSLNhanXet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(0)"
+                    android:textColor="#7C4B2A"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Có hình ảnh -->
+            <LinearLayout
+                android:id="@+id/btnFilterHinhAnh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_filter_orange"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/txtCoHinhAnh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Có hình ảnh"
+                    android:textColor="#734322"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtSLHinhAnh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(0)"
+                    android:textColor="#7C4B2A"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Sao -->
+            <LinearLayout
+                android:id="@+id/btnFilterSao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_filter_gray"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtSao2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sao"
+                        android:textColor="#734322"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_star" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtFilterSaoValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(Tất cả)"
+                    android:textColor="#7C4B2A"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Empty state -->
+        <TextView
+            android:id="@+id/txtEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Chưa có đánh giá nào"
+            android:textColor="#888888"
+            android:textSize="17sp"
+            android:visibility="gone" />
+
+        <!-- RecyclerView danh sách đánh giá -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerDanhGia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:nestedScrollingEnabled="false" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

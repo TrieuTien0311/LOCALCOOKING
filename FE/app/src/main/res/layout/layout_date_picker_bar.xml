@@ -27,7 +27,6 @@
 
     </HorizontalScrollView>
 
-    <!-- Nút "Chọn ngày" cố định bên phải -->
     <androidx.cardview.widget.CardView
         android:id="@+id/btnChonNgay"
         android:layout_width="80dp"

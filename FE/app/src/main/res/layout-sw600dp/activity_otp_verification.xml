@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F5E6D3"
+        tools:context=".OtpVerification">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/innerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F5E6D3"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Quay lại"
+                android:textColor="#6B4423"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btnBack"
+                app:layout_constraintStart_toEndOf="@id/btnBack"
+                app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="40dp"
+                android:contentDescription="Logo"
+                android:src="@drawable/logo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Local Cooking Text -->
+            <TextView
+                android:id="@+id/tvAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="cursive"
+                android:text="LocalCooking"
+                android:textColor="#8B4513"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivLogo" />
+
+            <!-- Card Container -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardOtp"
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvAppName">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical">
+
+                    <!-- Title -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#F4C19A"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="Quên mật khẩu"
+                        android:textColor="#3D2817"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+
+                    <!-- Content Container -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <!-- Description Text -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="24dp"
+                            android:gravity="center"
+                            android:text="Nhập mã OTP đã được gửi đến email của bạn"
+                            android:textColor="#666666"
+                            android:textSize="17sp" />
+
+                        <!-- OTP Section Title -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="20dp"
+                            android:text="Nhập mã OTP"
+                            android:textColor="#3D2817"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <!-- OTP Input Boxes -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="28dp"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/otpBox1"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/otpBox2"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/otpBox3"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/otpBox4"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/otpBox5"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/otpBox6"
+                                android:layout_width="60dp"
+                                android:layout_height="65dp"
+                                android:layout_marginHorizontal="6dp"
+                                android:background="@drawable/otp_box_bg"
+                                android:gravity="center"
+                                android:importantForAutofill="no"
+                                android:inputType="number"
+                                android:maxLength="1"
+                                android:textColor="#3D2817"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- New Password Input -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilMatKhauMoi"
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Mật khẩu mới"
+                            app:hintAnimationEnabled="true"
+                            app:hintEnabled="true">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/idMatKhauMoi"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:autofillHints=""
+                                android:drawableEnd="@drawable/icon_eye_hide_tt"
+                                android:importantForAutofill="no"
+                                android:inputType="textPassword"
+                                android:padding="18dp"
+                                android:textColor="#000000"
+                                android:textSize="18sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Confirm Password Input -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilXacNhanMatKhau"
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="24dp"
+                            android:hint="Xác nhận mật khẩu mới"
+                            app:hintAnimationEnabled="true"
+                            app:hintEnabled="true">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/idXacNhanMatKhau"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:autofillHints=""
+                                android:drawableEnd="@drawable/icon_eye_hide_tt"
+                                android:importantForAutofill="no"
+                                android:inputType="textPassword"
+                                android:padding="18dp"
+                                android:textColor="#000000"
+                                android:textSize="18sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Submit Button -->
+                        <Button
+                            android:id="@+id/btnXacNhan"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_marginHorizontal="16dp"
+                            android:backgroundTint="#B73F41"
+                            android:text="Xác nhận"
+                            android:textAllCaps="false"
+                            android:textColor="#FAF6F6"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
