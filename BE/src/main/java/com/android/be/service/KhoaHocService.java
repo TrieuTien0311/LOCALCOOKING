@@ -5,9 +5,13 @@ import com.android.be.dto.KhoaHocDTO;
 import com.android.be.dto.LichTrinhLopHocDTO;
 import com.android.be.model.KhoaHoc;
 import com.android.be.model.LichTrinhLopHoc;
+import com.android.be.model.GiaoVien;
+import com.android.be.model.NguoiDung;
 import com.android.be.repository.DatLichRepository;
 import com.android.be.repository.KhoaHocRepository;
 import com.android.be.repository.LichTrinhLopHocRepository;
+import com.android.be.repository.GiaoVienRepository;
+import com.android.be.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -24,7 +28,9 @@ public class KhoaHocService {
     private final LichTrinhLopHocRepository lichTrinhRepository;
     private final DanhMucMonAnService danhMucMonAnService;
     private final DatLichRepository datLichRepository;
-    private final HinhAnhKhoaHocService hinhAnhKhoaHocService; // THÊM MỚI
+    private final HinhAnhKhoaHocService hinhAnhKhoaHocService;
+    private final GiaoVienRepository giaoVienRepository;
+    private final NguoiDungRepository nguoiDungRepository;
     
     public List<KhoaHocDTO> getAllKhoaHoc() {
         return khoaHocRepository.findAll().stream()
@@ -202,6 +208,22 @@ public class KhoaHocService {
         dto.setDiaDiem(lichTrinh.getDiaDiem());
         dto.setSoLuongToiDa(lichTrinh.getSoLuongToiDa());
         dto.setTrangThai(lichTrinh.getTrangThai());
+        
+        // Lấy tên giáo viên từ bảng GiaoVien -> NguoiDung
+        if (lichTrinh.getMaGiaoVien() != null) {
+            try {
+                Optional<GiaoVien> giaoVienOpt = giaoVienRepository.findById(lichTrinh.getMaGiaoVien());
+                if (giaoVienOpt.isPresent()) {
+                    GiaoVien giaoVien = giaoVienOpt.get();
+                    Optional<NguoiDung> nguoiDungOpt = nguoiDungRepository.findById(giaoVien.getMaNguoiDung());
+                    if (nguoiDungOpt.isPresent()) {
+                        dto.setTenGiaoVien(nguoiDungOpt.get().getHoTen());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error getting teacher name: " + e.getMessage());
+            }
+        }
         
         // Tính số chỗ còn trống cho ngày mai (hoặc ngày gần nhất)
         LocalDate ngayKiemTra = LocalDate.now().plusDays(1);
