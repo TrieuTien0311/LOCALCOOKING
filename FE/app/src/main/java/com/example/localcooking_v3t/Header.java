@@ -124,4 +124,20 @@ public class Header extends AppCompatActivity {
         selectButton(btnHome, "Trang chủ", R.drawable.ic_home_state2_thu, R.drawable.ic_home_thu);
         loadFragment(new HomeFragment());
     }
+
+    /**
+     * Chuyển đến OrderHistoryFragment (Lịch sử đặt lịch)
+     */
+    public void navigateToOrderHistory() {
+        selectButton(btnHis, "Lịch sử đặt lịch", R.drawable.ic_history_state2_thu, R.drawable.ic_history_thu);
+        loadFragment(new OrderHistoryFragment());
+    }
+
+    /**
+     * Chuyển đến FavoriteFragment (Yêu thích)
+     */
+    public void navigateToFavorite() {
+        selectButton(btnFav, "Yêu thích", R.drawable.ic_heart_state2_thu, R.drawable.ic_heart_thu);
+        loadFragment(new FavoriteFragment());
+    }
 }
