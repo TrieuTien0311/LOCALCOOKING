@@ -8,7 +8,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -17,14 +16,27 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
 
     private List<Voucher> danhSachUuDai;
     private OnItemClickListener listener;
+    private OnVoucherDeselectedListener deselectedListener;
     private boolean hienRadioButton = true;  // mặc định: có nút chọn
+    private String preSelectedMaCode = null; // Mã voucher đã chọn trước đó
 
     public void setHienRadioButton(boolean hien) {
         this.hienRadioButton = hien;
     }
+    
+    /**
+     * Set mã voucher đã chọn trước đó (để giữ trạng thái khi quay lại)
+     */
+    public void setPreSelectedMaCode(String maCode) {
+        this.preSelectedMaCode = maCode;
+    }
 
     public interface OnItemClickListener {
         void onDuocChonClick(Voucher uuDai);
+    }
+    
+    public interface OnVoucherDeselectedListener {
+        void onVoucherDeselected();
     }
 
     public VoucherAdapter(List<Voucher> danhSachUuDai) {
@@ -33,6 +45,10 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+    
+    public void setOnVoucherDeselectedListener(OnVoucherDeselectedListener listener) {
+        this.deselectedListener = listener;
     }
 
     @NonNull
@@ -55,34 +71,46 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
         // Set trạng thái RadioButton
         holder.rdbChon.setChecked(uuDai.isDuocChon());
 
-        holder.rdbChon.setOnClickListener(v -> {
-
-            // Bỏ chọn tất cả voucher khác
-            for (Voucher vc : danhSachUuDai) {
-                vc.setDuocChon(false);
-            }
-
-            // Chọn voucher hiện tại
-            uuDai.setDuocChon(true);
-
-            notifyDataSetChanged();
-
-            if (listener != null) listener.onDuocChonClick(uuDai);
-        });
-
-        // ⚡ Điều khiển hiển thị radio
+        // Điều khiển hiển thị radio
         if (!hienRadioButton) {
             holder.rdbChon.setVisibility(View.GONE);
         } else {
             holder.rdbChon.setVisibility(View.VISIBLE);
             holder.rdbChon.setChecked(uuDai.isDuocChon());
+            
+            // Xử lý click radio button - cho phép toggle (tick/untick)
             holder.rdbChon.setOnClickListener(v -> {
-                for (Voucher vc : danhSachUuDai) vc.setDuocChon(false);
-
-                uuDai.setDuocChon(true);
-                notifyDataSetChanged();
-
-                if (listener != null) listener.onDuocChonClick(uuDai);
+                boolean wasSelected = uuDai.isDuocChon();
+                
+                // Bỏ chọn tất cả voucher khác
+                for (Voucher vc : danhSachUuDai) {
+                    vc.setDuocChon(false);
+                }
+                
+                if (wasSelected) {
+                    // Nếu đang chọn -> bỏ chọn (untick)
+                    uuDai.setDuocChon(false);
+                    notifyDataSetChanged();
+                    
+                    // Thông báo đã bỏ chọn
+                    if (deselectedListener != null) {
+                        deselectedListener.onVoucherDeselected();
+                    }
+                } else {
+                    // Nếu chưa chọn -> chọn (tick)
+                    uuDai.setDuocChon(true);
+                    notifyDataSetChanged();
+                    
+                    // Thông báo đã chọn
+                    if (listener != null) {
+                        listener.onDuocChonClick(uuDai);
+                    }
+                }
+            });
+            
+            // Xử lý click cả item (không chỉ radio button)
+            holder.rootView.setOnClickListener(v -> {
+                holder.rdbChon.performClick();
             });
         }
     }
@@ -91,9 +119,31 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
     public int getItemCount() {
         return danhSachUuDai.size();
     }
+    
+    /**
+     * Lấy voucher đang được chọn
+     */
+    public Voucher getSelectedVoucher() {
+        for (Voucher vc : danhSachUuDai) {
+            if (vc.isDuocChon()) {
+                return vc;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Bỏ chọn tất cả voucher
+     */
+    public void clearSelection() {
+        for (Voucher vc : danhSachUuDai) {
+            vc.setDuocChon(false);
+        }
+        notifyDataSetChanged();
+    }
 
     static class UuDaiViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
+        View rootView; // Root view (CardView)
         ImageView imgMonAn;
         TextView txtTieuDe, txtMoTa, txtHSD;
         RadioButton rdbChon;
@@ -101,7 +151,7 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.UuDaiVie
         public UuDaiViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            cardView = itemView.findViewById(R.id.cardView);
+            rootView = itemView; // itemView chính là CardView (root element)
             imgMonAn = itemView.findViewById(R.id.imgMonAn);
             txtTieuDe = itemView.findViewById(R.id.txtTieuDe);
             txtMoTa = itemView.findViewById(R.id.txtMoTa);

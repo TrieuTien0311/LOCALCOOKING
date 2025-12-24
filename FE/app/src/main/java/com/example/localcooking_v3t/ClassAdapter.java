@@ -174,14 +174,25 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         if (lopHoc.getDaDienRa() != null && lopHoc.getDaDienRa()) {
             holder.overlayDim.setVisibility(View.VISIBLE);
             holder.txtDaDienRa.setVisibility(View.VISIBLE);
+            
+            // Disable nút đặt lịch khi lớp đã diễn ra
+            holder.btnDatLich.setEnabled(false);
+            holder.btnDatLich.setAlpha(0.5f);
+            holder.btnDatLich.setText("Đã qua");
         } else {
             holder.overlayDim.setVisibility(View.GONE);
             holder.txtDaDienRa.setVisibility(View.GONE);
+            
+            // Enable nút đặt lịch khi lớp chưa diễn ra
+            holder.btnDatLich.setEnabled(true);
+            holder.btnDatLich.setAlpha(1.0f);
+            holder.btnDatLich.setText("Đặt lịch");
         }
 
         // Xử lý sự kiện click
         holder.btnDatLich.setOnClickListener(v -> {
-            if (listener != null) {
+            // Chỉ cho phép đặt lịch nếu lớp chưa diễn ra
+            if (listener != null && (lopHoc.getDaDienRa() == null || !lopHoc.getDaDienRa())) {
                 listener.onDatLichClick(lopHoc);
             }
         });
