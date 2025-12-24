@@ -70,4 +70,9 @@ dependencies {
     // PhotoView for zoomable images
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
 
+    // ExoPlayer for fast video loading
+    implementation("androidx.media3:media3-exoplayer:1.2.1")
+    implementation("androidx.media3:media3-ui:1.2.1")
+    implementation("androidx.media3:media3-common:1.2.1")
+
 }
