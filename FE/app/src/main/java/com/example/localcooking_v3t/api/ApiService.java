@@ -333,4 +333,14 @@ public interface ApiService {
     // Lấy thông tin đơn để thanh toán lại
     @GET("api/don-dat-lich/{maDatLich}")
     Call<com.example.localcooking_v3t.model.DonDatLichDTO> getDonDatLichById(@Path("maDatLich") Integer maDatLich);
+
+    // ========== API MÓN ĂN ==========
+    
+    // Lấy tất cả món ăn
+    @GET("api/monan")
+    Call<List<com.example.localcooking_v3t.model.MonAn>> getAllMonAn();
+    
+    // Lấy món ăn theo ID
+    @GET("api/monan/{id}")
+    Call<com.example.localcooking_v3t.model.MonAn> getMonAnById(@Path("id") Integer id);
 }

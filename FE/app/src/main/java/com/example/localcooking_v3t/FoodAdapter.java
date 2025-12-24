@@ -127,24 +127,18 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             int currentIndex = currentImageIndexMap.get(maMonAn);
             HinhAnhMonAn hinhAnh = danhSachHinh.get(currentIndex);
             
-            // Chuyển đổi tên file thành resource ID
-            // Ví dụ: "nem_ran_ha_noi_1.jpg" -> "nem_ran_ha_noi_1"
+            // Load ảnh từ server URL
             String fileName = hinhAnh.getDuongDan();
-            String resourceName = fileName.replace(".jpg", "").replace(".png", "");
+            String imageUrl = RetrofitClient.BASE_URL + "uploads/dishes/" + fileName;
             
-            // Lấy resource ID từ drawable
-            int resourceId = holder.itemView.getContext().getResources()
-                    .getIdentifier(resourceName, "drawable", holder.itemView.getContext().getPackageName());
+            Log.d(TAG, "Loading image from URL: " + imageUrl);
             
-            if (resourceId != 0) {
-                // Nếu tìm thấy resource, load từ drawable
-                holder.imgMonAn.setImageResource(resourceId);
-                Log.d(TAG, "Loaded image: " + resourceName + " (ID: " + resourceId + ")");
-            } else {
-                // Nếu không tìm thấy, dùng placeholder
-                Log.e(TAG, "Không tìm thấy drawable: " + resourceName);
-                holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
-            }
+            // Sử dụng Glide để load ảnh từ URL
+            Glide.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_main_dish_tt)
+                .error(R.drawable.ic_main_dish_tt)
+                .into(holder.imgMonAn);
             
             // Cập nhật circle indicators
             updateCircleIndicators(holder, currentIndex, danhSachHinh.size());

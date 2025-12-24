@@ -1,8 +1,8 @@
 // Dishes Management
 let dishes = [];
 let filteredDishes = [];
-let courses = []; // Danh sách khóa học
-let categories = []; // Danh mục món ăn
+let courses = []; // Danh sách khóa học (để hiển thị tên)
+let categories = []; // Danh mục món ăn (để hiển thị tên)
 let currentPage = 1;
 const itemsPerPage = 10;
 let editingDishId = null;
@@ -21,8 +21,6 @@ async function loadData() {
   try {
     showLoading();
     await Promise.all([loadDishesData(), loadCoursesData(), loadCategoriesData()]);
-    populateCourseSelect();
-    populateCategorySelect();
     renderDishes();
     hideLoading();
   } catch (error) {
@@ -44,7 +42,7 @@ async function loadDishesData() {
   }
 }
 
-// Load courses data
+// Load courses data (để hiển thị tên khóa học)
 async function loadCoursesData() {
   try {
     const response = await apiService.get('/khoahoc');
@@ -55,42 +53,19 @@ async function loadCoursesData() {
   }
 }
 
-// Load categories data
+// Load categories data (để hiển thị tên danh mục)
 async function loadCategoriesData() {
   try {
     const response = await apiService.get('/danhmucmonan');
-    console.log('Categories API response:', response);
-    
-    // Check if response is error object
     if (response && response.success === false) {
       console.error('Categories API error:', response.message);
       categories = [];
       return;
     }
-    
     categories = Array.isArray(response) ? response : [];
-    console.log('Loaded categories:', categories);
   } catch (error) {
     console.error('Error loading categories:', error);
     categories = [];
-  }
-}
-
-// Populate course select
-function populateCourseSelect() {
-  const select = document.getElementById('maKhoaHoc');
-  if (select) {
-    select.innerHTML = '<option value="">-- Chọn khóa học --</option>' +
-      courses.map(c => `<option value="${c.maKhoaHoc}">${c.tenKhoaHoc}</option>`).join('');
-  }
-}
-
-// Populate category select
-function populateCategorySelect() {
-  const select = document.getElementById('maDanhMuc');
-  if (select) {
-    select.innerHTML = '<option value="">-- Chọn danh mục --</option>' +
-      categories.map(c => `<option value="${c.maDanhMuc}">${c.tenDanhMuc}</option>`).join('');
   }
 }
 
@@ -127,56 +102,55 @@ function renderDishes() {
   }
 
   tbody.innerHTML = paginatedDishes
-    .map(
-      (dish) => {
-        const course = courses.find(c => c.maKhoaHoc == dish.maKhoaHoc);
-        const category = categories.find(c => c.maDanhMuc == dish.maDanhMuc);
-        return `
-    <tr>
-      <td>
-        <span class="badge badge-secondary">#${dish.maMonAn}</span>
-      </td>
-      <td>
-        <strong>${dish.tenMon}</strong>
-      </td>
-      <td>
-        <div class="text-truncate" style="max-width: 250px;" title="${dish.gioiThieu || ''}">
-          ${dish.gioiThieu || '<span class="text-muted">Chưa có giới thiệu</span>'}
-        </div>
-      </td>
-      <td>
-        ${category 
-          ? `<span class="badge badge-success"><i class="fas fa-tag"></i> ${category.tenDanhMuc}</span>`
-          : '<span class="badge badge-warning"><i class="fas fa-question"></i> Chưa phân loại</span>'
-        }
-      </td>
-      <td>
-        ${course
-          ? `<span class="badge badge-primary"><i class="fas fa-book"></i> ${course.tenKhoaHoc}</span>`
-          : '<span class="badge badge-info"><i class="fas fa-circle"></i> Chưa gán</span>'
-        }
-      </td>
-      <td class="text-center">
-        <div class="btn-group">
-          <button class="btn-action btn-view" onclick="viewDish(${dish.maMonAn})" title="Xem chi tiết">
-            <i class="fas fa-eye"></i>
-          </button>
-          <button class="btn-action btn-edit" onclick="editDish(${dish.maMonAn})" title="Chỉnh sửa">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn-action btn-delete" onclick="deleteDish(${dish.maMonAn})" title="Xóa">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </td>
-    </tr>
-  `;
-      }
-    )
+    .map((dish) => {
+      const course = courses.find(c => c.maKhoaHoc == dish.maKhoaHoc);
+      const category = categories.find(c => c.maDanhMuc == dish.maDanhMuc);
+      return `
+        <tr>
+          <td>
+            <span class="badge badge-secondary">#${dish.maMonAn}</span>
+          </td>
+          <td>
+            <strong>${dish.tenMon}</strong>
+          </td>
+          <td>
+            <div class="text-truncate" style="max-width: 250px;" title="${dish.gioiThieu || ''}">
+              ${dish.gioiThieu || '<span class="text-muted">Chưa có giới thiệu</span>'}
+            </div>
+          </td>
+          <td>
+            ${category 
+              ? `<span class="badge badge-success"><i class="fas fa-tag"></i> ${category.tenDanhMuc}</span>`
+              : '<span class="badge badge-warning"><i class="fas fa-question"></i> Chưa phân loại</span>'
+            }
+          </td>
+          <td>
+            ${course
+              ? `<span class="badge badge-primary"><i class="fas fa-book"></i> ${course.tenKhoaHoc}</span>`
+              : '<span class="badge badge-info"><i class="fas fa-circle"></i> Chưa gán</span>'
+            }
+          </td>
+          <td class="text-center">
+            <div class="btn-group">
+              <button class="btn-action btn-view" onclick="viewDish(${dish.maMonAn})" title="Xem chi tiết">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn-action btn-edit" onclick="editDish(${dish.maMonAn})" title="Chỉnh sửa">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-action btn-delete" onclick="deleteDish(${dish.maMonAn})" title="Xóa">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    })
     .join('');
 
   renderPagination();
 }
+
 
 // Render pagination
 function renderPagination() {
@@ -260,33 +234,25 @@ async function viewDish(id) {
 
   // Load category name if exists
   if (dish.maDanhMuc && !dish.tenDanhMuc) {
-    try {
-      const categories = await apiService.get('/danhmucmonan');
-      const categoryList = Array.isArray(categories) ? categories : [];
-      const category = categoryList.find((c) => c.maDanhMuc === dish.maDanhMuc);
-      dish.tenDanhMuc = category ? category.tenDanhMuc : 'Không xác định';
-    } catch (error) {
-      console.log('Could not load category:', error);
-    }
+    const category = categories.find((c) => c.maDanhMuc === dish.maDanhMuc);
+    dish.tenDanhMuc = category ? category.tenDanhMuc : 'Không xác định';
   }
 
   openDishDetailModal(dish, images);
 }
 
-// Edit dish
+// Edit dish - CHỈ SỬA THÔNG TIN CƠ BẢN, KHÔNG SỬA KHÓA HỌC VÀ DANH MỤC
 async function editDish(id) {
   const dish = dishes.find((d) => d.maMonAn === id);
   if (!dish) return;
 
   editingDishId = id;
-  imagesToDelete = []; // Reset delete list
-  document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Món Ăn';
+  imagesToDelete = [];
+  document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Chỉnh Sửa Món Ăn';
   document.getElementById('dishId').value = dish.maMonAn;
   document.getElementById('tenMon').value = dish.tenMon;
   document.getElementById('gioiThieu').value = dish.gioiThieu || '';
   document.getElementById('nguyenLieu').value = dish.nguyenLieu || '';
-  document.getElementById('maKhoaHoc').value = dish.maKhoaHoc || '';
-  document.getElementById('maDanhMuc').value = dish.maDanhMuc || '';
 
   // Load existing images
   selectedImages = [];
@@ -300,16 +266,14 @@ async function editDish(id) {
 
     if (images && images.length > 0) {
       previewContainer.innerHTML = images
-        .map(
-          (img) => `
-        <div class="image-preview-item" data-existing="${img.maHinhAnh}">
-          <img src="${API_CONFIG.BASE_URL}/uploads/${img.duongDan}" alt="Preview" />
-          <button type="button" class="remove-image" onclick="removeExistingImage(${img.maHinhAnh})">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      `
-        )
+        .map((img) => `
+          <div class="image-preview-item" data-existing="${img.maHinhAnh}">
+            <img src="${API_CONFIG.BASE_URL}/uploads/${img.duongDan}" alt="Preview" />
+            <button type="button" class="remove-image" onclick="removeExistingImage(${img.maHinhAnh})">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `)
         .join('');
     }
   } catch (error) {
@@ -326,7 +290,7 @@ async function deleteDish(id) {
   if (!dish) return;
 
   if (dish.maKhoaHoc) {
-    alert('Không thể xóa món ăn đã được gán vào khóa học');
+    alert('Không thể xóa món ăn đã được gán vào khóa học.\nVui lòng gỡ món ăn khỏi khóa học trước.');
     return;
   }
 
@@ -349,6 +313,7 @@ function removeExistingImage(imageId) {
   imagesToDelete.push(imageId);
   document.querySelector(`[data-existing="${imageId}"]`).remove();
 }
+
 
 // Initialize upload
 function initUpload() {
@@ -429,28 +394,16 @@ function removeNewImage(index) {
   }
 }
 
-// Handle form submit
+// Handle form submit - KHÔNG GỬI maKhoaHoc và maDanhMuc (sẽ là null)
 document.getElementById('dishForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const tenMon = document.getElementById('tenMon').value.trim();
   const gioiThieu = document.getElementById('gioiThieu').value.trim();
   const nguyenLieu = document.getElementById('nguyenLieu').value.trim();
-  const maKhoaHoc = document.getElementById('maKhoaHoc').value;
-  const maDanhMuc = document.getElementById('maDanhMuc').value;
 
   if (!tenMon || !gioiThieu || !nguyenLieu) {
     alert('Vui lòng điền đầy đủ thông tin');
-    return;
-  }
-
-  if (!maKhoaHoc) {
-    alert('Vui lòng chọn khóa học cho món ăn');
-    return;
-  }
-
-  if (!maDanhMuc) {
-    alert('Vui lòng chọn danh mục cho món ăn');
     return;
   }
 
@@ -472,14 +425,24 @@ document.getElementById('dishForm').addEventListener('submit', async (e) => {
   try {
     showLoading();
 
-    // Create/Update dish với maKhoaHoc và maDanhMuc
+    // Món ăn mới tạo sẽ có maKhoaHoc và maDanhMuc là null
+    // Sẽ được gán khi tạo khóa học
     const dishData = {
       tenMon,
       gioiThieu,
       nguyenLieu,
-      maKhoaHoc: parseInt(maKhoaHoc),
-      maDanhMuc: parseInt(maDanhMuc),
+      maKhoaHoc: null,
+      maDanhMuc: null,
     };
+
+    // Nếu đang edit, giữ nguyên maKhoaHoc và maDanhMuc hiện tại
+    if (editingDishId) {
+      const existingDish = dishes.find(d => d.maMonAn === editingDishId);
+      if (existingDish) {
+        dishData.maKhoaHoc = existingDish.maKhoaHoc;
+        dishData.maDanhMuc = existingDish.maDanhMuc;
+      }
+    }
 
     console.log('Saving dish data:', dishData);
 
@@ -488,7 +451,6 @@ document.getElementById('dishForm').addEventListener('submit', async (e) => {
       const response = await apiService.put(`/monan/${editingDishId}`, dishData);
       console.log('Update response:', response);
       
-      // Check if response is error
       if (response && response.success === false) {
         throw new Error(response.message || 'Lỗi cập nhật món ăn');
       }
@@ -509,7 +471,6 @@ document.getElementById('dishForm').addEventListener('submit', async (e) => {
       const response = await apiService.post('/monan', dishData);
       console.log('Create response:', response);
       
-      // Check if response is error
       if (response && response.success === false) {
         throw new Error(response.message || 'Lỗi tạo món ăn');
       }
@@ -547,9 +508,7 @@ document.getElementById('dishForm').addEventListener('submit', async (e) => {
 function resetForm() {
   document.getElementById('dishForm').reset();
   document.getElementById('dishId').value = '';
-  document.getElementById('maKhoaHoc').value = '';
-  document.getElementById('maDanhMuc').value = '';
-  document.getElementById('modalTitle').textContent = 'Thêm Món Ăn Mới';
+  document.getElementById('modalTitle').innerHTML = '<i class="fas fa-utensils"></i> Thêm Món Ăn Mới';
   document.getElementById('imagePreviewContainer').innerHTML = '';
   editingDishId = null;
   selectedImages = [];

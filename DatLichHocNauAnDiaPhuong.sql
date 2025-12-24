@@ -103,8 +103,8 @@ CREATE TABLE DanhMucMonAn (
 -- 7. MÓN ĂN
 CREATE TABLE MonAn (
     maMonAn INT PRIMARY KEY IDENTITY(1,1),
-    maKhoaHoc INT NOT NULL,
-    maDanhMuc INT NOT NULL,
+    maKhoaHoc INT NULL,
+    maDanhMuc INT NULL,
     tenMon NVARCHAR(200) NOT NULL,
     gioiThieu NVARCHAR(MAX),
     nguyenLieu NVARCHAR(MAX),
@@ -1782,8 +1782,30 @@ INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transI
 VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
 
 PRINT N'✅ Đã thực thi thành công !';
+
+INSERT INTO MonAn (maKhoaHoc, maDanhMuc, tenMon, gioiThieu, nguyenLieu) VALUES
+-- Món 1: Khai vị
+(null, null, N'Nộm hoa chuối tai heo', 
+ N'Món khai vị thanh mát với hoa chuối trắng nõn, tai heo giòn sần sật thấm đẫm nước nộm chua ngọt.', 
+ N'Hoa chuối tây, tai heo, lạc rang, rau kinh giới, chanh, tỏi, ớt, nước mắm ngon'),
+
+-- Món 2: Món chính 1
+(null, null, N'Chả cá Lã Vọng', 
+ N'Đặc sản nức tiếng kinh kỳ. Cá lăng tẩm ướp riềng mẻ nướng than hoa, ăn kèm thì là và mắm tôm đánh bông.', 
+ N'Cá lăng (hoặc cá quả), riềng, nghệ, mẻ, mắm tôm, thì là, hành hoa, bún rối, lạc rang'),
+
+-- Món 3: Món chính 2 (Xôi cốm - Tinh hoa quà thu)
+(null, null, N'Xôi cốm hạt sen', 
+ N'Thức quà thanh tao gói trong lá sen. Hạt cốm dẻo thơm quyện với đậu xanh bùi bùi và dừa nạo béo ngậy.', 
+ N'Cốm tươi (cốm Vòng), đậu xanh cà vỏ, hạt sen tươi, dừa nạo, đường kính, mỡ gà')
+ go
+ INSERT INTO HinhAnhMonAn (maMonAn, duongDan, thuTu) VALUES
+(65, N'nom_hoa_chuoi_tai_heo_1.jpg', 1), (65, N'nom_hoa_chuoi_tai_heo_2.jpg', 2),
+(66, N'cha_ca_la_vong_1.jpg', 1),        (66, N'cha_ca_la_vong_2.jpg', 2),
+(67, N'xoi_com_1.jpg', 1),       (67, N'xoi_com_2.jpg', 2)
 select * from ThanhToan
 select * from DatLich
 select * from NguoiDung
 select * from MonAn
-
+select * from KhoaHoc
+select * from LichTrinhLopHoc

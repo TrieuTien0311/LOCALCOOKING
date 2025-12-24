@@ -20,15 +20,17 @@ public class UploadController {
 
     /**
      * Upload một file
-     * POST /api/upload/image
+     * POST /api/upload/image?folder=courses
      */
     @PostMapping("/image")
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "folder", defaultValue = "reviews") String folder) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String fileName = fileStorageService.storeFile(file, "reviews");
-            String fileUrl = "/uploads/reviews/" + fileName;
+            String fileName = fileStorageService.storeFile(file, folder);
+            String fileUrl = "/uploads/" + folder + "/" + fileName;
             
             response.put("success", true);
             response.put("fileName", fileName);

@@ -16,6 +16,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.localcooking_v3t.api.ApiService;
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.CheckSeatsResponse;
@@ -659,7 +662,7 @@ public class Booking extends AppCompatActivity {
             Log.d("BOOKING_UI", "Set teacher history");
         }
         
-        // Hình ảnh giáo viên
+        // Hình ảnh giáo viên (vẫn load từ drawable vì ảnh giáo viên lưu local)
         ImageView imgGiaoVien = findViewById(R.id.imgGiaoVien);
         if (imgGiaoVien != null) {
             int resId = giaoVien.getHinhAnhResId(this);
@@ -684,21 +687,33 @@ public class Booking extends AppCompatActivity {
         Log.d("BOOKING_UI", "hinhAnh (banner): " + khoaHoc.getHinhAnh());
         Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // Chỉ sử dụng danh sách ảnh từ HinhAnhKhoaHoc (không thêm banner vì có thể đã bao gồm)
+        // Tạo danh sách ảnh: ảnh đại diện trước, sau đó là ảnh từ HinhAnhKhoaHoc
         List<HinhAnhKhoaHoc> combinedImageList = new ArrayList<>();
         
-        // Thêm các ảnh từ HinhAnhKhoaHoc
-        if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
-            combinedImageList.addAll(khoaHoc.getHinhAnhList());
-            Log.d("BOOKING_UI", "Added " + khoaHoc.getHinhAnhList().size() + " images from HinhAnhKhoaHoc");
-        } else if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
-            // Fallback: nếu không có hinhAnhList, dùng ảnh banner
+        // 1. Thêm ảnh đại diện (KhoaHoc.hinhAnh) làm ảnh đầu tiên
+        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
             HinhAnhKhoaHoc bannerImage = new HinhAnhKhoaHoc();
             bannerImage.setDuongDan(khoaHoc.getHinhAnh());
             bannerImage.setMaKhoaHoc(khoaHoc.getMaKhoaHoc());
             combinedImageList.add(bannerImage);
-            Log.d("BOOKING_UI", "Added banner image as fallback: " + khoaHoc.getHinhAnh());
+            Log.d("BOOKING_UI", "Added banner image first: " + khoaHoc.getHinhAnh());
         }
+        
+        // 2. Thêm các ảnh từ HinhAnhKhoaHoc (ảnh bổ sung) - KHÔNG loại bỏ trùng
+        // WebAdmin đã validate chỉ cho upload đúng 2 ảnh gallery
+        if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
+            Log.d("BOOKING_UI", "Gallery images from API: " + khoaHoc.getHinhAnhList().size());
+            for (HinhAnhKhoaHoc img : khoaHoc.getHinhAnhList()) {
+                if (img.getDuongDan() != null && !img.getDuongDan().isEmpty()) {
+                    combinedImageList.add(img);
+                    Log.d("BOOKING_UI", "Added gallery image: " + img.getDuongDan());
+                }
+            }
+        } else {
+            Log.w("BOOKING_UI", "No gallery images from API (hinhAnhList is null or empty)");
+        }
+        
+        Log.d("BOOKING_UI", "Total combined images: " + combinedImageList.size());
         
         // Hiển thị slide ảnh
         if (!combinedImageList.isEmpty()) {
@@ -879,8 +894,8 @@ public class Booking extends AppCompatActivity {
         // Lấy ảnh hiện tại
         HinhAnhKhoaHoc currentImage = hinhAnhList.get(currentImageIndex);
         
-        // Convert tên file thành resource ID
-        int resId = currentImage.getHinhAnhResId(this);
+        // Tạo URL từ đường dẫn ảnh
+        String imageUrl = RetrofitClient.BASE_URL + "uploads/courses/" + currentImage.getDuongDan();
         
         if (withAnimation) {
             // Animation fade out
@@ -888,8 +903,13 @@ public class Booking extends AppCompatActivity {
                     .alpha(0f)
                     .setDuration(150)
                     .withEndAction(() -> {
-                        // Đổi ảnh
-                        imMonAn.setImageResource(resId);
+                        // Load ảnh từ URL
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .apply(new RequestOptions()
+                                .placeholder(R.drawable.hue)
+                                .error(R.drawable.hue))
+                            .into(imMonAn);
                         
                         // Animation slide in
                         imMonAn.setTranslationX(slideFromLeft ? -100f : 100f);
@@ -901,8 +921,13 @@ public class Booking extends AppCompatActivity {
                     })
                     .start();
         } else {
-            // Không animation - hiển thị trực tiếp
-            imMonAn.setImageResource(resId);
+            // Không animation - load trực tiếp từ URL
+            Glide.with(this)
+                .load(imageUrl)
+                .apply(new RequestOptions()
+                    .placeholder(R.drawable.hue)
+                    .error(R.drawable.hue))
+                .into(imMonAn);
         }
         
         // Cập nhật indicators

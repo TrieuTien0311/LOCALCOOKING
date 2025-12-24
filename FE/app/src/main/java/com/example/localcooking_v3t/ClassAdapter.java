@@ -12,6 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.KhoaHoc;
 import com.google.android.material.button.MaterialButton;
 
@@ -93,10 +97,20 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             holder.cardView.setLayoutParams(params);
         }
         
-        // THÊM MỚI: Hiển thị ảnh banner khóa học
+        // THÊM MỚI: Hiển thị ảnh banner khóa học từ URL server
+        String imageUrl = null;
         if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
-            int resId = lopHoc.getHinhAnhResId(holder.itemView.getContext());
-            holder.imgMonAn.setImageResource(resId);
+            imageUrl = RetrofitClient.BASE_URL + "uploads/courses/" + lopHoc.getHinhAnh();
+        }
+        
+        if (imageUrl != null) {
+            Glide.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .apply(new RequestOptions()
+                    .transform(new RoundedCorners(16))
+                    .placeholder(R.drawable.hue)
+                    .error(R.drawable.hue))
+                .into(holder.imgMonAn);
         } else {
             // Ảnh mặc định nếu không có
             holder.imgMonAn.setImageResource(R.drawable.hue);

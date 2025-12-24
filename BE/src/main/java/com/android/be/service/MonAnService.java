@@ -25,9 +25,32 @@ public class MonAnService {
         return monAnRepository.save(monAn);
     }
     
-    public MonAn updateMonAn(Integer id, MonAn monAn) {
-        monAn.setMaMonAn(id);
-        return monAnRepository.save(monAn);
+    public MonAn updateMonAn(Integer id, MonAn monAnUpdate) {
+        // Lấy món ăn hiện tại từ DB
+        MonAn existingMonAn = monAnRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy món ăn với id: " + id));
+        
+        // Chỉ update các field được gửi lên (không null)
+        if (monAnUpdate.getMaKhoaHoc() != null) {
+            existingMonAn.setMaKhoaHoc(monAnUpdate.getMaKhoaHoc());
+        }
+        if (monAnUpdate.getMaDanhMuc() != null) {
+            existingMonAn.setMaDanhMuc(monAnUpdate.getMaDanhMuc());
+        }
+        if (monAnUpdate.getTenMon() != null) {
+            existingMonAn.setTenMon(monAnUpdate.getTenMon());
+        }
+        if (monAnUpdate.getGioiThieu() != null) {
+            existingMonAn.setGioiThieu(monAnUpdate.getGioiThieu());
+        }
+        if (monAnUpdate.getNguyenLieu() != null) {
+            existingMonAn.setNguyenLieu(monAnUpdate.getNguyenLieu());
+        }
+        if (monAnUpdate.getHinhAnh() != null) {
+            existingMonAn.setHinhAnh(monAnUpdate.getHinhAnh());
+        }
+        
+        return monAnRepository.save(existingMonAn);
     }
     
     public void deleteMonAn(Integer id) {

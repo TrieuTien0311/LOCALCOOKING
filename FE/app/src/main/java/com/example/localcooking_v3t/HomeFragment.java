@@ -36,6 +36,9 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.KhoaHoc;
 import com.example.localcooking_v3t.model.LichTrinhLopHoc;
@@ -237,16 +240,17 @@ public class HomeFragment extends Fragment {
     private void setupSpecialDishesRecyclerView(View view) {
         androidx.recyclerview.widget.RecyclerView recyclerSpecialDishes = view.findViewById(R.id.recyclerSpecialDishes);
         
-        // Danh sách 6 ảnh món ăn
-        List<Integer> dishImages = new java.util.ArrayList<>();
-        dishImages.add(R.drawable.phobo);
-        dishImages.add(R.drawable.comtam);
-        dishImages.add(R.drawable.banhxeo);
-        dishImages.add(R.drawable.nemnuong);
-        dishImages.add(R.drawable.banhcuon);
-        dishImages.add(R.drawable.buncha);
+        // Danh sách ảnh mặc định từ drawable (fallback)
+        List<SpecialDishAdapter.DishItem> defaultDishItems = new java.util.ArrayList<>();
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.phobo));
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.comtam));
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.banhxeo));
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.nemnuong));
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.banhcuon));
+        defaultDishItems.add(new SpecialDishAdapter.DishItem(R.drawable.buncha));
         
-        SpecialDishAdapter adapter = new SpecialDishAdapter(dishImages);
+        // Tạo adapter với ảnh mặc định trước
+        SpecialDishAdapter adapter = new SpecialDishAdapter(requireContext(), defaultDishItems);
         
         // LinearLayoutManager ngang
         androidx.recyclerview.widget.LinearLayoutManager layoutManager = 
@@ -258,9 +262,169 @@ public class HomeFragment extends Fragment {
         
         // Scroll đến vị trí giữa để có thể scroll cả 2 chiều
         int middlePosition = Integer.MAX_VALUE / 2;
-        // Đảm bảo vị trí bắt đầu từ item đầu tiên
-        middlePosition = middlePosition - (middlePosition % dishImages.size());
+        middlePosition = middlePosition - (middlePosition % defaultDishItems.size());
         recyclerSpecialDishes.scrollToPosition(middlePosition);
+        
+        // Gọi API để lấy món ăn từ server
+        loadSpecialDishesFromServer(adapter, recyclerSpecialDishes, defaultDishItems.size());
+    }
+    
+    /**
+     * Load món ăn từ server, nếu có ảnh từ server thì dùng, không thì giữ drawable
+     */
+    private void loadSpecialDishesFromServer(SpecialDishAdapter adapter, 
+            androidx.recyclerview.widget.RecyclerView recyclerView, int defaultCount) {
+        Log.d(TAG, "=== START loadSpecialDishesFromServer ===");
+        
+        RetrofitClient.getApiService().getAllMonAn()
+            .enqueue(new Callback<List<com.example.localcooking_v3t.model.MonAn>>() {
+                @Override
+                public void onResponse(Call<List<com.example.localcooking_v3t.model.MonAn>> call, 
+                        Response<List<com.example.localcooking_v3t.model.MonAn>> response) {
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached, skip");
+                        return;
+                    }
+                    
+                    Log.d(TAG, "API getAllMonAn response code: " + response.code());
+                    
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<com.example.localcooking_v3t.model.MonAn> monAnList = response.body();
+                        Log.d(TAG, "Loaded " + monAnList.size() + " dishes from API");
+                        
+                        // Log chi tiết từng món ăn
+                        for (com.example.localcooking_v3t.model.MonAn monAn : monAnList) {
+                            Log.d(TAG, "MonAn: id=" + monAn.getMaMonAn() + 
+                                  ", ten=" + monAn.getTenMon() + 
+                                  ", hinhAnh=" + monAn.getHinhAnh());
+                        }
+                        
+                        if (monAnList.isEmpty()) {
+                            Log.d(TAG, "MonAn list is empty, using default drawables");
+                            return;
+                        }
+                        
+                        List<SpecialDishAdapter.DishItem> serverDishItems = new java.util.ArrayList<>();
+                        
+                        // Đếm số món có ảnh trực tiếp trong MonAn.hinhAnh
+                        int directImageCount = 0;
+                        for (com.example.localcooking_v3t.model.MonAn monAn : monAnList) {
+                            if (monAn.getHinhAnh() != null && !monAn.getHinhAnh().isEmpty()) {
+                                directImageCount++;
+                            }
+                        }
+                        Log.d(TAG, "Direct image count (MonAn.hinhAnh): " + directImageCount);
+                        
+                        if (directImageCount > 0) {
+                            // Có ảnh trực tiếp trong MonAn.hinhAnh
+                            for (com.example.localcooking_v3t.model.MonAn monAn : monAnList) {
+                                if (monAn.getHinhAnh() != null && !monAn.getHinhAnh().isEmpty()) {
+                                    String imageUrl = RetrofitClient.BASE_URL + "uploads/dishes/" + monAn.getHinhAnh();
+                                    Log.d(TAG, "Adding dish image URL: " + imageUrl);
+                                    serverDishItems.add(new SpecialDishAdapter.DishItem(imageUrl));
+                                }
+                            }
+                            Log.d(TAG, "Total dish images to display: " + serverDishItems.size());
+                            updateDishAdapter(adapter, recyclerView, serverDishItems);
+                        } else {
+                            // Không có ảnh trực tiếp, thử load từ HinhAnhMonAn
+                            Log.d(TAG, "No direct images, loading from HinhAnhMonAn table...");
+                            loadDishImagesFromHinhAnhMonAn(monAnList, adapter, recyclerView);
+                        }
+                    } else {
+                        Log.e(TAG, "API getAllMonAn failed: code=" + response.code() + ", message=" + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<com.example.localcooking_v3t.model.MonAn>> call, Throwable t) {
+                    Log.e(TAG, "API getAllMonAn error: " + t.getMessage(), t);
+                }
+            });
+    }
+    
+    /**
+     * Load ảnh món ăn từ bảng HinhAnhMonAn
+     */
+    private void loadDishImagesFromHinhAnhMonAn(List<com.example.localcooking_v3t.model.MonAn> monAnList,
+            SpecialDishAdapter adapter, androidx.recyclerview.widget.RecyclerView recyclerView) {
+        Log.d(TAG, "=== START loadDishImagesFromHinhAnhMonAn ===");
+        
+        List<SpecialDishAdapter.DishItem> serverDishItems = new java.util.ArrayList<>();
+        final int[] loadedCount = {0};
+        final int totalToLoad = monAnList.size();
+        
+        Log.d(TAG, "Total dishes to load images for: " + totalToLoad);
+        
+        if (totalToLoad == 0) {
+            Log.d(TAG, "No dishes to load images for");
+            return;
+        }
+        
+        for (com.example.localcooking_v3t.model.MonAn monAn : monAnList) {
+            Log.d(TAG, "Loading images for MonAn id=" + monAn.getMaMonAn());
+            
+            RetrofitClient.getApiService().getHinhAnhMonAn(monAn.getMaMonAn())
+                .enqueue(new Callback<List<com.example.localcooking_v3t.model.HinhAnhMonAn>>() {
+                    @Override
+                    public void onResponse(Call<List<com.example.localcooking_v3t.model.HinhAnhMonAn>> call,
+                            Response<List<com.example.localcooking_v3t.model.HinhAnhMonAn>> response) {
+                        if (!isAdded() || getContext() == null) return;
+                        
+                        Log.d(TAG, "HinhAnhMonAn API response for MonAn " + monAn.getMaMonAn() + 
+                              ": code=" + response.code());
+                        
+                        if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                            String duongDan = response.body().get(0).getDuongDan();
+                            Log.d(TAG, "Found image: " + duongDan + " for MonAn " + monAn.getMaMonAn());
+                            
+                            if (duongDan != null && !duongDan.isEmpty()) {
+                                String imageUrl = RetrofitClient.BASE_URL + "uploads/dishes/" + duongDan;
+                                Log.d(TAG, "Adding HinhAnhMonAn URL: " + imageUrl);
+                                serverDishItems.add(new SpecialDishAdapter.DishItem(imageUrl));
+                            }
+                        } else {
+                            Log.d(TAG, "No images found for MonAn " + monAn.getMaMonAn());
+                        }
+                        
+                        loadedCount[0]++;
+                        Log.d(TAG, "Loaded " + loadedCount[0] + "/" + totalToLoad + " dishes");
+                        
+                        if (loadedCount[0] >= totalToLoad) {
+                            Log.d(TAG, "All dishes loaded. Total images: " + serverDishItems.size());
+                            if (!serverDishItems.isEmpty()) {
+                                updateDishAdapter(adapter, recyclerView, serverDishItems);
+                            } else {
+                                Log.d(TAG, "No images found from HinhAnhMonAn, keeping default drawables");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<com.example.localcooking_v3t.model.HinhAnhMonAn>> call, Throwable t) {
+                        loadedCount[0]++;
+                        Log.e(TAG, "Error loading HinhAnhMonAn for MonAn " + monAn.getMaMonAn() + ": " + t.getMessage());
+                    }
+                });
+        }
+    }
+    
+    /**
+     * Cập nhật adapter với danh sách ảnh món ăn
+     */
+    private void updateDishAdapter(SpecialDishAdapter adapter, 
+            androidx.recyclerview.widget.RecyclerView recyclerView,
+            List<SpecialDishAdapter.DishItem> serverDishItems) {
+        if (!isAdded() || getContext() == null || serverDishItems.isEmpty()) return;
+        
+        adapter.updateData(serverDishItems);
+        
+        // Scroll lại vị trí giữa
+        int middlePosition = Integer.MAX_VALUE / 2;
+        middlePosition = middlePosition - (middlePosition % serverDishItems.size());
+        recyclerView.scrollToPosition(middlePosition);
+        
+        Log.d(TAG, "Loaded " + serverDishItems.size() + " dish images from server");
     }
 
     @Override
@@ -493,7 +657,24 @@ public class HomeFragment extends Fragment {
                 (int) (120 * density)
         ));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageResource(khoaHoc.getHinhAnhResId(requireContext()));
+        
+        // Load ảnh từ URL server
+        String imageUrl = null;
+        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+            imageUrl = RetrofitClient.BASE_URL + "uploads/courses/" + khoaHoc.getHinhAnh();
+        }
+        
+        if (imageUrl != null) {
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .apply(new RequestOptions()
+                    .transform(new RoundedCorners(16))
+                    .placeholder(R.drawable.hue)
+                    .error(R.drawable.hue))
+                .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.hue);
+        }
         innerLayout.addView(imageView);
         
         // TextView tên khóa học

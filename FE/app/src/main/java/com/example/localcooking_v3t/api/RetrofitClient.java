@@ -15,7 +15,7 @@ public class RetrofitClient {
     private static final String IP_MAY_TINH = "192.168.137.1";
 
     // Tự động chọn URL dựa trên môi trường
-    private static final String BASE_URL = isEmulator()
+    public static final String BASE_URL = isEmulator()
             ? "http://10.0.2.2:8080/"           // Máy ảo
             : "http://" + IP_MAY_TINH + ":8080/"; // Điện thoại thật
 

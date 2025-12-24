@@ -28,10 +28,10 @@ public class MonAn {
     
     @Column(name = "gioiThieu", columnDefinition = "NVARCHAR(MAX)")
     private String gioiThieu;
-    
+
     @Column(name = "nguyenLieu", columnDefinition = "NVARCHAR(MAX)")
     private String nguyenLieu;
-    
+
     @Column(name = "hinhAnh", length = 255)
     private String hinhAnh;
 }

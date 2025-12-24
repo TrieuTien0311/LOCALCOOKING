@@ -55,5 +55,9 @@ public class KhoaHoc {
     @PrePersist
     protected void onCreate() {
         ngayTao = LocalDateTime.now();
+        // Đảm bảo giá trị mặc định
+        if (soLuongDanhGia == null) soLuongDanhGia = 0;
+        if (saoTrungBinh == null) saoTrungBinh = 0.0f;
+        if (coUuDai == null) coUuDai = false;
     }
 }

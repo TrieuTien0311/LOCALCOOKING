@@ -160,24 +160,9 @@
                 <input type="text" name="tenMon" id="tenMon" class="form-control" placeholder="Nhập tên món ăn" required />
               </div>
 
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label">Khóa Học <span class="text-danger">*</span></label>
-                    <select name="maKhoaHoc" id="maKhoaHoc" class="form-control" required>
-                      <option value="">-- Chọn khóa học --</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label">Danh Mục <span class="text-danger">*</span></label>
-                    <select name="maDanhMuc" id="maDanhMuc" class="form-control" required>
-                      <option value="">-- Chọn danh mục --</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+              <!-- Khóa học và Danh mục sẽ được gán tự động khi tạo khóa học -->
+              <input type="hidden" name="maKhoaHoc" id="maKhoaHoc" value="" />
+              <input type="hidden" name="maDanhMuc" id="maDanhMuc" value="" />
 
               <div class="form-group">
                 <label class="form-label">Giới Thiệu <span class="text-danger">*</span></label>
