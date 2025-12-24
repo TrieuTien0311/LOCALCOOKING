@@ -25,6 +25,16 @@ public class SessionManager {
     }
     
     public void createLoginSession(Integer maNguoiDung, String tenDangNhap, String hoTen, String email, String vaiTro) {
+        // Kiểm tra nếu user mới khác user cũ thì xóa lịch sử tìm kiếm
+        Integer oldUserId = getMaNguoiDung();
+        if (oldUserId != null && oldUserId != -1 && !oldUserId.equals(maNguoiDung)) {
+            // User khác đăng nhập, xóa lịch sử tìm kiếm cũ
+            clearSearchHistory();
+        } else if (oldUserId == -1) {
+            // Chưa có user nào đăng nhập trước đó, xóa lịch sử tìm kiếm cũ (nếu có)
+            clearSearchHistory();
+        }
+        
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putInt(KEY_MA_NGUOI_DUNG, maNguoiDung);
         editor.putString(KEY_TEN_DANG_NHAP, tenDangNhap);
@@ -79,6 +89,17 @@ public class SessionManager {
     public void logout() {
         editor.clear();
         editor.apply();
+        
+        // Xóa lịch sử tìm kiếm khi đăng xuất
+        clearSearchHistory();
+    }
+    
+    /**
+     * Xóa lịch sử tìm kiếm
+     */
+    private void clearSearchHistory() {
+        SharedPreferences searchPrefs = context.getSharedPreferences("LocalCookingPrefs", Context.MODE_PRIVATE);
+        searchPrefs.edit().putString("search_history", "[]").apply();
     }
 
     public void updateUserInfo(String hoTen, String email) {

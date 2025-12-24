@@ -1182,7 +1182,7 @@ BEGIN
             N' đã bị hủy. ' +
             CASE 
                 WHEN i.ghiChu IS NOT NULL THEN N'Lý do: ' + i.ghiChu
-                ELSE N'Nếu bạn đã thanh toán, số tiền sẽ được hoàn lại trong 3-5 ngày làm việc.'
+                ELSE N'Trường hợp đơn hàng đã hoàn tất thanh toán, khi hủy dịch vụ sẽ không áp dụng hoàn tiền.'
             END,
             N'HuyDon'
         FROM inserted i
@@ -1784,4 +1784,6 @@ VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003
 PRINT N'✅ Đã thực thi thành công !';
 select * from ThanhToan
 select * from DatLich
+select * from NguoiDung
+select * from MonAn
 

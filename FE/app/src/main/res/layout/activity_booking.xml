@@ -190,22 +190,6 @@
                                     android:id="@+id/circle3"
                                     android:layout_width="9dp"
                                     android:layout_height="9dp"
-                                    android:layout_marginRight="8dp"
-                                    app:srcCompat="@drawable/ic_circle_tn"
-                                    app:tint="#DCA790" />
-
-                                <ImageView
-                                    android:id="@+id/circle4"
-                                    android:layout_width="9dp"
-                                    android:layout_height="9dp"
-                                    android:layout_marginRight="8dp"
-                                    app:srcCompat="@drawable/ic_circle_tn"
-                                    app:tint="#DCA790" />
-
-                                <ImageView
-                                    android:id="@+id/circle5"
-                                    android:layout_width="9dp"
-                                    android:layout_height="9dp"
                                     app:srcCompat="@drawable/ic_circle_tn"
                                     app:tint="#DCA790" />
                             </LinearLayout>

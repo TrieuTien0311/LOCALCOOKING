@@ -2,19 +2,24 @@ package com.example.localcooking_v3t;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,15 +31,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.KhoaHoc;
+import com.example.localcooking_v3t.model.LichTrinhLopHoc;
 import com.example.localcooking_v3t.utils.SessionManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,12 +61,19 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private static final String PREF_NAME = "LocalCookingPrefs";
+    private static final String KEY_LOCATION_SHARING = "location_sharing_enabled";
+    private static final String KEY_SEARCH_HISTORY = "search_history";
+    private static final int MAX_SEARCH_HISTORY = 10;
     
     private ImageView ivLogo, ivArrow;
     private TextView tvAppName, tvHello, tvCurrentLocation, tvDestination, tvDate;
     private TextView tvViewAll;
     private Button btnSearch;
     private LinearLayout layoutPopularClasses;
+    private LinearLayout layoutRecentItems;
+    private LinearLayout layoutRecentSearch;
+    private HorizontalScrollView scrollRecentItems;
     private ActivityResultLauncher<Intent> calendarLauncher;
     private SessionManager sessionManager;
     
@@ -64,6 +82,7 @@ public class HomeFragment extends Fragment {
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
     private double currentLatitude = 0;
     private double currentLongitude = 0;
+    private boolean isLocationSharingEnabled = false;
     
     // Danh sách 4 địa điểm
     private static final String[] DESTINATIONS = {"Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"};
@@ -126,9 +145,16 @@ public class HomeFragment extends Fragment {
         tvViewAll = view.findViewById(R.id.tvViewAll);
         btnSearch = view.findViewById(R.id.btnSearch);
         layoutPopularClasses = view.findViewById(R.id.layoutPopularClasses);
+        layoutRecentItems = view.findViewById(R.id.layoutRecentItems);
+        layoutRecentSearch = view.findViewById(R.id.layoutRecentSearch);
+        scrollRecentItems = view.findViewById(R.id.scrollRecentItems);
         
         // Khởi tạo SessionManager
         sessionManager = new SessionManager(requireContext());
+        
+        // Load trạng thái chia sẻ vị trí
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        isLocationSharingEnabled = prefs.getBoolean(KEY_LOCATION_SHARING, false);
         
         // Khởi tạo Location Client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -139,8 +165,15 @@ public class HomeFragment extends Fragment {
         // Load lớp học phổ biến
         loadPopularClasses();
         
-        // Lấy vị trí hiện tại
-        checkLocationPermissionAndGetLocation();
+        // Load lịch sử tìm kiếm
+        loadSearchHistory();
+        
+        // Lấy vị trí hiện tại nếu đã bật chia sẻ
+        if (isLocationSharingEnabled) {
+            checkLocationPermissionAndGetLocation();
+        } else {
+            tvCurrentLocation.setText("Chưa chia sẻ vị trí");
+        }
 
         // --- Xử lý sự kiện ---
 
@@ -157,6 +190,9 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        
+        // Click vào vị trí hiện tại để quản lý chia sẻ vị trí
+        tvCurrentLocation.setOnClickListener(v -> showLocationSharingDialog());
 
         // Hiển thị ngày hiện tại
         setCurrentDate();
@@ -171,11 +207,22 @@ public class HomeFragment extends Fragment {
         tvDestination.setOnClickListener(v -> showDestinationDialog());
         
         btnSearch.setOnClickListener(v -> {
+            // Lưu lịch sử tìm kiếm
+            saveSearchHistory(tvCurrentLocation.getText().toString(), 
+                              tvDestination.getText().toString(), 
+                              tvDate.getText().toString());
+            
             // Truyền dữ liệu sang Classes Activity
             Intent intent = new Intent(requireContext(), Classes.class);
             intent.putExtra("destination", tvDestination.getText().toString());
             intent.putExtra("date", tvDate.getText().toString());
             startActivity(intent);
+        });
+        
+        // Xóa tất cả lịch sử tìm kiếm
+        tvViewAll.setOnClickListener(v -> {
+            clearSearchHistory();
+            Toast.makeText(requireContext(), "Đã xóa lịch sử tìm kiếm", Toast.LENGTH_SHORT).show();
         });
         
         // Setup RecyclerView món ăn đặc sắc với infinite scroll
@@ -504,12 +551,54 @@ public class HomeFragment extends Fragment {
         innerLayout.addView(priceLayout);
         cardView.addView(innerLayout);
         
-        // Click listener
+        // Click listener - mở Booking activity
         cardView.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Khóa học: " + khoaHoc.getTenKhoaHoc(), Toast.LENGTH_SHORT).show();
+            openBookingActivity(khoaHoc);
         });
         
         return cardView;
+    }
+    
+    /**
+     * Mở Booking activity với thông tin khóa học
+     */
+    private void openBookingActivity(KhoaHoc khoaHoc) {
+        if (khoaHoc == null) return;
+        
+        Intent intent = new Intent(requireContext(), Booking.class);
+        
+        // Truyền thông tin khóa học
+        intent.putExtra("maKhoaHoc", khoaHoc.getMaKhoaHoc());
+        intent.putExtra("tenKhoaHoc", khoaHoc.getTenKhoaHoc());
+        
+        // Lấy giá tiền
+        if (khoaHoc.getGiaTien() != null) {
+            intent.putExtra("giaTien", String.valueOf(khoaHoc.getGiaTien()));
+        }
+        
+        // Lấy thông tin từ lịch trình nếu có
+        if (khoaHoc.getLichTrinhList() != null && !khoaHoc.getLichTrinhList().isEmpty()) {
+            LichTrinhLopHoc lichTrinh = khoaHoc.getLichTrinhList().get(0);
+            intent.putExtra("maLichTrinh", lichTrinh.getMaLichTrinh());
+            intent.putExtra("thoiGian", lichTrinh.getThoiGianFormatted());
+            intent.putExtra("diaDiem", lichTrinh.getDiaDiem());
+        }
+        
+        // Ngày tham gia - lấy từ tvDate hoặc ngày hiện tại
+        String ngayThamGia = tvDate.getText().toString();
+        // Chuyển từ "T4, 25/12/2024" sang "2024-12-25"
+        if (ngayThamGia.contains(", ")) {
+            String[] parts = ngayThamGia.split(", ");
+            if (parts.length > 1) {
+                String[] dateParts = parts[1].split("/");
+                if (dateParts.length == 3) {
+                    ngayThamGia = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+                }
+            }
+        }
+        intent.putExtra("ngayThamGia", ngayThamGia);
+        
+        startActivity(intent);
     }
     
     /**
@@ -708,5 +797,289 @@ public class HomeFragment extends Fragment {
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
         
         builder.create().show();
+    }
+    
+    /**
+     * Hiển thị dialog quản lý chia sẻ vị trí
+     */
+    private void showLocationSharingDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        
+        if (isLocationSharingEnabled) {
+            // Đã bật chia sẻ vị trí -> hỏi có muốn tắt không
+            builder.setTitle("Chia sẻ vị trí");
+            builder.setMessage("Bạn có muốn tắt chia sẻ vị trí không?");
+            builder.setPositiveButton("Tắt", (dialog, which) -> {
+                isLocationSharingEnabled = false;
+                saveLocationSharingState(false);
+                tvCurrentLocation.setText("Chưa chia sẻ vị trí");
+                Toast.makeText(requireContext(), "Đã tắt chia sẻ vị trí", Toast.LENGTH_SHORT).show();
+            });
+            builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        } else {
+            // Chưa bật chia sẻ vị trí -> hỏi có muốn bật không
+            builder.setTitle("Chia sẻ vị trí");
+            builder.setMessage("Bạn có muốn chia sẻ vị trí để chúng tôi gợi ý địa điểm học gần bạn?");
+            builder.setPositiveButton("Cho phép", (dialog, which) -> {
+                isLocationSharingEnabled = true;
+                saveLocationSharingState(true);
+                checkLocationPermissionAndGetLocation();
+                Toast.makeText(requireContext(), "Đang lấy vị trí...", Toast.LENGTH_SHORT).show();
+            });
+            builder.setNegativeButton("Không", (dialog, which) -> dialog.dismiss());
+        }
+        
+        builder.create().show();
+    }
+    
+    /**
+     * Lưu trạng thái chia sẻ vị trí
+     */
+    private void saveLocationSharingState(boolean enabled) {
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(KEY_LOCATION_SHARING, enabled).apply();
+    }
+    
+    /**
+     * Lưu lịch sử tìm kiếm
+     */
+    private void saveSearchHistory(String from, String to, String date) {
+        if (from.equals("Chưa chia sẻ vị trí")) {
+            from = "Vị trí của bạn";
+        }
+        
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String historyJson = prefs.getString(KEY_SEARCH_HISTORY, "[]");
+        
+        // Lấy thời gian hiện tại (giờ:phút:giây)
+        java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String currentTime = timeFormat.format(new java.util.Date());
+        
+        try {
+            JSONArray historyArray = new JSONArray(historyJson);
+            
+            // Tạo object mới
+            JSONObject newSearch = new JSONObject();
+            newSearch.put("from", from);
+            newSearch.put("to", to);
+            newSearch.put("date", date);
+            newSearch.put("time", currentTime);
+            
+            // Kiểm tra trùng lặp (chỉ so sánh from, to, date - không so sánh time)
+            for (int i = 0; i < historyArray.length(); i++) {
+                JSONObject item = historyArray.getJSONObject(i);
+                if (item.getString("from").equals(from) && 
+                    item.getString("to").equals(to) && 
+                    item.getString("date").equals(date)) {
+                    // Đã tồn tại, xóa cái cũ
+                    historyArray.remove(i);
+                    break;
+                }
+            }
+            
+            // Thêm vào đầu danh sách
+            JSONArray newArray = new JSONArray();
+            newArray.put(newSearch);
+            for (int i = 0; i < Math.min(historyArray.length(), MAX_SEARCH_HISTORY - 1); i++) {
+                newArray.put(historyArray.get(i));
+            }
+            
+            // Lưu lại
+            prefs.edit().putString(KEY_SEARCH_HISTORY, newArray.toString()).apply();
+            
+            // Cập nhật UI
+            loadSearchHistory();
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error saving search history", e);
+        }
+    }
+    
+    /**
+     * Load và hiển thị lịch sử tìm kiếm
+     */
+    private void loadSearchHistory() {
+        if (!isAdded() || getContext() == null || layoutRecentItems == null) return;
+        
+        layoutRecentItems.removeAllViews();
+        
+        // Ẩn hoàn toàn phần lịch sử tìm kiếm khi chưa đăng nhập
+        if (!sessionManager.isLoggedIn()) {
+            if (layoutRecentSearch != null) {
+                layoutRecentSearch.setVisibility(View.GONE);
+            }
+            if (scrollRecentItems != null) {
+                scrollRecentItems.setVisibility(View.GONE);
+            }
+            return;
+        }
+        
+        // Đã đăng nhập - hiển thị phần lịch sử tìm kiếm
+        if (layoutRecentSearch != null) {
+            layoutRecentSearch.setVisibility(View.VISIBLE);
+        }
+        if (scrollRecentItems != null) {
+            scrollRecentItems.setVisibility(View.VISIBLE);
+        }
+        
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String historyJson = prefs.getString(KEY_SEARCH_HISTORY, "[]");
+        
+        try {
+            JSONArray historyArray = new JSONArray(historyJson);
+            
+            if (historyArray.length() == 0) {
+                // Không có lịch sử, hiển thị thông báo
+                TextView emptyText = new TextView(requireContext());
+                emptyText.setText("Chưa có lịch sử tìm kiếm");
+                emptyText.setTextColor(Color.parseColor("#666666"));
+                emptyText.setTextSize(14);
+                emptyText.setGravity(Gravity.CENTER);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                params.topMargin = (int) (16 * getResources().getDisplayMetrics().density);
+                emptyText.setLayoutParams(params);
+                layoutRecentItems.addView(emptyText);
+                return;
+            }
+            
+            float density = getResources().getDisplayMetrics().density;
+            
+            for (int i = 0; i < historyArray.length(); i++) {
+                JSONObject item = historyArray.getJSONObject(i);
+                String from = item.getString("from");
+                String to = item.getString("to");
+                String date = item.getString("date");
+                String time = item.optString("time", ""); // Lấy thời gian nếu có
+                
+                // Tạo item view
+                LinearLayout itemLayout = createSearchHistoryItem(from, to, date, time, density);
+                layoutRecentItems.addView(itemLayout);
+            }
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error loading search history", e);
+        }
+    }
+    
+    /**
+     * Tạo view cho một item lịch sử tìm kiếm
+     */
+    private LinearLayout createSearchHistoryItem(String from, String to, String date, String time, float density) {
+        // Tính kích thước item dựa trên màn hình
+        // Điện thoại: hiển thị 2 item vừa màn hình
+        // Tablet (sw600dp): hiển thị 4 item vừa màn hình
+        int screenWidthPx = getResources().getDisplayMetrics().widthPixels;
+        int screenWidthDp = (int) (screenWidthPx / density);
+        boolean isTablet = screenWidthDp >= 600;
+        
+        int marginHorizontal = (int) (isTablet ? 24 : 16); // margin của HorizontalScrollView
+        int itemMargin = (int) (12 * density); // margin giữa các item
+        int itemsToShow = isTablet ? 4 : 2; // Số item hiển thị vừa màn hình
+        
+        // Tính width của mỗi item để vừa màn hình
+        int availableWidth = screenWidthPx - (int) (marginHorizontal * 2 * density);
+        int totalMargins = itemMargin * (itemsToShow - 1);
+        int itemWidth = (availableWidth - totalMargins) / itemsToShow;
+        
+        LinearLayout itemLayout = new LinearLayout(requireContext());
+        LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                itemWidth,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        itemParams.setMarginEnd(itemMargin);
+        itemLayout.setLayoutParams(itemParams);
+        itemLayout.setOrientation(LinearLayout.VERTICAL);
+        itemLayout.setBackgroundResource(R.drawable.input_bg);
+        itemLayout.setPadding((int) (12 * density), (int) (12 * density), 
+                              (int) (12 * density), (int) (12 * density));
+        
+        // TextView "Từ" với blue dot
+        TextView tvFrom = new TextView(requireContext());
+        tvFrom.setText(from);
+        tvFrom.setTextColor(Color.parseColor("#6A3B1A"));
+        tvFrom.setTextSize(isTablet ? 15 : 14);
+        tvFrom.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvFrom.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_blue_dot_thu, 0, 0, 0);
+        tvFrom.setCompoundDrawablePadding((int) (8 * density));
+        tvFrom.setMaxLines(1);
+        tvFrom.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams fromParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        fromParams.bottomMargin = (int) (5 * density);
+        tvFrom.setLayoutParams(fromParams);
+        itemLayout.addView(tvFrom);
+        
+        // TextView "Đến" với red dot
+        TextView tvTo = new TextView(requireContext());
+        tvTo.setText(to);
+        tvTo.setTextColor(Color.parseColor("#6A3B1A"));
+        tvTo.setTextSize(isTablet ? 15 : 14);
+        tvTo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTo.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_red_dot_thu, 0, 0, 0);
+        tvTo.setCompoundDrawablePadding((int) (8 * density));
+        tvTo.setMaxLines(1);
+        tvTo.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams toParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        toParams.bottomMargin = (int) (5 * density);
+        tvTo.setLayoutParams(toParams);
+        itemLayout.addView(tvTo);
+        
+        // TextView ngày
+        TextView tvDateHistory = new TextView(requireContext());
+        tvDateHistory.setText(date);
+        tvDateHistory.setTextColor(Color.parseColor("#666666"));
+        tvDateHistory.setTextSize(isTablet ? 11 : 10);
+        tvDateHistory.setMaxLines(1);
+        tvDateHistory.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams dateParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        dateParams.setMarginStart((int) (24 * density));
+        tvDateHistory.setLayoutParams(dateParams);
+        itemLayout.addView(tvDateHistory);
+        
+        // TextView thời gian (giờ:phút:giây) - dòng riêng
+        if (time != null && !time.isEmpty()) {
+            TextView tvTimeHistory = new TextView(requireContext());
+            tvTimeHistory.setText(time);
+            tvTimeHistory.setTextColor(Color.parseColor("#888888"));
+            tvTimeHistory.setTextSize(isTablet ? 10 : 9);
+            tvTimeHistory.setMaxLines(1);
+            LinearLayout.LayoutParams timeParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            timeParams.setMarginStart((int) (24 * density));
+            timeParams.topMargin = (int) (2 * density);
+            tvTimeHistory.setLayoutParams(timeParams);
+            itemLayout.addView(tvTimeHistory);
+        }
+        
+        // Click listener để tìm kiếm lại
+        itemLayout.setOnClickListener(v -> {
+            tvDestination.setText(to);
+            tvDate.setText(date);
+            Toast.makeText(requireContext(), "Đã chọn: " + to, Toast.LENGTH_SHORT).show();
+        });
+        
+        return itemLayout;
+    }
+    
+    /**
+     * Xóa tất cả lịch sử tìm kiếm
+     */
+    private void clearSearchHistory() {
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putString(KEY_SEARCH_HISTORY, "[]").apply();
+        loadSearchHistory();
     }
 }

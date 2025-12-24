@@ -106,13 +106,11 @@ public class Booking extends AppCompatActivity {
         btnPre = findViewById(R.id.btnPre);
         btnNext = findViewById(R.id.btnNext);
         
-        // Ánh xạ 5 circles
-        circles = new ImageView[5];
+        // Ánh xạ 3 circles
+        circles = new ImageView[3];
         circles[0] = findViewById(R.id.circle1);
         circles[1] = findViewById(R.id.circle2);
         circles[2] = findViewById(R.id.circle3);
-        circles[3] = findViewById(R.id.circle4);
-        circles[4] = findViewById(R.id.circle5);
         
         // Xử lý nút Previous với animation
         btnPre.setOnClickListener(v -> {
@@ -686,22 +684,20 @@ public class Booking extends AppCompatActivity {
         Log.d("BOOKING_UI", "hinhAnh (banner): " + khoaHoc.getHinhAnh());
         Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // Tạo danh sách ảnh mới: ảnh banner (hinhAnh) + ảnh từ HinhAnhKhoaHoc
+        // Chỉ sử dụng danh sách ảnh từ HinhAnhKhoaHoc (không thêm banner vì có thể đã bao gồm)
         List<HinhAnhKhoaHoc> combinedImageList = new ArrayList<>();
         
-        // 1. Thêm ảnh banner (hinhAnh từ KhoaHoc) làm ảnh đầu tiên
-        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+        // Thêm các ảnh từ HinhAnhKhoaHoc
+        if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
+            combinedImageList.addAll(khoaHoc.getHinhAnhList());
+            Log.d("BOOKING_UI", "Added " + khoaHoc.getHinhAnhList().size() + " images from HinhAnhKhoaHoc");
+        } else if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+            // Fallback: nếu không có hinhAnhList, dùng ảnh banner
             HinhAnhKhoaHoc bannerImage = new HinhAnhKhoaHoc();
             bannerImage.setDuongDan(khoaHoc.getHinhAnh());
             bannerImage.setMaKhoaHoc(khoaHoc.getMaKhoaHoc());
             combinedImageList.add(bannerImage);
-            Log.d("BOOKING_UI", "Added banner image: " + khoaHoc.getHinhAnh());
-        }
-        
-        // 2. Thêm các ảnh từ HinhAnhKhoaHoc
-        if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
-            combinedImageList.addAll(khoaHoc.getHinhAnhList());
-            Log.d("BOOKING_UI", "Added " + khoaHoc.getHinhAnhList().size() + " images from HinhAnhKhoaHoc");
+            Log.d("BOOKING_UI", "Added banner image as fallback: " + khoaHoc.getHinhAnh());
         }
         
         // Hiển thị slide ảnh
