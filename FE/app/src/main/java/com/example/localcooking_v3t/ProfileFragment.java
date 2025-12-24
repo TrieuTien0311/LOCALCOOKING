@@ -85,6 +85,34 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        // Xử lý click vào "Lịch sử đặt lịch"
+        View orderHistoryLayout = view.findViewById(R.id.cDLichSuDat);
+        orderHistoryLayout.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                // Chuyển đến OrderHistoryFragment thông qua Header
+                if (getActivity() instanceof Header) {
+                    ((Header) getActivity()).navigateToOrderHistory();
+                }
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập để xem lịch sử đặt lịch", Toast.LENGTH_SHORT).show();
+                navigateToLogin();
+            }
+        });
+
+        // Xử lý click vào "Mục yêu thích"
+        View favoriteLayout = view.findViewById(R.id.cDYeuThich);
+        favoriteLayout.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                // Chuyển đến FavoriteFragment thông qua Header
+                if (getActivity() instanceof Header) {
+                    ((Header) getActivity()).navigateToFavorite();
+                }
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập để xem mục yêu thích", Toast.LENGTH_SHORT).show();
+                navigateToLogin();
+            }
+        });
+
         // Xử lý nút "Đăng xuất"
         btnLogout.setOnClickListener(v -> {
             performLogout();

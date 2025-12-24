@@ -1,6 +1,7 @@
 package com.example.localcooking_v3t;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -364,7 +365,8 @@ public class FavoriteFragment extends Fragment {
         adapter.setOnItemClickListener(new ClassAdapter.OnItemClickListener() {
             @Override
             public void onDatLichClick(KhoaHoc lopHoc) {
-                Toast.makeText(requireContext(), "Đặt lịch: " + lopHoc.getTenKhoaHoc(), Toast.LENGTH_SHORT).show();
+                // Chuyển sang màn hình đặt lịch (Booking)
+                navigateToBooking(lopHoc);
             }
 
             @Override
@@ -459,6 +461,58 @@ public class FavoriteFragment extends Fragment {
                     Toast.makeText(requireContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                 }
             });
+    }
+    
+    /**
+     * Chuyển sang màn hình đặt lịch (Booking)
+     */
+    private void navigateToBooking(KhoaHoc khoaHoc) {
+        if (khoaHoc == null) {
+            Toast.makeText(requireContext(), "Không có thông tin khóa học", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Intent intent = new Intent(requireContext(), Booking.class);
+        
+        // Truyền thông tin khóa học
+        intent.putExtra("maKhoaHoc", khoaHoc.getMaKhoaHoc());
+        intent.putExtra("tenKhoaHoc", khoaHoc.getTenLop());
+        intent.putExtra("moTa", khoaHoc.getMoTa());
+        intent.putExtra("giaTien", khoaHoc.getGia());
+        intent.putExtra("hinhAnh", khoaHoc.getHinhAnh());
+        
+        // Truyền ngày được chọn (format dd/MM/yyyy)
+        String formattedDate = formatDateForDisplay(selectedDate);
+        intent.putExtra("ngayThamGia", selectedDate); // yyyy-MM-dd cho API
+        intent.putExtra("ngayHienThi", formattedDate); // dd/MM/yyyy cho hiển thị
+        
+        // Truyền thông tin lịch trình nếu có
+        List<LichTrinhLopHoc> lichTrinhList = khoaHoc.getLichTrinhList();
+        if (lichTrinhList != null && !lichTrinhList.isEmpty()) {
+            LichTrinhLopHoc lichTrinh = lichTrinhList.get(0);
+            intent.putExtra("maLichTrinh", lichTrinh.getMaLichTrinh());
+            intent.putExtra("thoiGian", lichTrinh.getThoiGianFormatted());
+            intent.putExtra("diaDiem", lichTrinh.getDiaDiem());
+            
+            if (lichTrinh.getSoChoConTrong() != null) {
+                intent.putExtra("soChoConTrong", lichTrinh.getSoChoConTrong());
+            }
+        }
+        
+        // Truyền thông tin ưu đãi nếu có
+        if (khoaHoc.getCoUuDai() != null && khoaHoc.getCoUuDai()) {
+            intent.putExtra("coUuDai", true);
+            if (khoaHoc.getPhanTramGiam() != null) {
+                intent.putExtra("phanTramGiam", khoaHoc.getPhanTramGiam());
+            }
+            if (khoaHoc.getGiaSauGiam() != null) {
+                intent.putExtra("giaSauGiam", khoaHoc.getGiaSauGiam());
+            }
+        }
+        
+        Log.d(TAG, "Navigate to Booking: " + khoaHoc.getTenKhoaHoc() + ", ngay: " + selectedDate);
+        
+        startActivity(intent);
     }
     
     /**

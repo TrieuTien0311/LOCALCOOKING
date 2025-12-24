@@ -26,6 +26,59 @@
 
 ---
 
+### Mô tả Use Case theo Actor
+
+#### 1. Actor: Học viên (Android App)
+
+| STT | Use Case | Mô tả |
+|-----|----------|-------|
+| UC01 | Đăng ký tài khoản | Học viên tạo tài khoản mới bằng email, xác thực OTP qua email |
+| UC02 | Đăng nhập | Học viên đăng nhập bằng email/mật khẩu hoặc Google Sign-In |
+| UC03 | Quên mật khẩu | Học viên khôi phục mật khẩu qua OTP gửi về email |
+| UC04 | Đổi mật khẩu | Học viên thay đổi mật khẩu với xác thực OTP |
+| UC05 | Tìm kiếm khóa học | Học viên tìm kiếm khóa học theo địa điểm (Hà Nội, Huế, Đà Nẵng...) và ngày |
+| UC06 | Xem chi tiết khóa học | Học viên xem thông tin khóa học: mô tả, giá, đánh giá, danh sách món ăn |
+| UC07 | Xem lịch trình | Học viên xem các lịch trình của khóa học, số chỗ còn trống |
+| UC08 | Đặt lịch học | Học viên chọn lịch trình, ngày tham gia, số người và xác nhận đặt lịch |
+| UC09 | Áp dụng mã giảm giá | Học viên nhập mã ưu đãi để được giảm giá khi đặt lịch |
+| UC10 | Thanh toán Momo | Học viên thanh toán đơn đặt lịch qua ví điện tử Momo |
+| UC11 | Xem lịch sử đặt lịch | Học viên xem danh sách các đơn đặt lịch đã thực hiện |
+| UC12 | Hủy đơn đặt lịch | Học viên hủy đơn đặt lịch (trước 15 phút khai giảng) |
+| UC13 | Đánh giá khóa học | Học viên đánh giá sao (1-5) và viết bình luận sau khi hoàn thành khóa học |
+| UC14 | Upload media đánh giá | Học viên tải lên hình ảnh/video kèm theo đánh giá |
+| UC15 | Quản lý yêu thích | Học viên thêm/xóa khóa học vào danh sách yêu thích |
+| UC16 | Xem thông báo | Học viên xem các thông báo từ hệ thống (nhắc nhở, đặt lịch thành công) |
+| UC17 | Cập nhật thông tin cá nhân | Học viên chỉnh sửa họ tên, số điện thoại, địa chỉ |
+
+#### 2. Actor: Quản trị viên - Admin (WebAdmin)
+
+| STT | Use Case | Mô tả |
+|-----|----------|-------|
+| UC18 | Đăng nhập Admin | Admin đăng nhập vào hệ thống quản trị WebAdmin |
+| UC19 | Xem Dashboard | Admin xem thống kê tổng quan: người dùng, khóa học, đặt lịch, doanh thu |
+| UC20 | Quản lý người dùng | Admin xem, thêm, sửa, xóa thông tin người dùng |
+| UC21 | Phân quyền người dùng | Admin gán vai trò cho người dùng (Admin, Giáo viên, Học viên) |
+| UC22 | Quản lý giáo viên | Admin xem, thêm, sửa, xóa thông tin giáo viên (chuyên môn, kinh nghiệm) |
+| UC23 | Quản lý khóa học | Admin xem, thêm, sửa, xóa khóa học (tên, mô tả, giá, hình ảnh) |
+| UC24 | Quản lý lịch trình | Admin tạo lịch trình cho khóa học, gán giáo viên, cài đặt thời gian/địa điểm |
+| UC25 | Quản lý danh mục món ăn | Admin xem, thêm, sửa, xóa danh mục món ăn (Khai vị, Món chính, Tráng miệng) |
+| UC26 | Quản lý món ăn | Admin xem, thêm, sửa, xóa món ăn, gán vào khóa học và danh mục |
+| UC27 | Quản lý đơn đặt lịch | Admin xem danh sách đặt lịch, cập nhật trạng thái (Đặt trước, Đã hoàn thành, Đã hủy) |
+| UC28 | Quản lý ưu đãi | Admin tạo, sửa, xóa mã giảm giá, cài đặt điều kiện áp dụng |
+| UC29 | Xem báo cáo doanh thu | Admin xem thống kê doanh thu theo ngày/tháng/năm |
+
+#### 3. Actor: Hệ thống (System)
+
+| STT | Use Case | Mô tả |
+|-----|----------|-------|
+| UC30 | Gửi OTP qua email | Hệ thống tự động gửi mã OTP đến email người dùng khi đăng ký/quên mật khẩu |
+| UC31 | Gửi thông báo nhắc nhở | Hệ thống tự động gửi thông báo trước 1 ngày và 30 phút khi lớp học sắp diễn ra |
+| UC32 | Cập nhật trạng thái đơn | Hệ thống tự động cập nhật trạng thái đơn đặt lịch khi hết hạn thanh toán |
+| UC33 | Tính toán đánh giá | Hệ thống tự động tính điểm sao trung bình và số lượng đánh giá cho khóa học |
+| UC34 | Xử lý callback Momo | Hệ thống nhận và xử lý kết quả thanh toán từ Momo |
+
+---
+
 ## III. GIỚI THIỆU DỰ ÁN
 
 ### 1. Tên dự án
@@ -56,12 +109,12 @@ Local Cooking là nền tảng đặt lịch học nấu ăn trực tuyến, k�
 | 3 | Spring Data JPA | - | ORM, truy vấn cơ sở dữ liệu |
 | 4 | Spring Boot Starter Web | - | Xây dựng RESTful API |
 | 5 | Spring Boot Starter Mail | - | Gửi email (OTP, thông báo) |
-| 6 | Spring Boot DevTools | - | Hot reload trong quá trình phát triển |
+| 6 | Spring Boot DevToo trong quá trình phát triển |
 | 7 | SQL Server | 2019+ | Hệ quản trị cơ sở dữ liệu |
 | 8 | MSSQL JDBC Driver | - | Kết nối Java với SQL Server |
 | 9 | Lombok | - | Giảm boilerplate code (getter, setter, constructor) |
 | 10 | H2 Database | - | Database backup/testing |
-
+ls | - | Hot reload
 #### 1.2. Tích hợp dịch vụ bên thứ ba (Backend)
 
 | STT | Dịch vụ | Công nghệ/Thư viện | Phiên bản | Mô tả |
@@ -92,17 +145,17 @@ Local Cooking là nền tảng đặt lịch học nấu ăn trực tuyến, k�
 
 #### 2.2. Tích hợp dịch vụ bên thứ ba (Android)
 
-| STT | Dịch vụ | Công nghệ/Thư viện | Phiên bản | Mô tả |
-|-----|---------|-------------------|-----------|-------|
-| 1 | Gọi API REST | Retrofit | 2.9.0 | HTTP Client gọi Backend API |
-| 2 | Gọi API REST | Gson Converter | 2.9.0 | Chuyển đổi JSON sang Object |
-| 3 | Gọi API REST | OkHttp | 4.12.0 | HTTP Client, logging interceptor |
-| 4 | Load hình ảnh | Glide | 4.16.0 | Tải và cache hình ảnh hiệu quả |
-| 5 | Zoom hình ảnh | PhotoView | 2.3.0 | Phóng to/thu nhỏ hình ảnh |
-| 6 | Phát video | ExoPlayer (Media3) | 1.2.1 | Phát video đánh giá |
-| 7 | Đăng nhập Google | Google Sign-In | 21.0.0 | Xác thực tài khoản Google |
-| 8 | Định vị | Play Services Location | 21.0.1 | Lấy vị trí người dùng |
-| 9 | Avatar tròn | CircleImageView | 3.1.0 | Hiển thị ảnh đại diện dạng tròn |
+| STT | Dịch vụ | Nhà cung cấp | Mục đích sử dụng |
+|-----|---------|--------------|------------------|
+| 1 | Google Sign-In | Google | Đăng nhập bằng tài khoản Google, xác thực người dùng nhanh chóng |
+| 2 | Google Play Services Location | Google | Lấy vị trí hiện tại của người dùng để tìm kiếm khóa học gần đây |
+| 3 | Momo Payment | Momo (M_Service) | Thanh toán trực tuyến cho đơn đặt lịch học |
+| 4 | Glide | Bumptech | Tải, hiển thị và cache hình ảnh từ server |
+| 5 | ExoPlayer (Media3) | Google/AndroidX | Phát video đánh giá của học viên |
+| 6 | Retrofit | Square | Gọi RESTful API từ Backend |
+| 7 | OkHttp | Square | HTTP Client, xử lý request/response |
+| 8 | PhotoView | Chris Banes | Zoom phóng to/thu nhỏ hình ảnh chi tiết |
+| 9 | CircleImageView | Henning Dodenhof | Hiển thị avatar người dùng dạng tròn |
 
 ---
 
@@ -465,79 +518,506 @@ UuDai (1) ──────< (N) LichSuUuDai
 
 ---
 
-## VII. TÍNH NĂNG CHÍNH
+## VII. CÁC CHỨC NĂNG CHI TIẾT
 
-### 1. Ứng dụng Android (Học viên)
+### 1. Module Xác thực (Authentication)
 
-#### Xác thực & Tài khoản
-- Đăng ký tài khoản mới với xác thực OTP qua email
-- Đăng nhập bằng email/mật khẩu hoặc Google Sign-In
-- Quên mật khẩu với OTP
-- Đổi mật khẩu có xác thực OTP
+####    
 
-#### Tìm kiếm & Khám phá
-- Tìm kiếm khóa học theo địa điểm (Hà Nội, Huế, Đà Nẵng, Cần Thơ...)
-- Lọc theo ngày học
-- Xem chi tiết khóa học (mô tả, giá, đánh giá, món ăn)
-- Xem lịch trình và số chỗ còn trống
+**Mục đích:** Cho phép người dùng mới tạo tài khoản để sử dụng ứng dụng.
 
-#### Đặt lịch & Thanh toán
-- Chọn lịch trình, ngày tham gia, số người
-- Áp dụng mã giảm giá
-- Thanh toán qua Momo
-- Xem lịch sử đặt lịch
-- Hủy đơn (trước 15 phút khai giảng)
+**Quy trình đăng ký:**
+1. Người dùng nhập thông tin: email, mật khẩu, họ tên, số điện thoại
+2. Hệ thống kiểm tra email đã tồn tại chưa
+3. Gửi mã OTP 6 số đến email người dùng
+4. Người dùng nhập mã OTP để xác thực
+5. Mã hóa mật khẩu và lưu thông tin vào database
+6. Trả về thông tin user đã tạo
 
-#### Đánh giá & Thông báo
-- Đánh giá khóa học sau khi hoàn thành (1-5 sao)
-- Upload hình ảnh/video đánh giá
-- Nhận thông báo nhắc nhở trước 1 ngày và 30 phút
-- Thông báo đặt lịch thành công
+**Validation:**
+- Email phải đúng định dạng và chưa được sử dụng
+- Mật khẩu đủ độ dài (tối thiểu 6 ký tự)
+- Các trường bắt buộc không được để trống
 
-#### Yêu thích
-- Thêm/xóa khóa học yêu thích
-- Xem danh sách yêu thích
+#### 1.2. Đăng nhập
 
-### 2. WebAdmin (Quản trị viên)
+**Mục đích:** Xác thực người dùng và cấp quyền truy cập hệ thống.
 
-#### Dashboard
-- Thống kê tổng quan (người dùng, khóa học, đặt lịch, doanh thu)
-- Hoạt động gần đây
-- Đơn hàng mới nhất
+**Quy trình đăng nhập:**
+1. Người dùng nhập email và mật khẩu
+2. Hệ thống tìm user theo email
+3. So sánh mật khẩu với hash đã lưu
+4. Nếu đúng: trả về thông tin user
+5. Client lưu thông tin để sử dụng cho các request sau
 
-#### Quản lý Người dùng
-- Xem danh sách người dùng
-- Thêm/sửa/xóa người dùng
-- Phân quyền (Admin, Giáo viên, Học viên)
+**Đăng nhập Google:**
+1. Người dùng chọn "Đăng nhập bằng Google"
+2. Google trả về ID Token
+3. Backend xác thực token với Google API
+4. Tạo tài khoản mới hoặc đăng nhập nếu đã tồn tại
 
-#### Quản lý Giáo viên
-- Thông tin giáo viên
-- Chuyên môn, kinh nghiệm
-- Lịch sử công tác
-
-#### Quản lý Khóa học
-- CRUD khóa học
-- Upload hình ảnh
-- Cài đặt giá, ưu đãi
-
-#### Quản lý Lịch trình
-- Tạo lịch trình cho khóa học
-- Gán giáo viên
-- Cài đặt thời gian, địa điểm, số lượng tối đa
-
-#### Quản lý Đặt lịch
-- Xem danh sách đặt lịch
-- Cập nhật trạng thái (Đặt trước, Đã hoàn thành, Đã hủy)
-- Xem chi tiết thanh toán
-
-#### Quản lý Món ăn
-- CRUD món ăn
-- Gán món ăn vào khóa học và danh mục
-- Upload hình ảnh món ăn
+**Xử lý lỗi:**
+- Email không tồn tại: Thông báo "Email hoặc mật khẩu không đúng"
+- Mật khẩu sai: Thông báo "Email hoặc mật khẩu không đúng"
+- Tài khoản bị khóa: Thông báo "Tài khoản đã bị vô hiệu hóa"
 
 ---
 
-## VIII. API ENDPOINTS
+### 2. Module OTP & Quên mật khẩu
+
+#### 2.1. Gửi OTP
+
+**Mục đích:** Gửi mã xác thực đến email người dùng để đăng ký hoặc đặt lại mật khẩu.
+
+**Quy trình:**
+1. Người dùng nhập email
+2. Hệ thống kiểm tra email có tồn tại không (với quên mật khẩu)
+3. Sinh mã OTP 6 chữ số ngẫu nhiên
+4. Lưu OTP vào database với thời hạn 5 phút
+5. Gửi email chứa mã OTP đến người dùng
+
+**Đặc điểm:**
+- OTP có thời hạn 5 phút
+- Mỗi email chỉ có 1 OTP valid tại một thời điểm
+- Gửi lại OTP sẽ invalidate OTP cũ
+
+#### 2.2. Xác thực OTP
+
+**Mục đích:** Kiểm tra mã OTP người dùng nhập có đúng không.
+
+**Quy trình:**
+1. Người dùng nhập email và mã OTP đã nhận
+2. Hệ thống so sánh với OTP đã lưu
+3. Kiểm tra OTP còn hạn hay không
+4. Trả về kết quả: hợp lệ hoặc không hợp lệ
+
+#### 2.3. Đặt lại mật khẩu
+
+**Mục đích:** Cho phép người dùng tạo mật khẩu mới sau khi xác thực OTP.
+
+**Yêu cầu:** Phải xác thực OTP thành công trước đó.
+
+**Quy trình:**
+1. Người dùng nhập mật khẩu mới
+2. Hệ thống mã hóa mật khẩu
+3. Cập nhật vào database
+4. Xóa OTP đã sử dụng
+
+---
+
+### 3. Module Quản lý người dùng
+
+#### 3.1. Xem thông tin cá nhân
+
+**Mục đích:** Lấy thông tin chi tiết của người dùng đang đăng nhập.
+
+**Thông tin trả về:**
+- Thông tin cơ bản: id, email, họ tên, số điện thoại
+- Vai trò và trạng thái tài khoản
+- Thông tin bổ sung: địa chỉ, giới tính
+
+#### 3.2. Cập nhật thông tin cá nhân
+
+**Mục đích:** Cho phép người dùng chỉnh sửa thông tin profile.
+
+**Thông tin có thể cập nhật:**
+- Họ tên, số điện thoại
+- Địa chỉ, giới tính
+
+**Thông tin KHÔNG thể tự thay đổi:**
+- Email (định danh duy nhất)
+- Vai trò (chỉ Admin mới thay đổi được)
+
+#### 3.3. Đổi mật khẩu
+
+**Mục đích:** Cho phép người dùng thay đổi mật khẩu khi đã đăng nhập.
+
+**Yêu cầu:**
+- Phải nhập mật khẩu cũ đúng
+- Mật khẩu mới phải khác mật khẩu cũ
+- Xác nhận mật khẩu mới phải khớp
+- Xác thực OTP gửi về email
+
+#### 3.4. Quản lý danh sách người dùng (Admin)
+
+**Mục đích:** Admin có thể quản lý tất cả tài khoản trong hệ thống.
+
+**Chức năng:**
+- Xem danh sách tất cả người dùng
+- Xem chi tiết từng người dùng
+- Cập nhật thông tin người dùng
+- Thay đổi trạng thái tài khoản (HoatDong/BiKhoa)
+- Xóa tài khoản
+- Phân quyền vai trò (Admin, GiaoVien, HocVien)
+
+---
+
+### 4. Module Quản lý Khóa học
+
+#### 4.1. Xem danh sách khóa học
+
+**Mục đích:** Hiển thị tất cả khóa học cho người dùng duyệt.
+
+**Tính năng:**
+- Tìm kiếm theo địa điểm
+- Lọc theo ngày học
+- Sắp xếp theo giá, đánh giá
+
+**Bộ lọc khóa học:**
+
+| Tiêu chí | Mô tả |
+|----------|-------|
+| diaDiem | Tìm theo địa điểm (Hà Nội, Huế, Đà Nẵng, Cần Thơ...) |
+| ngayTimKiem | Lọc theo ngày học (YYYY-MM-DD) |
+| coUuDai | Chỉ khóa học có ưu đãi |
+
+#### 4.2. Xem chi tiết khóa học
+
+**Mục đích:** Hiển thị đầy đủ thông tin một khóa học cụ thể.
+**Thông tin hiển thị:**
+- Tiêu đề, mô tả chi tiết, giới thiệu
+- Hình ảnh khóa học
+- Giá tiền, giá sau ưu đãi (nếu có)
+- Số lượng đánh giá, điểm sao trung bình
+- Danh sách món ăn theo danh mục
+- Danh sách lịch trình với số chỗ còn trống
+- Thông tin giáo viên
+
+#### 4.3. Tạo khóa học mới (Admin)
+
+**Mục đích:** Cho phép Admin tạo khóa học mới.
+
+**Thông tin cần nhập:**
+
+| Trường | Bắt buộc | Mô tả |
+|--------|----------|-------|
+| tenKhoaHoc | Có | Tên khóa học |
+| moTa | Không | Mô tả ngắn (tối đa 500 ký tự) |
+| gioiThieu | Không | Giới thiệu chi tiết |
+| giaTriSauBuoiHoc | Không | Giá trị học viên nhận được |
+| giaTien | Có | Giá tiền (VNĐ) |
+| hinhAnh | Không | Ảnh banner khóa học |
+| coUuDai | Không | Có ưu đãi không |
+
+#### 4.4. Cập nhật khóa học
+
+**Mục đích:** Chỉnh sửa thông tin khóa học đã tạo.
+
+**Điều kiện:** Chỉ Admin mới có quyền sửa.
+
+#### 4.5. Xóa khóa học
+
+**Mục đích:** Xóa khóa học khỏi hệ thống.
+
+**Lưu ý:** Xóa khóa học sẽ xóa cascade tất cả lịch trình, món ăn liên quan.
+
+---
+
+### 5. Module Đặt lịch học
+
+#### 5.1. Đặt lịch tham gia khóa học
+
+**Mục đích:** Cho phép học viên đăng ký tham gia một khóa học.
+
+**Quy trình:**
+1. Học viên xem chi tiết khóa học
+2. Chọn lịch trình phù hợp
+3. Chọn ngày tham gia
+4. Nhập số lượng người
+5. Hệ thống kiểm tra:
+   - Lịch trình còn chỗ không?
+   - Ngày tham gia hợp lệ không?
+6. Nhập thông tin liên hệ (tên, email, SĐT)
+7. Áp dụng mã giảm giá (nếu có)
+8. Tạo đơn đặt lịch với status = "Đặt trước"
+9. Chuyển đến thanh toán Momo
+
+**Trạng thái đặt lịch:**
+
+| Trạng thái | Mô tả |
+|------------|-------|
+| Đặt trước | Đã đặt, chờ thanh toán hoặc đã thanh toán nhưng lớp chưa diễn ra |
+| Đã hoàn thành | Đã thanh toán và lớp học đã diễn ra |
+| Đã huỷ | Đã hủy đơn |
+
+#### 5.2. Thanh toán Momo
+
+**Mục đích:** Cho phép học viên thanh toán đơn đặt lịch qua ví Momo.
+
+**Quy trình:**
+1. Hệ thống tạo request thanh toán đến Momo
+2. Momo trả về payUrl và deeplink
+3. Mở app Momo hoặc trang thanh toán
+4. Học viên xác nhận thanh toán
+5. Momo gọi callback về Backend
+6. Cập nhật trạng thái thanh toán
+7. Gửi thông báo đặt lịch thành công
+
+**Thông tin thanh toán:**
+- requestId: ID request gửi Momo
+- orderId: Mã đơn hàng hệ thống
+- transId: Mã giao dịch Momo
+- resultCode: 0 = thành công
+
+#### 5.3. Xem lịch sử đặt lịch
+
+**Mục đích:** Học viên xem danh sách các đơn đặt lịch đã thực hiện.
+
+**Phân loại:**
+- Tất cả đơn
+- Đặt trước (chờ diễn ra)
+- Đã hoàn thành
+- Đã hủy
+
+#### 5.4. Hủy đơn đặt lịch
+
+**Mục đích:** Cho phép học viên hủy đơn nếu không thể tham gia.
+
+**Điều kiện:** Chỉ hủy được khi:
+- Đơn đã thanh toán
+- Trước thời gian lớp học diễn ra 15 phút
+
+---
+
+### 6. Module Đánh giá
+
+#### 6.1. Kiểm tra trạng thái đánh giá
+
+**Mục đích:** Kiểm tra học viên có thể đánh giá khóa học không.
+
+**Trạng thái:**
+
+| Trạng thái | Mô tả |
+|------------|-------|
+| CÓ THỂ ĐÁNH GIÁ | Đơn đã hoàn thành, chưa đánh giá |
+| ĐÃ ĐÁNH GIÁ | Đã đánh giá rồi |
+| KHÔNG THỂ ĐÁNH GIÁ | Đơn chưa hoàn thành |
+
+#### 6.2. Tạo đánh giá
+
+**Mục đích:** Cho phép học viên đánh giá khóa học sau khi hoàn thành.
+
+**Thông tin đánh giá:**
+- Điểm sao (1-5)
+- Bình luận
+- Hình ảnh/video đính kèm (tùy chọn)
+
+**Quy trình:**
+1. Kiểm tra đơn đã hoàn thành chưa
+2. Kiểm tra chưa đánh giá
+3. Lưu đánh giá vào database
+4. Upload hình ảnh/video (nếu có)
+5. Cập nhật điểm sao trung bình của khóa học
+
+#### 6.3. Xem đánh giá khóa học
+
+**Mục đích:** Hiển thị danh sách đánh giá của một khóa học.
+
+**Thông tin hiển thị:**
+- Tên học viên
+- Điểm sao
+- Bình luận
+- Hình ảnh/video
+- Ngày đánh giá
+
+---
+
+### 7. Module Thông báo
+
+#### 7.1. Xem danh sách thông báo
+
+**Mục đích:** Người dùng xem các thông báo từ hệ thống.
+
+**Phân loại thông báo:**
+
+| Loại | Mô tả |
+|------|-------|
+| Hệ Thống | Thông báo chung từ hệ thống |
+| DatLich | Thông báo đặt lịch thành công |
+| NhacNho | Nhắc nhở trước khi lớp học diễn ra |
+
+**Tính năng:**
+- Đánh dấu đã đọc
+- Đánh dấu tất cả là đã đọc
+- Xóa thông báo đã đọc
+- Đếm số thông báo chưa đọc
+
+#### 7.2. Thông báo tự động
+
+**Mục đích:** Hệ thống tự động gửi thông báo nhắc nhở.
+
+**Loại thông báo tự động:**
+- Đặt lịch thành công: Ngay sau khi thanh toán
+- Nhắc nhở trước 1 ngày: Lớp học sắp diễn ra vào ngày mai
+- Nhắc nhở trước 30 phút: Lớp học sắp bắt đầu
+
+---
+
+### 8. Module Ưu đãi
+
+#### 8.1. Xem danh sách ưu đãi
+
+**Mục đích:** Hiển thị các mã giảm giá khả dụng cho học viên.
+
+**Thông tin hiển thị:**
+- Mã code, tên ưu đãi
+- Loại giảm (phần trăm/số tiền)
+- Giá trị giảm, giảm tối đa
+- Thời hạn sử dụng
+- Điều kiện áp dụng (số người tối thiểu)
+
+#### 8.2. Áp dụng mã ưu đãi
+
+**Mục đích:** Cho phép học viên sử dụng mã giảm giá khi đặt lịch.
+
+**Quy trình:**
+1. Học viên nhập mã ưu đãi
+2. Hệ thống kiểm tra:
+   - Mã có tồn tại không?
+   - Mã còn hạn không?
+   - Mã còn số lượng không?
+   - Đủ điều kiện số người không?
+3. Tính toán số tiền được giảm
+4. Trả về giá sau giảm
+
+#### 8.3. Quản lý ưu đãi (Admin)
+
+**Mục đích:** Admin quản lý danh sách mã giảm giá trong hệ thống.
+
+**Chức năng:**
+- Thêm mã ưu đãi mới
+- Cập nhật thông tin ưu đãi
+- Thay đổi trạng thái (Hoạt Động/Hết Hạn)
+- Xóa ưu đãi
+
+---
+
+### 9. Module Yêu thích
+
+#### 9.1. Thêm vào yêu thích
+
+**Mục đích:** Cho phép học viên lưu khóa học để theo dõi.
+
+**Quy trình:**
+1. Học viên nhấn nút "Yêu thích" trên khóa học
+2. Hệ thống kiểm tra đã yêu thích chưa
+3. Thêm vào danh sách yêu thích
+
+#### 9.2. Xóa khỏi yêu thích
+
+**Mục đích:** Xóa khóa học khỏi danh sách yêu thích.
+
+#### 9.3. Xem danh sách yêu thích
+
+**Mục đích:** Hiển thị tất cả khóa học đã lưu.
+
+---
+
+## VIII. GIAO DIỆN NGƯỜI DÙNG
+
+### 1. Tổng quan giao diện
+
+Ứng dụng được thiết kế theo Material Design với giao diện hiện đại, thân thiện người dùng. Cấu trúc navigation chính sử dụng Bottom Navigation Bar kết hợp với Fragments.
+
+### 2. Các màn hình theo vai trò
+
+#### 2.1. Màn hình Xác thực (Chung)
+
+| Màn hình | Mô tả chức năng |
+|----------|-----------------|
+| Đăng nhập | Form nhập email/password, nút đăng nhập Google, link đăng ký, link quên mật khẩu |
+| Đăng ký | Form nhập đầy đủ thông tin: email, mật khẩu, họ tên, SĐT |
+| Quên mật khẩu | Nhập email để nhận OTP |
+| Xác thực OTP | Nhập 6 số OTP, có nút gửi lại |
+| Đặt lại mật khẩu | Nhập mật khẩu mới và xác nhận |
+
+#### 2.2. Màn hình Học viên (Android App)
+
+| Màn hình | Mô tả chức năng |
+|----------|-----------------|
+| Trang chủ | Banner khóa học nổi bật, ô tìm kiếm theo địa điểm và ngày |
+| Kết quả tìm kiếm | Danh sách khóa học theo bộ lọc |
+| Chi tiết khóa học | Ảnh, thông tin đầy đủ, danh sách món ăn, lịch trình, nút đặt lịch |
+| Đặt lịch | Chọn lịch trình, ngày, số người, nhập thông tin, áp dụng mã giảm giá |
+| Thanh toán Momo | Chuyển đến app/web Momo để thanh toán |
+| Lịch sử đặt lịch | Danh sách đơn đặt lịch, tab theo trạng thái |
+| Chi tiết đơn | Thông tin đơn, khóa học, thanh toán, nút hủy/đánh giá |
+| Đánh giá | Form đánh giá sao, bình luận, upload hình ảnh/video |
+| Yêu thích | Danh sách khóa học đã lưu |
+| Thông báo | Danh sách thông báo, badge số chưa đọc |
+| Cá nhân | Avatar, thông tin user, nút cài đặt |
+| Chỉnh sửa hồ sơ | Form cập nhật thông tin |
+| Đổi mật khẩu | Nhập mật khẩu cũ, mới, xác thực OTP |
+
+#### 2.3. Màn hình Admin (WebAdmin)
+
+| Màn hình | Mô tả chức năng |
+|----------|-----------------|
+| Dashboard | Thống kê tổng quan, hoạt động gần đây, đơn hàng mới |
+| Quản lý người dùng | Danh sách người dùng, CRUD, phân quyền |
+| Quản lý giáo viên | Danh sách giáo viên, CRUD, thông tin chi tiết |
+| Quản lý khóa học | Danh sách khóa học, CRUD, upload hình ảnh |
+| Quản lý lịch trình | Danh sách lịch trình, CRUD, gán giáo viên |
+| Quản lý món ăn | Danh sách món ăn, CRUD, gán khóa học & danh mục |
+| Quản lý đặt lịch | Danh sách đơn, cập nhật trạng thái |
+
+### 3. Đặc điểm UI/UX
+
+| Tính năng | Mô tả |
+|-----------|-------|
+| Pull-to-refresh | Kéo xuống để làm mới dữ liệu |
+| Loading states | Hiển thị loading khi tải dữ liệu |
+| Error handling | Thông báo lỗi thân thiện, nút thử lại |
+| Image caching | Glide tự động cache hình ảnh |
+| Responsive | Giao diện tương thích nhiều kích thước màn hình |
+
+---
+
+## IX. TỔNG KẾT
+
+### 1. Điểm nổi bật của dự án
+
+| Điểm nổi bật | Mô tả |
+|--------------|-------|
+| Kiến trúc Clean | Phân tách rõ ràng Backend/Frontend/WebAdmin, dễ bảo trì và mở rộng |
+| Bảo mật | Mã hóa mật khẩu, xác thực OTP, Google OAuth |
+| Thanh toán tích hợp | Tích hợp Momo Payment API, xử lý callback realtime |
+| Multi-platform | Android App cho học viên, WebAdmin cho quản trị |
+| Multi-role | Hỗ trợ đầy đủ 3 vai trò với quyền hạn riêng biệt |
+| Thông báo tự động | Hệ thống nhắc nhở trước 1 ngày và 30 phút |
+| Đánh giá đa phương tiện | Hỗ trợ upload hình ảnh và video đánh giá |
+
+### 2. Thống kê dự án
+
+| Tiêu chí | Số lượng |
+|----------|----------|
+| Tổng số API endpoints | ~50+ |
+| Số bảng database | 18 |
+| Số màn hình Android | ~15+ |
+| Số trang WebAdmin | 7 |
+
+### 3. Công nghệ sử dụng tóm tắt
+
+| Layer | Công nghệ |
+|-------|-----------|
+| Backend Framework | Spring Boot 4.0.0 |
+| Backend Language | Java 21 |
+| Database | SQL Server |
+| ORM | Hibernate/JPA |
+| Payment | Momo API |
+| Authentication | Google OAuth 2.0 |
+| Email Service | Spring Mail |
+| Mobile Platform | Android (SDK 22-36) |
+| Mobile Language | Java 11 |
+| HTTP Client | Retrofit 2.9.0 + OkHttp 4.12.0 |
+| Image Loading | Glide 4.16.0 |
+| Video Player | ExoPlayer (Media3) 1.2.1 |
+| UI Framework | Material Design 1.12.0 |
+| WebAdmin | HTML5/CSS3/JavaScript |
+
+---
+
+## X. API ENDPOINTS
 
 ### Base URL: `http://localhost:8080/api`
 
@@ -560,7 +1040,7 @@ UuDai (1) ──────< (N) LichSuUuDai
 
 ---
 
-## IX. HƯỚNG DẪN CÀI ĐẶT
+## XI. HƯỚNG DẪN CÀI ĐẶT
 
 ### 1. Yêu cầu hệ thống
 - Java JDK 21
@@ -594,7 +1074,7 @@ Backend chạy tại: `http://localhost:8080`
 
 ---
 
-## X. DEMO & SCREENSHOTS
+## XII. DEMO & SCREENSHOTS
 
 ### 1. Màn hình đăng nhập
 [Chèn ảnh]
@@ -613,7 +1093,7 @@ Backend chạy tại: `http://localhost:8080`
 
 ---
 
-## XI. KẾT LUẬN
+## XIII. KẾT LUẬN
 
 ### Kết quả đạt được
 - Hoàn thành đầy đủ các tính năng theo yêu cầu

@@ -437,6 +437,15 @@ public class Payment extends AppCompatActivity {
             intent.putExtra(Vouchers.EXTRA_MA_HOC_VIEN, sessionManager.getMaNguoiDung());
             intent.putExtra(Vouchers.EXTRA_SO_LUONG_NGUOI, soLuongDat);
             intent.putExtra(Vouchers.EXTRA_TONG_TIEN, tongTien);
+            
+            // Truyền voucher đã chọn trước đó (nếu có) để giữ trạng thái
+            if (selectedMaUuDai != null && selectedMaUuDai != -1) {
+                intent.putExtra(Vouchers.EXTRA_SELECTED_MA_UU_DAI, selectedMaUuDai);
+            }
+            if (selectedMaCode != null && !selectedMaCode.isEmpty()) {
+                intent.putExtra(Vouchers.EXTRA_SELECTED_MA_CODE, selectedMaCode);
+            }
+            
             voucherLauncher.launch(intent);
         });
 
