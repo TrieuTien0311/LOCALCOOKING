@@ -16,45 +16,41 @@
         <LinearLayout
             android:id="@+id/layoutBanner"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:background="#D45155"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
             android:orientation="horizontal"
-            android:padding="10dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="12dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_flash"
                 app:tint="#FFFFFF" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:text="ƯU ĐÃI GIỜ CHÓT !"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
-
-            <View
-                android:id="@+id/view22"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/txtKetThuc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="24dp"
                 android:text="Kết thúc sau 23:30:00"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
@@ -81,12 +77,12 @@
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="12dp">
+                    android:paddingBottom="36dp">
 
                     <!-- Hình ảnh món ăn với CardView bo tròn -->
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingTop="8dp"
                         android:paddingRight="16dp">
@@ -107,12 +103,11 @@
                         </androidx.cardview.widget.CardView>
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="130dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:layout_marginTop="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:orientation="vertical">
 
                             <!-- Giá gốc (bị gạch ngang khi có ưu đãi) -->
                             <TextView
@@ -282,7 +277,7 @@
                 <View
                     android:id="@+id/overlayDim"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"
+                    android:layout_height="match_parent"
                     android:background="#73474545"
                     android:visibility="gone" />
 
@@ -293,13 +288,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_rounded_dark_tt"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="32dp"
-                    android:paddingRight="16dp"
-                    android:paddingBottom="32dp"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="36dp"
                     android:text="Đã diễn ra"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="normal"
                     android:visibility="gone" />
 
