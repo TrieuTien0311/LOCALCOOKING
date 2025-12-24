@@ -110,6 +110,20 @@ public class ClassesFragment extends Fragment {
             public void onChiTietClick(KhoaHoc lopHoc) {
                 // Mở bottom sheet chi tiết với ngày được chọn
                 DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(lopHoc, date);
+                
+                // Set listener để đồng bộ trạng thái yêu thích
+                bottomSheet.setOnFavoriteChangedListener((khoaHoc, isFavorite) -> {
+                    // Cập nhật trạng thái trong danh sách
+                    for (KhoaHoc item : danhSachLopHoc) {
+                        if (item.getMaKhoaHoc().equals(khoaHoc.getMaKhoaHoc())) {
+                            item.setIsFavorite(isFavorite);
+                            break;
+                        }
+                    }
+                    // Cập nhật UI
+                    classAdapter.notifyDataSetChanged();
+                });
+                
                 bottomSheet.show(getChildFragmentManager(), "DetailBottomSheet");
             }
 

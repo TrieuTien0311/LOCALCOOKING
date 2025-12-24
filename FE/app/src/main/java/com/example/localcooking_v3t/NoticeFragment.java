@@ -1,10 +1,13 @@
 package com.example.localcooking_v3t;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +40,8 @@ public class NoticeFragment extends Fragment {
     private List<Notice> noticeList;
     private ProgressBar progressBar;
     private TextView tvEmpty;
+    private LinearLayout layoutLoginRequired;
+    private Button btnLogin;
 
     private ApiService apiService;
     private SessionManager sessionManager;
@@ -50,6 +55,8 @@ public class NoticeFragment extends Fragment {
 
         // Khởi tạo views
         recyclerView = view.findViewById(R.id.recyclerViewNotices);
+        layoutLoginRequired = view.findViewById(R.id.layoutLoginRequired);
+        btnLogin = view.findViewById(R.id.btnLogin);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Khởi tạo danh sách
@@ -58,6 +65,16 @@ public class NoticeFragment extends Fragment {
         // Khởi tạo API service và session
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(requireContext());
+
+        // Kiểm tra đăng nhập
+        if (!sessionManager.isLoggedIn()) {
+            // Chưa đăng nhập - hiển thị yêu cầu đăng nhập
+            showLoginRequired();
+            return view;
+        }
+
+        // Đã đăng nhập - hiển thị danh sách thông báo
+        showNoticeList();
 
         // Lấy mã người dùng
         maNguoiDung = sessionManager.getMaNguoiDung();
@@ -81,12 +98,26 @@ public class NoticeFragment extends Fragment {
         // Load dữ liệu từ API
         if (maNguoiDung != null && maNguoiDung > 0) {
             loadThongBaoFromAPI();
-        } else {
-            Log.w(TAG, "Chưa đăng nhập, hiển thị dữ liệu mẫu");
-            initSampleData();
         }
 
         return view;
+    }
+
+    // Hiển thị yêu cầu đăng nhập
+    private void showLoginRequired() {
+        recyclerView.setVisibility(View.GONE);
+        layoutLoginRequired.setVisibility(View.VISIBLE);
+        
+        btnLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), Login.class);
+            startActivity(intent);
+        });
+    }
+
+    // Hiển thị danh sách thông báo
+    private void showNoticeList() {
+        layoutLoginRequired.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     // Load thông báo từ API
