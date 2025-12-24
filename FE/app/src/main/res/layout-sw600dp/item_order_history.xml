@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout cho tablet - item_order_history.xml -->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imgMonAnOrder"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="top"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="6dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/hue_h" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Badge trạng thái thanh toán -->
+            <TextView
+                android:id="@+id/txtTrangThaiThanhToan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="⏳ Chưa thanh toán"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:background="@drawable/badge_chua_thanh_toan"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtTieuDe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Ẩm thực địa phương Huế"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/txtSoLuongNguoi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:drawableLeft="@drawable/ic_participants"
+                android:drawablePadding="8dp"
+                android:drawableTint="#757575"
+                android:gravity="center_vertical"
+                android:text="1 người"
+                android:textColor="#757575"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLich"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:drawableLeft="@drawable/ic_calendar"
+                android:drawablePadding="8dp"
+                android:drawableTint="#757575"
+                android:gravity="center_vertical"
+                android:text="14:00 - 17:00, 02/10/2025"
+                android:textColor="#757575"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtDiaDiem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:drawableLeft="@drawable/ic_location"
+                android:drawablePadding="8dp"
+                android:drawableTint="#757575"
+                android:gravity="center_vertical"
+                android:text="23 Lê Duẩn, Đà Nẵng"
+                android:textColor="#757575"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/txtGia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_coin"
+                android:drawablePadding="8dp"
+                android:drawableTint="#757575"
+                android:gravity="center_vertical"
+                android:text="715.000₫"
+                android:textColor="#D84B42"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Nút action -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="6dp">
+
+                <!-- Nút Hủy đặt -->
+                <Button
+                    android:id="@+id/btnHuyDat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:backgroundTint="#C62828"
+                    android:minWidth="100dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="Hủy đặt"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:cornerRadius="8dp" />
+
+                <!-- Nút Thanh toán -->
+                <Button
+                    android:id="@+id/btnThanhToan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="12dp"
+                    android:backgroundTint="#4CAF50"
+                    android:minWidth="120dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="Thanh toán"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+
+            <!-- Thời gian hủy -->
+            <TextView
+                android:id="@+id/txtThoiGianHuy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Đã huỷ lúc 10:52 - T3, 11/11/2024"
+                android:textAlignment="textEnd"
+                android:textColor="#BA5632"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!-- Nút Đặt lại và Đánh giá -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/txtDatLai"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="28dp"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="#D84B42"
+                    android:gravity="center_vertical"
+                    android:text="Đặt lại"
+                    android:textColor="#D84B42"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtDanhGia2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="#D84B42"
+                    android:gravity="center_vertical"
+                    android:text="Xem đánh giá"
+                    android:textColor="#D84B42"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout cho tablet - bottom_sheet_detail.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    android:padding="0dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="14dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTenLop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ẩm thực địa phương Huế"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvThoiGian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="14:00 - T5, 02/10/2025"
+                android:textColor="#1E1E1E"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view8"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="1"
+            android:background="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/btnDong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="36dp"
+            android:text="Đóng"
+            android:textColor="#8B4513"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginBottom="0dp"
+        android:background="#FFC59D"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabIndicatorColor="#6A3B1A"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorGravity="bottom"
+        app:tabSelectedTextColor="#6A3B1A"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        app:tabTextColor="#7A7777">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabMoTa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mô tả"
+            android:visibility="visible" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabDanhGia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá"
+            android:visibility="visible" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabChinhSach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chính sách"
+            android:visibility="visible" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabUuDai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ưu đãi" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- Shadow dưới TabLayout -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/tab_shadow" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:id="@+id/view11"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="0dp"
+        android:background="#CDCDCD" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="48dp"
+        android:paddingTop="14dp"
+        android:paddingRight="48dp"
+        android:paddingBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDatLich"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/button_red"
+                android:letterSpacing="0.001"
+                android:minHeight="0dp"
+                android:paddingLeft="0dp"
+                android:paddingTop="4dp"
+                android:paddingRight="0dp"
+                android:paddingBottom="4dp"
+                android:text="Đặt lịch"
+                android:textAllCaps="false"
+                android:textColor="#FDFDFD"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+
+            <View
+                android:id="@+id/view12"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="#E0E0E0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnfav"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/button_bg"
+                app:backgroundTint="@null"
+                app:icon="@drawable/ic_heart"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="#6A3B1A" />
+
+            <View
+                android:id="@+id/view13"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="#E0E0E0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/button_bg"
+                app:backgroundTint="@null"
+                app:icon="@drawable/icon_share_tt"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="#6A3B1A" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView38"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Được phục vụ bạn là niềm vinh hạnh của chúng tôi"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+</LinearLayout>
