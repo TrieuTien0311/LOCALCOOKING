@@ -758,7 +758,7 @@ INSERT INTO KhoaHoc (tenKhoaHoc, moTa, gioiThieu, giaTriSauBuoiHoc, giaTien, hin
  N'• Nấu lẩu mắm không bị mặn chát
 • Nướng cá lóc giữ được độ ngọt
 • Kỹ thuật nấu nước cốt dừa béo', 
- 580000, N'huong_vi_mien_tay_song_nuoc_1.jpg', 1),
+ 580000, N'huong_vi_mien_tay_song_nuoc_1.png', 1),
 
 (N'Bánh Xèo & Bánh Khọt Nam Bộ', 
  N'Cặp đôi bánh chiên giòn rụm, vàng ươm của miền Nam', 
@@ -963,31 +963,31 @@ INSERT INTO HinhAnhMonAn (maMonAn, duongDan, thuTu) VALUES
 (63, N'che_chuoi_nuong_1.jpg', 1),				(63, N'che_chuoi_nuong_2.jpg', 2),
 (64, N'che_buoi_1.jpg', 1),						(64, N'che_buoi_2.jpg', 2);
 
--- 8. HÌNH ẢNH KHÓA HỌC (48 dòng)
+-- 8. HÌNH ẢNH KHÓA HỌC (48 dòng - 3 ảnh mỗi khóa học)
 INSERT INTO HinhAnhKhoaHoc (maKhoaHoc, duongDan, thuTu) VALUES
 -- Hà Nội
-(1, N'am_thuc_pho_co_ha_noi_2.jpg', 1),           (1, N'am_thuc_pho_co_ha_noi_3.jpg', 2),
-(2, N'bun_va_mon_cuon_ha_thanh_2.jpg', 1),        (2, N'bun_va_mon_cuon_ha_thanh_3.jpg', 2),
-(3, N'banh_dan_gian_va_qua_que_bac_bo_2.jpg', 1), (3, N'banh_dan_gian_va_qua_que_bac_bo_3.jpg', 2),
-(4, N'mon_nhau_va_lai_rai_ha_noi_2.jpg', 1),      (4, N'mon_nhau_va_lai_rai_ha_noi_3.jpg', 2),
+(1, N'am_thuc_pho_co_ha_noi_1.jpg', 1),           (1, N'am_thuc_pho_co_ha_noi_2.jpg', 2),           (1, N'am_thuc_pho_co_ha_noi_3.jpg', 3),
+(2, N'bun_va_mon_cuon_ha_thanh_1.jpg', 1),        (2, N'bun_va_mon_cuon_ha_thanh_2.jpg', 2),        (2, N'bun_va_mon_cuon_ha_thanh_3.jpg', 3),
+(3, N'banh_dan_gian_va_qua_que_bac_bo_1.jpg', 1), (3, N'banh_dan_gian_va_qua_que_bac_bo_2.jpg', 2), (3, N'banh_dan_gian_va_qua_que_bac_bo_3.jpg', 3),
+(4, N'mon_nhau_va_lai_rai_ha_noi_1.jpg', 1),      (4, N'mon_nhau_va_lai_rai_ha_noi_2.jpg', 2),      (4, N'mon_nhau_va_lai_rai_ha_noi_3.jpg', 3),
 
 -- Huế
-(5, N'tinh_hoa_cung_dinh_hue_2.jpg', 1),          (5, N'tinh_hoa_cung_dinh_hue_3.jpg', 2),
-(6, N'banh_hue_truyen_thong_2.jpg', 1),           (6, N'banh_hue_truyen_thong_3.jpg', 2),
-(7, N'am_thuc_chay_xu_hue_2.jpg', 1),             (7, N'am_thuc_chay_xu_hue_3.jpg', 2),
-(8, N'banh_trai_va_qua_chieu_co_do_2.jpg', 1),    (8, N'banh_trai_va_qua_chieu_co_do_3.jpg', 2),
+(5, N'tinh_hoa_cung_dinh_hue_1.jpg', 1),          (5, N'tinh_hoa_cung_dinh_hue_2.jpg', 2),          (5, N'tinh_hoa_cung_dinh_hue_3.jpg', 3),
+(6, N'banh_hue_truyen_thong_1.jpg', 1),           (6, N'banh_hue_truyen_thong_2.jpg', 2),           (6, N'banh_hue_truyen_thong_3.jpg', 3),
+(7, N'am_thuc_chay_xu_hue_1.jpg', 1),             (7, N'am_thuc_chay_xu_hue_2.jpg', 2),             (7, N'am_thuc_chay_xu_hue_3.jpg', 3),
+(8, N'banh_trai_va_qua_chieu_co_do_1.jpg', 1),    (8, N'banh_trai_va_qua_chieu_co_do_2.jpg', 2),    (8, N'banh_trai_va_qua_chieu_co_do_3.jpg', 3),
 
 -- Đà Nẵng
-(9, N'dac_san_bien_da_nang_2.jpg', 1),            (9, N'dac_san_bien_da_nang_3.jpg', 2),
-(10, N'banh_xeo_va_nem_lui_da_nang_2.jpg', 1),    (10, N'banh_xeo_va_nem_lui_da_nang_3.jpg', 2),
-(11, N'bun_mam_va_cha_ca_mien_trung_2.jpg', 1),   (11, N'bun_mam_va_cha_ca_mien_trung_3.jpg', 2),
-(12, N'soi_banh_thu_cong_va_cao_lau_2.jpg', 1),   (12, N'soi_banh_thu_cong_va_cao_lau_3.jpg', 2),
+(9, N'dac_san_bien_da_nang_1.jpg', 1),            (9, N'dac_san_bien_da_nang_2.jpg', 2),            (9, N'dac_san_bien_da_nang_3.jpg', 3),
+(10, N'banh_xeo_va_nem_lui_da_nang_1.jpg', 1),    (10, N'banh_xeo_va_nem_lui_da_nang_2.jpg', 2),    (10, N'banh_xeo_va_nem_lui_da_nang_3.jpg', 3),
+(11, N'bun_mam_va_cha_ca_mien_trung_1.jpg', 1),   (11, N'bun_mam_va_cha_ca_mien_trung_2.jpg', 2),   (11, N'bun_mam_va_cha_ca_mien_trung_3.jpg', 3),
+(12, N'soi_banh_thu_cong_va_cao_lau_1.jpg', 1),   (12, N'soi_banh_thu_cong_va_cao_lau_2.jpg', 2),   (12, N'soi_banh_thu_cong_va_cao_lau_3.jpg', 3),
 
--- Cần Thơ
-(13, N'huong_vi_mien_tay_song_nuoc_2.jpg', 1),    (13, N'huong_vi_mien_tay_song_nuoc_3.jpg', 2),
-(14, N'banh_xeo_va_banh_khot_nam_bo_2.jpg', 1),   (14, N'banh_xeo_va_banh_khot_nam_bo_3.jpg', 2),
-(15, N'hu_tieu_va_mon_ngon_phuong_nam_2.jpg', 1), (15, N'hu_tieu_va_mon_ngon_phuong_nam_3.jpg', 2),
-(16, N'bien_tau_chuoi_va_che_nam_bo_2.jpg', 1),   (16, N'bien_tau_chuoi_va_che_nam_bo_3.jpg', 2);
+-- Cần Thơ (lưu ý khóa 13 ảnh 1 là .png)
+(13, N'huong_vi_mien_tay_song_nuoc_1.png', 1),    (13, N'huong_vi_mien_tay_song_nuoc_2.jpg', 2),    (13, N'huong_vi_mien_tay_song_nuoc_3.jpg', 3),
+(14, N'banh_xeo_va_banh_khot_nam_bo_1.jpg', 1),   (14, N'banh_xeo_va_banh_khot_nam_bo_2.jpg', 2),   (14, N'banh_xeo_va_banh_khot_nam_bo_3.jpg', 3),
+(15, N'hu_tieu_va_mon_ngon_phuong_nam_1.jpg', 1), (15, N'hu_tieu_va_mon_ngon_phuong_nam_2.jpg', 2), (15, N'hu_tieu_va_mon_ngon_phuong_nam_3.jpg', 3),
+(16, N'bien_tau_chuoi_va_che_nam_bo_1.jpg', 1),   (16, N'bien_tau_chuoi_va_che_nam_bo_2.jpg', 2),   (16, N'bien_tau_chuoi_va_che_nam_bo_3.jpg', 3);
 
 
 
@@ -1783,3 +1783,5 @@ VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003
 
 PRINT N'✅ Đã thực thi thành công !';
 
+select * from ThanhToan
+select * from DatLich

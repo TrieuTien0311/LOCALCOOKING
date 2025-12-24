@@ -13,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/nguoidung")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class NguoiDungController {
     
     private final NguoiDungService nguoiDungService;

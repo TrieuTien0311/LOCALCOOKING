@@ -33,6 +33,7 @@ public interface DatLichRepository extends JpaRepository<DatLich, Integer> {
            "AND d.trangThai <> 'Đã Hủy'")
     Integer countBookedSeats(@Param("maLichTrinh") Integer maLichTrinh, 
                              @Param("ngayThamGia") LocalDate ngayThamGia);
+    
     // Đếm số đơn đặt lịch của user (để check đơn đầu tiên)
     @Query("SELECT COUNT(d) FROM DatLich d WHERE d.maHocVien = :maHocVien")
     long countByMaHocVien(@Param("maHocVien") Integer maHocVien);
@@ -40,4 +41,18 @@ public interface DatLichRepository extends JpaRepository<DatLich, Integer> {
     // Check user đã có đơn nào chưa (để xác định tài khoản mới)
     @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DatLich d WHERE d.maHocVien = :maHocVien")
     boolean existsByMaHocVien(@Param("maHocVien") Integer maHocVien);
+    
+    // Lấy danh sách đặt lịch với thông tin đầy đủ cho dashboard
+    @Query(value = "SELECT d.maDatLich, d.maHocVien, d.maLichTrinh, d.ngayThamGia, d.soLuongNguoi, " +
+                   "d.tongTien, d.tenNguoiDat, d.emailNguoiDat, d.sdtNguoiDat, d.ngayDat, " +
+                   "d.trangThai, d.ghiChu, " +
+                   "CASE WHEN tt.maDatLich IS NOT NULL THEN 1 ELSE 0 END as daThanhToan, " +
+                   "kh.tenKhoaHoc, n.hoTen as hoTenHocVien, n.email as emailHocVien " +
+                   "FROM DatLich d " +
+                   "LEFT JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
+                   "LEFT JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc " +
+                   "LEFT JOIN NguoiDung n ON d.maHocVien = n.maNguoiDung " +
+                   "LEFT JOIN ThanhToan tt ON d.maDatLich = tt.maDatLich " +
+                   "ORDER BY d.ngayDat DESC", nativeQuery = true)
+    List<Object[]> findAllWithDetails();
 }

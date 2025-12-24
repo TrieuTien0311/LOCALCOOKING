@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Tạo/Sửa Khóa Học</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+    <link rel="stylesheet" href="../assets/css/pages/course-form.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="../assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a href="../index.html" data-tooltip="Dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li><a href="users.html" data-tooltip="Người Dùng"><i class="fas fa-users"></i><span>Người Dùng</span></a></li>
+            <li><a href="teachers.html" data-tooltip="Giáo Viên"><i class="fas fa-chalkboard-teacher"></i><span>Giáo Viên</span></a></li>
+            <li><a href="courses.html" class="active" data-tooltip="Khóa Học"><i class="fas fa-book-open"></i><span>Khóa Học</span></a></li>
+            <li><a href="schedules.html" data-tooltip="Lịch Trình"><i class="fas fa-calendar-alt"></i><span>Lịch Trình</span></a></li>
+            <li><a href="bookings.html" data-tooltip="Đặt Lịch"><i class="fas fa-clipboard-list"></i><span>Đặt Lịch</span></a></li>
+            <li><a href="dishes.html" data-tooltip="Món Ăn"><i class="fas fa-hamburger"></i><span>Món Ăn</span></a></li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất"><i class="fas fa-sign-out-alt"></i><span>Đăng Xuất</span></a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 id="pageTitle"><i class="fas fa-plus-circle" style="color: var(--primary); margin-right: 10px;"></i> Thêm Khóa Học Mới</h1>
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="../assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area" id="contentArea">
+          <div class="card" style="margin-bottom: 24px; padding: 24px;">
+            <div class="steps-container" style="display: flex; justify-content: space-between;">
+              <div class="step active" data-step="1" style="text-align: center; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-gradient); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">1</div>
+                <small>Thông Tin</small>
+              </div>
+              <div class="step" data-step="2" style="text-align: center; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">2</div>
+                <small>Lịch Trình</small>
+              </div>
+              <div class="step" data-step="3" style="text-align: center; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">3</div>
+                <small>Slideshow</small>
+              </div>
+              <div class="step" data-step="4" style="text-align: center; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">4</div>
+                <small>Món Ăn</small>
+              </div>
+              <div class="step" data-step="5" style="text-align: center; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">5</div>
+                <small>Xác Nhận</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <form id="courseForm">
+              <div class="step-content active" data-step="1">
+                <div class="card-header"><h3><i class="fas fa-info-circle"></i> Thông Tin Cơ Bản</h3></div>
+                <div class="card-body">
+                  <div class="form-group"><label class="form-label">Tên Khóa Học *</label><input type="text" name="tenKhoaHoc" class="form-control" required /></div>
+                  <div class="form-group"><label class="form-label">Mô Tả Ngắn *</label><textarea name="moTa" class="form-control" rows="3" required></textarea></div>
+                  <div class="form-group"><label class="form-label">Giới Thiệu Chi Tiết *</label><textarea name="gioiThieu" class="form-control" rows="4" required></textarea></div>
+                  <div class="form-group"><label class="form-label">Giá Trị Sau Buổi Học</label><textarea name="giaTriSauBuoiHoc" class="form-control" rows="4"></textarea></div>
+                  <div class="row">
+                    <div class="col-md-6"><div class="form-group"><label class="form-label">Giá Tiền (VNĐ) *</label><input type="number" name="giaTien" class="form-control" required /></div></div>
+                    <div class="col-md-6"><div class="form-group"><label class="form-label">Có Ưu Đãi</label><select name="coUuDai" class="form-control"><option value="false">Không</option><option value="true">Có</option></select></div></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Ảnh Đại Diện *</label>
+                    <div class="upload-area" id="uploadMainImage"><i class="fas fa-cloud-upload-alt"></i><p>Click để chọn ảnh</p><input type="file" id="mainImageInput" accept="image/*" style="display: none" /></div>
+                    <div id="mainImagePreview"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-content" data-step="2" style="display: none;">
+                <div class="card-header"><h3><i class="fas fa-calendar-alt"></i> Lịch Trình Học</h3></div>
+                <div class="card-body">
+                  <div id="schedulesContainer"></div>
+                  <button type="button" class="btn btn-secondary" id="btnAddSchedule"><i class="fas fa-plus"></i> Thêm Lịch Trình</button>
+                </div>
+              </div>
+
+              <div class="step-content" data-step="3" style="display: none;">
+                <div class="card-header"><h3><i class="fas fa-images"></i> Ảnh Slideshow</h3></div>
+                <div class="card-body">
+                  <div class="upload-area" id="uploadSlideshow"><i class="fas fa-cloud-upload-alt"></i><p>Chọn 2 ảnh slideshow</p><input type="file" id="slideshowInput" accept="image/*" multiple style="display: none" /></div>
+                  <div id="slideshowPreview"></div>
+                </div>
+              </div>
+
+              <div class="step-content" data-step="4" style="display: none;">
+                <div class="card-header"><h3><i class="fas fa-utensils"></i> Chọn Món Ăn</h3></div>
+                <div class="card-body">
+                  <div class="form-group"><label>Món Khai Vị</label><select name="khaiVi" class="form-control"><option value="">Không chọn</option></select></div>
+                  <div class="form-group"><label>Món Chính 1</label><select name="monChinh1" class="form-control"><option value="">Không chọn</option></select></div>
+                  <div class="form-group"><label>Món Chính 2</label><select name="monChinh2" class="form-control"><option value="">Không chọn</option></select></div>
+                  <div class="form-group"><label>Món Tráng Miệng</label><select name="trangMieng" class="form-control"><option value="">Không chọn</option></select></div>
+                </div>
+              </div>
+
+              <div class="step-content" data-step="5" style="display: none;">
+                <div class="card-header"><h3><i class="fas fa-check-circle"></i> Xác Nhận</h3></div>
+                <div class="card-body"><div id="reviewContent"></div></div>
+              </div>
+
+              <div class="card-footer" style="display: flex; justify-content: space-between; padding: 20px;">
+                <button type="button" class="btn btn-secondary" id="btnPrev" style="display: none;"><i class="fas fa-chevron-left"></i> Quay Lại</button>
+                <div style="margin-left: auto;">
+                  <button type="button" class="btn btn-primary" id="btnNext">Tiếp Theo <i class="fas fa-chevron-right"></i></button>
+                  <button type="submit" class="btn btn-success" id="btnSubmit" style="display: none;"><i class="fas fa-save"></i> Lưu Khóa Học</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/config/api-config.js"></script>
+    <script src="../assets/js/services/api-service.js"></script>
+    <script src="../assets/js/utils/helpers.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/pages/course-form.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+    </script>
+  </body>
+</html>

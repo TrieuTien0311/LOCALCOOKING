@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/uudai")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class UuDaiController {
     
     private final UuDaiService uuDaiService;

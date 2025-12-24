@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Cooking - Quản Lý Món Ăn</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+    <link rel="stylesheet" href="../assets/css/pages/dishes.css" />
+    <link rel="stylesheet" href="../assets/css/components/dish-detail-modal.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-icon">
+            <img src="../assets/images/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <h2>Local Cooking</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="../index.html" data-tooltip="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="users.html" data-tooltip="Người Dùng">
+                <i class="fas fa-users"></i>
+                <span>Người Dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="teachers.html" data-tooltip="Giáo Viên">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Giáo Viên</span>
+              </a>
+            </li>
+            <li>
+              <a href="courses.html" data-tooltip="Khóa Học">
+                <i class="fas fa-book-open"></i>
+                <span>Khóa Học</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" data-tooltip="Lịch Trình">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch Trình</span>
+              </a>
+            </li>
+            <li>
+              <a href="bookings.html" data-tooltip="Đặt Lịch">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Lịch</span>
+              </a>
+            </li>
+            <li>
+              <a href="dishes.html" class="active" data-tooltip="Món Ăn">
+                <i class="fas fa-hamburger"></i>
+                <span>Món Ăn</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <a href="#" onclick="logout()" data-tooltip="Đăng Xuất">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1><i class="fas fa-hamburger" style="color: var(--primary); margin-right: 10px;"></i> Quản Lý Món Ăn</h1>
+          </div>
+          
+          <div class="header-right">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge"></span>
+            </button>
+            
+            <div class="user-info">
+              <img src="../assets/images/logo.png" alt="Avatar" class="avatar" />
+              <div class="user-details">
+                <span class="user-name" id="userName">Admin</span>
+                <span class="user-role">Quản trị viên</span>
+              </div>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="content-area" id="contentArea">
+          <div class="action-bar">
+            <div class="action-bar-left">
+              <div class="search-box" style="max-width: 400px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchDish" placeholder="Tìm theo tên món, nguyên liệu..." />
+              </div>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" id="btnAddDish">
+                <i class="fas fa-plus"></i> Thêm Món Ăn
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-list"></i> Danh Sách Món Ăn</h3>
+            </div>
+            <div class="table-container" style="box-shadow: none; border-radius: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 8%;">Mã Món</th>
+                    <th style="width: 20%;">Tên Món</th>
+                    <th style="width: 27%;">Giới Thiệu</th>
+                    <th style="width: 15%;">Danh Mục</th>
+                    <th style="width: 15%;">Khóa Học</th>
+                    <th style="width: 15%;" class="text-center">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="dishesTableBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Dish Modal -->
+    <div id="dishModal" class="modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle"><i class="fas fa-utensils"></i> Thêm Món Ăn Mới</h2>
+            <button class="close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="dishForm">
+              <input type="hidden" name="maMonAn" id="dishId" />
+
+              <div class="form-group">
+                <label class="form-label">Tên Món Ăn <span class="text-danger">*</span></label>
+                <input type="text" name="tenMon" id="tenMon" class="form-control" placeholder="Nhập tên món ăn" required />
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Khóa Học <span class="text-danger">*</span></label>
+                    <select name="maKhoaHoc" id="maKhoaHoc" class="form-control" required>
+                      <option value="">-- Chọn khóa học --</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Danh Mục <span class="text-danger">*</span></label>
+                    <select name="maDanhMuc" id="maDanhMuc" class="form-control" required>
+                      <option value="">-- Chọn danh mục --</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Giới Thiệu <span class="text-danger">*</span></label>
+                <textarea name="gioiThieu" id="gioiThieu" class="form-control" rows="3" placeholder="Mô tả ngắn về món ăn..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Nguyên Liệu <span class="text-danger">*</span></label>
+                <textarea name="nguyenLieu" id="nguyenLieu" class="form-control" rows="4" placeholder="Liệt kê các nguyên liệu cần thiết..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Hình Ảnh <span class="text-danger">*</span> <small style="color: #64748b; font-weight: normal;">(Chọn đúng 2 ảnh)</small></label>
+                <div class="image-preview-container" id="imagePreviewContainer"></div>
+                <div class="upload-area" id="uploadArea">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Kéo thả hoặc click để chọn ảnh</p>
+                  <small>PNG, JPG tối đa 5MB mỗi ảnh</small>
+                  <input type="file" id="dishImages" accept="image/*" multiple style="display: none" />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal">
+              <i class="fas fa-times"></i> Hủy
+            </button>
+            <button type="submit" form="dishForm" class="btn btn-primary">
+              <i class="fas fa-save"></i> Lưu Món Ăn
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dish Detail Modal -->
+    <div id="dishDetailModal" class="modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="detailDishName"><i class="fas fa-info-circle" style="color: var(--primary);"></i> Tên Món Ăn</h2>
+            <button class="close" onclick="closeDishDetailModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+              <span class="badge badge-success" id="detailDishCategory">
+                <i class="fas fa-tag"></i> Khai vị
+              </span>
+              <span class="badge badge-info" id="detailDishCourse">
+                <i class="fas fa-circle"></i> Món ăn độc lập
+              </span>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-info-circle" style="color: var(--primary);"></i> Giới Thiệu
+              </label>
+              <p id="detailDishIntro" style="margin: 8px 0 0 0;">Mô tả về món ăn...</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-list-ul" style="color: var(--primary);"></i> Nguyên Liệu
+              </label>
+              <div id="detailDishIngredients" style="margin: 8px 0 0 0; white-space: pre-line;">Danh sách nguyên liệu...</div>
+            </div>
+
+            <div>
+              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
+                <i class="fas fa-images" style="color: var(--primary);"></i> Hình Ảnh
+              </label>
+              <div class="image-gallery" id="detailDishImages" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
+                <!-- Images populated via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/config/api-config.js"></script>
+    <script src="../assets/js/services/api-service.js"></script>
+    <script src="../assets/js/utils/helpers.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/modal.js"></script>
+    <script src="../assets/js/components/upload.js"></script>
+    <script src="../assets/js/components/dish-detail-modal.js"></script>
+    <script src="../assets/js/pages/dishes.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('expanded');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('shifted');
+      }
+    </script>
+  </body>
+</html>

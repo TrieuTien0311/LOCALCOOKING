@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/danhgia")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class DanhGiaController {
     
     private final DanhGiaService danhGiaService;

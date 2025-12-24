@@ -10,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hinhanh-khoahoc")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class HinhAnhKhoaHocController {
     
     private final HinhAnhKhoaHocService hinhAnhKhoaHocService;

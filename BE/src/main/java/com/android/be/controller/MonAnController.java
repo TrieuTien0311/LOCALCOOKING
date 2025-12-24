@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/monan")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class MonAnController {
     
     private final MonAnService monAnService;
