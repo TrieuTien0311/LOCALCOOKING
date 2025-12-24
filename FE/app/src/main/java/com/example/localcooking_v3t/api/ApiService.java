@@ -228,12 +228,18 @@ public interface ApiService {
     @GET("api/uudai/{id}")
     Call<UuDaiDTO> getUuDaiById(@Path("id") Integer id);
 
-    // Lấy danh sách ưu đãi khả dụng cho user
+    // Lấy danh sách ưu đãi khả dụng cho user (dùng cho Activity Vouchers - chọn áp dụng)
+    // CHỈ hiển thị voucher ĐỦ ĐIỀU KIỆN
     @GET("api/uudai/available")
     Call<List<UuDaiDTO>> getAvailableUuDai(
             @Query("maHocVien") Integer maHocVien,
             @Query("soLuongNguoi") Integer soLuongNguoi
     );
+
+    // Lấy danh sách ưu đãi để HIỂN THỊ (dùng cho DetailVoucherFragment - xem thông tin)
+    // Hiển thị TẤT CẢ voucher để khách biết có ưu đãi
+    @GET("api/uudai/display")
+    Call<List<UuDaiDTO>> getDisplayUuDai(@Query("maHocVien") Integer maHocVien);
 
     // Áp dụng mã ưu đãi
     @POST("api/uudai/apply")

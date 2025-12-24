@@ -48,7 +48,8 @@ public class UuDaiController {
     }
     
     /**
-     * Lấy danh sách ưu đãi khả dụng cho user
+     * Lấy danh sách ưu đãi khả dụng cho user (dùng cho Activity Vouchers - chọn áp dụng)
+     * CHỈ hiển thị voucher ĐỦ ĐIỀU KIỆN
      * GET /api/uudai/available?maHocVien=1&soLuongNguoi=5
      */
     @GetMapping("/available")
@@ -56,6 +57,16 @@ public class UuDaiController {
             @RequestParam Integer maHocVien,
             @RequestParam(defaultValue = "1") Integer soLuongNguoi) {
         return ResponseEntity.ok(uuDaiService.getAvailableUuDaiForUser(maHocVien, soLuongNguoi));
+    }
+    
+    /**
+     * Lấy danh sách ưu đãi để HIỂN THỊ cho user (dùng cho DetailVoucherFragment - xem thông tin)
+     * Hiển thị TẤT CẢ voucher để khách biết có ưu đãi (dù chưa đủ điều kiện)
+     * GET /api/uudai/display?maHocVien=1
+     */
+    @GetMapping("/display")
+    public ResponseEntity<List<UuDaiDTO>> getDisplayUuDai(@RequestParam Integer maHocVien) {
+        return ResponseEntity.ok(uuDaiService.getDisplayUuDaiForUser(maHocVien));
     }
     
     /**

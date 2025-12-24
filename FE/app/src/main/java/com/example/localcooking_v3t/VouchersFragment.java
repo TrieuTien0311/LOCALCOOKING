@@ -33,6 +33,8 @@ public class VouchersFragment extends Fragment {
     private static final String ARG_MA_HOC_VIEN = "maHocVien";
     private static final String ARG_SO_LUONG_NGUOI = "soLuongNguoi";
     private static final String ARG_TONG_TIEN = "tongTien";
+    private static final String ARG_PRE_SELECTED_MA_UU_DAI = "preSelectedMaUuDai";
+    private static final String ARG_PRE_SELECTED_MA_CODE = "preSelectedMaCode";
 
     private RecyclerView recyclerView;
     private VoucherAdapter adapter;
@@ -45,26 +47,46 @@ public class VouchersFragment extends Fragment {
     private Integer maHocVien;
     private Integer soLuongNguoi = 1;
     private Double tongTien = 0.0;
+    
+    // Voucher đã chọn trước đó
+    private Integer preSelectedMaUuDai;
+    private String preSelectedMaCode;
 
     private OnVoucherSelectedListener voucherSelectedListener;
+    private OnVoucherDeselectedListener voucherDeselectedListener;
     private UuDaiDTO selectedUuDai;
 
     public interface OnVoucherSelectedListener {
         void onVoucherSelected(UuDaiDTO uuDai);
     }
+    
+    public interface OnVoucherDeselectedListener {
+        void onVoucherDeselected();
+    }
 
     public void setOnVoucherSelectedListener(OnVoucherSelectedListener listener) {
         this.voucherSelectedListener = listener;
+    }
+    
+    public void setOnVoucherDeselectedListener(OnVoucherDeselectedListener listener) {
+        this.voucherDeselectedListener = listener;
     }
 
     public VouchersFragment() {}
 
     public static VouchersFragment newInstance(Integer maHocVien, Integer soLuongNguoi, Double tongTien) {
+        return newInstance(maHocVien, soLuongNguoi, tongTien, null, null);
+    }
+    
+    public static VouchersFragment newInstance(Integer maHocVien, Integer soLuongNguoi, Double tongTien,
+                                                Integer preSelectedMaUuDai, String preSelectedMaCode) {
         VouchersFragment fragment = new VouchersFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_MA_HOC_VIEN, maHocVien != null ? maHocVien : -1);
         args.putInt(ARG_SO_LUONG_NGUOI, soLuongNguoi != null ? soLuongNguoi : 1);
         args.putDouble(ARG_TONG_TIEN, tongTien != null ? tongTien : 0.0);
+        args.putInt(ARG_PRE_SELECTED_MA_UU_DAI, preSelectedMaUuDai != null ? preSelectedMaUuDai : -1);
+        args.putString(ARG_PRE_SELECTED_MA_CODE, preSelectedMaCode);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,6 +103,14 @@ public class VouchersFragment extends Fragment {
             if (maHocVien == -1) maHocVien = null;
             soLuongNguoi = getArguments().getInt(ARG_SO_LUONG_NGUOI, 1);
             tongTien = getArguments().getDouble(ARG_TONG_TIEN, 0.0);
+            
+            // Lấy thông tin voucher đã chọn trước đó
+            preSelectedMaUuDai = getArguments().getInt(ARG_PRE_SELECTED_MA_UU_DAI, -1);
+            if (preSelectedMaUuDai == -1) preSelectedMaUuDai = null;
+            preSelectedMaCode = getArguments().getString(ARG_PRE_SELECTED_MA_CODE);
+            
+            Log.d(TAG, "preSelectedMaUuDai: " + preSelectedMaUuDai);
+            Log.d(TAG, "preSelectedMaCode: " + preSelectedMaCode);
         }
 
         // Lấy maHocVien từ SessionManager nếu chưa có
@@ -111,16 +141,44 @@ public class VouchersFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // Lắng nghe sự kiện chọn voucher
-        adapter.setOnItemClickListener(uuDai -> {
-            int position = danhSachVoucher.indexOf(uuDai);
-            if (position >= 0 && position < danhSachUuDaiDTO.size()) {
-                selectedUuDai = danhSachUuDaiDTO.get(position);
+        adapter.setOnItemClickListener(voucher -> {
+            // Tìm UuDaiDTO tương ứng dựa trên maUuDai hoặc maCode
+            UuDaiDTO foundDto = null;
+            for (UuDaiDTO dto : danhSachUuDaiDTO) {
+                if (voucher.getMaUuDai() != null && voucher.getMaUuDai().equals(dto.getMaUuDai())) {
+                    foundDto = dto;
+                    break;
+                } else if (voucher.getMaCode() != null && voucher.getMaCode().equals(dto.getMaCode())) {
+                    foundDto = dto;
+                    break;
+                }
+            }
+            
+            if (foundDto != null) {
+                selectedUuDai = foundDto;
+                Log.d(TAG, "Selected voucher: maCode=" + foundDto.getMaCode() + 
+                        ", maUuDai=" + foundDto.getMaUuDai() + 
+                        ", giaTriGiam=" + foundDto.getGiaTriGiam());
                 if (voucherSelectedListener != null) {
                     voucherSelectedListener.onVoucherSelected(selectedUuDai);
                 }
+            } else {
+                Log.e(TAG, "Could not find UuDaiDTO for voucher: " + voucher.getTieuDe());
+            }
+            
+            Toast.makeText(getContext(),
+                    "Bạn đã chọn: " + voucher.getTieuDe(),
+                    Toast.LENGTH_SHORT).show();
+        });
+        
+        // Lắng nghe sự kiện bỏ chọn voucher (untick)
+        adapter.setOnVoucherDeselectedListener(() -> {
+            selectedUuDai = null;
+            if (voucherDeselectedListener != null) {
+                voucherDeselectedListener.onVoucherDeselected();
             }
             Toast.makeText(getContext(),
-                    "Bạn đã chọn: " + uuDai.getTieuDe(),
+                    "Đã bỏ chọn voucher",
                     Toast.LENGTH_SHORT).show();
         });
 
@@ -214,14 +272,40 @@ public class VouchersFragment extends Fragment {
                 }
             }
 
+            // Tạo voucher với maCode và maUuDai để mapping
             Voucher voucher = new Voucher(
                     hinhAnh,
                     dto.getTieuDe() != null ? dto.getTieuDe() : dto.getMaCode(),
                     moTa,
-                    dto.getHsd() != null ? dto.getHsd() : "Không giới hạn"
+                    dto.getHsd() != null ? dto.getHsd() : "Không giới hạn",
+                    dto.getMaCode(),
+                    dto.getMaUuDai()
             );
-            voucher.setDuocChon(dto.getDuocChon() != null && dto.getDuocChon());
+            
+            // Kiểm tra xem voucher này có phải là voucher đã chọn trước đó không
+            boolean isPreSelected = false;
+            if (preSelectedMaUuDai != null && dto.getMaUuDai() != null 
+                    && preSelectedMaUuDai.equals(dto.getMaUuDai())) {
+                isPreSelected = true;
+            } else if (preSelectedMaCode != null && preSelectedMaCode.equals(dto.getMaCode())) {
+                isPreSelected = true;
+            }
+            
+            if (isPreSelected) {
+                voucher.setDuocChon(true);
+                selectedUuDai = dto;
+                Log.d(TAG, "Pre-selected voucher: " + dto.getMaCode());
+                
+                // Thông báo cho Activity để cập nhật bottom bar
+                if (voucherSelectedListener != null) {
+                    voucherSelectedListener.onVoucherSelected(dto);
+                }
+            } else {
+                voucher.setDuocChon(dto.getDuocChon() != null && dto.getDuocChon());
+            }
+            
             danhSachVoucher.add(voucher);
+            Log.d(TAG, "Added voucher: maCode=" + dto.getMaCode() + ", maUuDai=" + dto.getMaUuDai() + ", isPreSelected=" + isPreSelected);
         }
     }
 

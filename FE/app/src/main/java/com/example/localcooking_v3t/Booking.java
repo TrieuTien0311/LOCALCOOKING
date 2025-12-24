@@ -229,6 +229,114 @@ public class Booking extends AppCompatActivity {
         
         // Load dữ liệu từ API
         loadLichTrinhData();
+        
+        // Xử lý nút Chi tiết (header) - mở bottom sheet
+        TextView btnChiTiet = findViewById(R.id.btnChiTiet);
+        if (btnChiTiet != null) {
+            btnChiTiet.setOnClickListener(v -> showDetailBottomSheet(0)); // Tab Mô tả
+        }
+        
+        // Xử lý các tab ở bottom card
+        TextView txtMoTa = findViewById(R.id.txt_MoTa_DL);
+        TextView txtDanhGia = findViewById(R.id.txt_DanhGia_DL);
+        TextView txtChinhSach = findViewById(R.id.txt_ChinhSach_DL);
+        TextView txtUuDai = findViewById(R.id.txt_UuDai_DL);
+        
+        if (txtMoTa != null) {
+            txtMoTa.setOnClickListener(v -> showDetailBottomSheet(0)); // Tab Mô tả
+        }
+        if (txtDanhGia != null) {
+            txtDanhGia.setOnClickListener(v -> showDetailBottomSheet(1)); // Tab Đánh giá
+        }
+        if (txtChinhSach != null) {
+            txtChinhSach.setOnClickListener(v -> showDetailBottomSheet(2)); // Tab Chính sách
+        }
+        if (txtUuDai != null) {
+            txtUuDai.setOnClickListener(v -> showDetailBottomSheet(3)); // Tab Ưu đãi
+        }
+        
+        // Xử lý click vào card Chi tiết
+        View cvChiTiet = findViewById(R.id.cv_ChiTiet_DL);
+        if (cvChiTiet != null) {
+            cvChiTiet.setOnClickListener(v -> showDetailBottomSheet(0));
+        }
+    }
+    
+    /**
+     * Hiển thị bottom sheet chi tiết với tab được chọn
+     */
+    private void showDetailBottomSheet(int tabIndex) {
+        if (khoaHoc != null) {
+            // Tạo bottom sheet với dữ liệu khóa học
+            DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(khoaHoc, formatDateForDisplay(ngayThamGia));
+            bottomSheet.show(getSupportFragmentManager(), "DetailBottomSheet");
+            
+            // Chuyển đến tab được chọn sau khi bottom sheet hiển thị
+            // (TabLayout sẽ tự động chọn tab đầu tiên, cần delay để chuyển tab)
+            if (tabIndex > 0) {
+                new android.os.Handler().postDelayed(() -> {
+                    // Bottom sheet đã hiển thị, có thể thêm logic chuyển tab nếu cần
+                }, 300);
+            }
+        } else {
+            // Nếu chưa có dữ liệu khóa học, tạo KhoaHoc từ dữ liệu Intent
+            KhoaHoc tempKhoaHoc = new KhoaHoc();
+            tempKhoaHoc.setMaKhoaHoc(maKhoaHoc);
+            tempKhoaHoc.setTenKhoaHoc(tenKhoaHoc);
+            tempKhoaHoc.setGiaTien(giaTien != null ? giaTien.doubleValue() : 0.0);
+            
+            // Tạo lịch trình tạm với địa điểm
+            if (lichTrinhLopHoc != null) {
+                List<LichTrinhLopHoc> lichTrinhList = new ArrayList<>();
+                lichTrinhList.add(lichTrinhLopHoc);
+                tempKhoaHoc.setLichTrinhList(lichTrinhList);
+            } else if (maLichTrinh != null && maLichTrinh > 0) {
+                LichTrinhLopHoc tempLichTrinh = new LichTrinhLopHoc();
+                tempLichTrinh.setMaLichTrinh(maLichTrinh);
+                tempLichTrinh.setGioBatDau(thoiGian != null ? thoiGian.split(" - ")[0] : "");
+                tempLichTrinh.setGioKetThuc(thoiGian != null && thoiGian.contains(" - ") ? thoiGian.split(" - ")[1] : "");
+                tempLichTrinh.setDiaDiem(diaDiem); // Set địa điểm vào lịch trình
+                List<LichTrinhLopHoc> lichTrinhList = new ArrayList<>();
+                lichTrinhList.add(tempLichTrinh);
+                tempKhoaHoc.setLichTrinhList(lichTrinhList);
+            }
+            
+            DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(tempKhoaHoc, formatDateForDisplay(ngayThamGia));
+            bottomSheet.show(getSupportFragmentManager(), "DetailBottomSheet");
+        }
+    }
+    
+    /**
+     * Format ngày từ "2025-01-15" sang "T4, 15/01/2025"
+     */
+    private String formatDateForDisplay(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return "";
+        
+        try {
+            String[] parts = dateStr.split("-");
+            if (parts.length == 3) {
+                // Tính thứ trong tuần
+                Calendar cal = Calendar.getInstance();
+                cal.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+                String thu = "";
+                switch (dayOfWeek) {
+                    case Calendar.SUNDAY: thu = "CN"; break;
+                    case Calendar.MONDAY: thu = "T2"; break;
+                    case Calendar.TUESDAY: thu = "T3"; break;
+                    case Calendar.WEDNESDAY: thu = "T4"; break;
+                    case Calendar.THURSDAY: thu = "T5"; break;
+                    case Calendar.FRIDAY: thu = "T6"; break;
+                    case Calendar.SATURDAY: thu = "T7"; break;
+                }
+                
+                return thu + ", " + parts[2] + "/" + parts[1] + "/" + parts[0];
+            }
+        } catch (Exception e) {
+            Log.e("BOOKING", "Error formatting date: " + e.getMessage());
+        }
+        return dateStr;
     }
     
     /**
