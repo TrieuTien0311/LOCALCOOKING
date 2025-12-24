@@ -177,7 +177,43 @@ public class HomeFragment extends Fragment {
             intent.putExtra("date", tvDate.getText().toString());
             startActivity(intent);
         });
+        
+        // Setup RecyclerView món ăn đặc sắc với infinite scroll
+        setupSpecialDishesRecyclerView(view);
+        
         return view;
+    }
+    
+    /**
+     * Setup RecyclerView món ăn đặc sắc với infinite scroll 2 chiều
+     */
+    private void setupSpecialDishesRecyclerView(View view) {
+        androidx.recyclerview.widget.RecyclerView recyclerSpecialDishes = view.findViewById(R.id.recyclerSpecialDishes);
+        
+        // Danh sách 6 ảnh món ăn
+        List<Integer> dishImages = new java.util.ArrayList<>();
+        dishImages.add(R.drawable.phobo);
+        dishImages.add(R.drawable.comtam);
+        dishImages.add(R.drawable.banhxeo);
+        dishImages.add(R.drawable.nemnuong);
+        dishImages.add(R.drawable.banhcuon);
+        dishImages.add(R.drawable.buncha);
+        
+        SpecialDishAdapter adapter = new SpecialDishAdapter(dishImages);
+        
+        // LinearLayoutManager ngang
+        androidx.recyclerview.widget.LinearLayoutManager layoutManager = 
+            new androidx.recyclerview.widget.LinearLayoutManager(requireContext(), 
+                androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false);
+        
+        recyclerSpecialDishes.setLayoutManager(layoutManager);
+        recyclerSpecialDishes.setAdapter(adapter);
+        
+        // Scroll đến vị trí giữa để có thể scroll cả 2 chiều
+        int middlePosition = Integer.MAX_VALUE / 2;
+        // Đảm bảo vị trí bắt đầu từ item đầu tiên
+        middlePosition = middlePosition - (middlePosition % dishImages.size());
+        recyclerSpecialDishes.scrollToPosition(middlePosition);
     }
 
     @Override

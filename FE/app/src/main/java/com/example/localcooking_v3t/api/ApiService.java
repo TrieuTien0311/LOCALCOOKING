@@ -290,6 +290,18 @@ public interface ApiService {
     @GET("api/danhgia/khoahoc/{maKhoaHoc}")
     Call<List<DanhGiaDTO>> getDanhGiaByKhoaHoc(@Path("maKhoaHoc") Integer maKhoaHoc);
 
+    // Lấy thống kê đánh giá của khóa học
+    @GET("api/danhgia/thongke/{maKhoaHoc}")
+    Call<com.example.localcooking_v3t.model.ThongKeDanhGiaDTO> getThongKeDanhGia(@Path("maKhoaHoc") Integer maKhoaHoc);
+
+    // Lấy danh sách đánh giá với filter
+    @GET("api/danhgia/khoahoc/{maKhoaHoc}/filter")
+    Call<List<DanhGiaDTO>> getDanhGiaWithFilter(
+            @Path("maKhoaHoc") Integer maKhoaHoc,
+            @Query("type") String type,
+            @Query("sao") Integer sao
+    );
+
     // Lấy tất cả đánh giá
     @GET("api/danhgia")
     Call<List<DanhGiaDTO>> getAllDanhGia();

@@ -2,6 +2,7 @@ package com.example.localcooking_v3t;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -17,13 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.localcooking_v3t.api.RetrofitClient;
 import com.example.localcooking_v3t.model.ResetPasswordRequest;
@@ -55,18 +50,10 @@ public class OtpVerification extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_otp_verification);
 
         // Lấy email từ Intent
         email = getIntent().getStringExtra("email");
-
-        // Cấu hình EdgeToEdge
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         setupStatusBar();
         initViews();
@@ -79,11 +66,8 @@ public class OtpVerification extends AppCompatActivity {
     private void setupStatusBar() {
         Window window = getWindow();
         window.setStatusBarColor(Color.parseColor("#F5E6D3"));
-
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(window, window.getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
     }
 

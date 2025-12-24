@@ -16,6 +16,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
+        void onItemClick(OrderHistory lichSuDatLich); // Click vào item để xem chi tiết
         void onHuyDatClick(OrderHistory lichSuDatLich);
         void onDatLaiClick(OrderHistory lichSuDatLich);
         void onDanhGiaClick(OrderHistory lichSuDatLich);
@@ -89,6 +90,11 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
         holder.txtDanhGia2.setOnClickListener(v -> {
             if (listener != null) listener.onDanhGiaClick(order);
+        });
+        
+        // Click vào item để xem chi tiết hóa đơn
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(order);
         });
     }
     

@@ -89,6 +89,12 @@ public class PreOrderFragment extends Fragment {
         
         adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
             @Override
+            public void onItemClick(OrderHistory order) {
+                // Xử lý click vào item
+                handleItemClick(order);
+            }
+            
+            @Override
             public void onHuyDatClick(OrderHistory order) {
                 handleHuyDat(order);
             }
@@ -300,5 +306,65 @@ public class PreOrderFragment extends Fragment {
             .setPositiveButton("Xác nhận", (dialog, which) -> onConfirm.run())
             .setNegativeButton("Hủy", null)
             .show();
+    }
+    
+    /**
+     * Xử lý click vào item đơn đặt trước
+     */
+    private void handleItemClick(OrderHistory order) {
+        if (order.getDaThanhToan() != null && order.getDaThanhToan()) {
+            // === ĐÃ THANH TOÁN → Chuyển sang Bill ===
+            goToBill(order);
+        } else {
+            // === CHƯA THANH TOÁN → Hiện popup hỏi ===
+            showPaymentConfirmDialog(order);
+        }
+    }
+    
+    /**
+     * Hiển thị popup xác nhận thanh toán
+     */
+    private void showPaymentConfirmDialog(OrderHistory order) {
+        new AlertDialog.Builder(getContext())
+            .setTitle("Đơn chưa thanh toán")
+            .setMessage("Bạn muốn tiếp tục thanh toán cho đơn này không?")
+            .setPositiveButton("Thanh toán", (dialog, which) -> {
+                // Chuyển sang trang Payment
+                handleThanhToan(order);
+            })
+            .setNegativeButton("Hủy", (dialog, which) -> {
+                // Đóng dialog, không làm gì
+                dialog.dismiss();
+            })
+            .show();
+    }
+    
+    /**
+     * Chuyển sang trang Bill để xem chi tiết hóa đơn
+     */
+    private void goToBill(OrderHistory order) {
+        Intent intent = new Intent(getActivity(), Bill.class);
+        
+        // Thông tin thanh toán
+        intent.putExtra("tongTienThanhToan", order.getTongTienGoc() != null ? order.getTongTienGoc().doubleValue() : 0);
+        intent.putExtra("transId", order.getTransId());
+        intent.putExtra("orderId", order.getOrderId());
+        intent.putExtra("ngayThanhToan", order.getNgayThanhToan());
+        intent.putExtra("trangThai", order.getTrangThai());
+        
+        // Thông tin lớp học
+        intent.putExtra("tenKhoaHoc", order.getTieuDe());
+        intent.putExtra("diaDiem", order.getDiaDiem());
+        intent.putExtra("thoiGian", order.getThoiGian());
+        intent.putExtra("ngayThamGia", order.getNgayThamGia());
+        intent.putExtra("hinhAnh", order.getHinhAnhPath());
+        intent.putExtra("moTa", order.getMoTa());
+        intent.putExtra("soLuongDat", order.getSoLuongNguoiInt());
+        
+        // Thông tin người đặt
+        intent.putExtra("tenNguoiDat", order.getTenNguoiDat());
+        intent.putExtra("sdtNguoiDat", order.getSdtNguoiDat());
+        
+        startActivity(intent);
     }
 }

@@ -26,6 +26,9 @@ public class DonDatLichService {
                 "d.soLuongNguoi, " +
                 "d.ngayThamGia, " +
                 "d.trangThai, " +
+                "d.tenNguoiDat, " +
+                "d.emailNguoiDat, " +
+                "d.sdtNguoiDat, " +
                 "k.maKhoaHoc, " +
                 "k.tenKhoaHoc, " +
                 "k.hinhAnh, " +
@@ -35,6 +38,8 @@ public class DonDatLichService {
                 "tt.soTien AS tongTien, " +
                 "tt.trangThai AS daThanhToan, " +
                 "tt.ngayThanhToan, " +
+                "tt.transId, " +
+                "tt.orderId, " +
                 "CASE WHEN EXISTS(SELECT 1 FROM DanhGia dg WHERE dg.maDatLich = d.maDatLich) THEN 1 ELSE 0 END AS daDanhGia " +
                 "FROM DatLich d " +
                 "JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
@@ -74,6 +79,8 @@ public class DonDatLichService {
                 tt.soTien AS tongTien,
                 tt.trangThai AS daThanhToan,
                 tt.ngayThanhToan,
+                tt.transId,
+                tt.orderId,
                 
                 0 AS daDanhGia
                 
@@ -102,6 +109,9 @@ public class DonDatLichService {
                 d.ngayThamGia,
                 d.trangThai,
                 d.thoiGianHuy,
+                d.tenNguoiDat,
+                d.emailNguoiDat,
+                d.sdtNguoiDat,
                 
                 k.maKhoaHoc,
                 k.tenKhoaHoc,
@@ -114,6 +124,8 @@ public class DonDatLichService {
                 tt.soTien AS tongTien,
                 tt.trangThai AS daThanhToan,
                 tt.ngayThanhToan,
+                tt.transId,
+                tt.orderId,
                 
                 0 AS daDanhGia
                 
@@ -238,6 +250,14 @@ public class DonDatLichService {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm - dd/MM/yyyy");
                 dto.setThoiGianHuy(sdf.format(thoiGianHuy));
             }
+        } catch (Exception e) {
+            // Ignore nếu không có column này
+        }
+        
+        // Thông tin thanh toán (transId, orderId)
+        try {
+            dto.setTransId(rs.getString("transId"));
+            dto.setOrderId(rs.getString("orderId"));
         } catch (Exception e) {
             // Ignore nếu không có column này
         }

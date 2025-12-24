@@ -71,6 +71,12 @@ public class SuccessfulOrderFragment extends Fragment {
 
         adapter.setOnItemClickListener(new OrderHistoryAdapter.OnItemClickListener() {
             @Override
+            public void onItemClick(OrderHistory order) {
+                // Chuyển sang trang Bill để xem chi tiết hóa đơn
+                goToBill(order);
+            }
+            
+            @Override
             public void onHuyDatClick(OrderHistory lichSuDatLich) {
                 // Không cần xử lý nút hủy cho đơn đã hoàn thành
             }
@@ -202,5 +208,34 @@ public class SuccessfulOrderFragment extends Fragment {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);
         }
+    }
+    
+    /**
+     * Chuyển sang trang Bill để xem chi tiết hóa đơn
+     */
+    private void goToBill(OrderHistory order) {
+        Intent intent = new Intent(getActivity(), Bill.class);
+        
+        // Thông tin thanh toán
+        intent.putExtra("tongTienThanhToan", order.getTongTienGoc() != null ? order.getTongTienGoc().doubleValue() : 0);
+        intent.putExtra("transId", order.getTransId());
+        intent.putExtra("orderId", order.getOrderId());
+        intent.putExtra("ngayThanhToan", order.getNgayThanhToan());
+        intent.putExtra("trangThai", order.getTrangThai());
+        
+        // Thông tin lớp học
+        intent.putExtra("tenKhoaHoc", order.getTieuDe());
+        intent.putExtra("diaDiem", order.getDiaDiem());
+        intent.putExtra("thoiGian", order.getThoiGian());
+        intent.putExtra("ngayThamGia", order.getNgayThamGia());
+        intent.putExtra("hinhAnh", order.getHinhAnhPath());
+        intent.putExtra("moTa", order.getMoTa());
+        intent.putExtra("soLuongDat", order.getSoLuongNguoiInt());
+        
+        // Thông tin người đặt
+        intent.putExtra("tenNguoiDat", order.getTenNguoiDat());
+        intent.putExtra("sdtNguoiDat", order.getSdtNguoiDat());
+        
+        startActivity(intent);
     }
 }
