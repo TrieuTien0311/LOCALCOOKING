@@ -7,4 +7,32 @@
 
     <style name="Theme.LOCALCOOKING_V3T" parent="Base.Theme.LOCALCOOKING_V3T" />
 
+    <!-- Custom DatePickerDialog Theme -->
+    <style name="CustomDatePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <!-- Header background color - màu cam nhạt -->
+        <item name="colorAccent">#F4C19A</item>
+        <item name="colorPrimary">#F4C19A</item>
+        <item name="colorPrimaryDark">#E5A97A</item>
+        
+        <!-- Dialog background -->
+        <item name="android:windowBackground">@drawable/dialog_rounded_background</item>
+        
+        <!-- Text colors - màu nâu đậm -->
+        <item name="android:textColorPrimary">@color/brown_dark</item>
+        <item name="android:textColorSecondary">@color/brown_dark</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerPositiveButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerNegativeButton</item>
+    </style>
+    
+    <!-- DatePicker Positive Button Style -->
+    <style name="DatePickerPositiveButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/brown_dark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <!-- DatePicker Negative Button Style -->
+    <style name="DatePickerNegativeButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#888888</item>
+    </style>
+
 </resources>

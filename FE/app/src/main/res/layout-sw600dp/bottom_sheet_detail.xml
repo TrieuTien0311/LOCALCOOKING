@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/bottom_sheet_background"
     android:orientation="vertical"
     android:padding="0dp">
@@ -67,13 +67,16 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="52dp"
         android:layout_marginBottom="0dp"
         android:background="#FFC59D"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
         app:tabBackground="@drawable/tab_selector"
         app:tabIndicatorColor="#6A3B1A"
         app:tabIndicatorFullWidth="false"
         app:tabIndicatorGravity="bottom"
+        app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="#6A3B1A"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:tabTextColor="#7A7777">
@@ -82,22 +85,19 @@
             android:id="@+id/tabMoTa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mô tả"
-            android:visibility="visible" />
+            android:text="Mô tả" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tabDanhGia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đánh giá"
-            android:visibility="visible" />
+            android:text="Đánh giá" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tabChinhSach"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chính sách"
-            android:visibility="visible" />
+            android:text="Chính sách" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tabUuDai"
@@ -116,8 +116,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="550dp" />
 
     <View
         android:id="@+id/view11"

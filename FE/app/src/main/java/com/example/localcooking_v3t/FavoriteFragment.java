@@ -110,6 +110,7 @@ public class FavoriteFragment extends Fragment {
         
         DatePickerDialog datePickerDialog = new DatePickerDialog(
             requireContext(),
+            R.style.CustomDatePickerDialog,
             (view, year, month, dayOfMonth) -> {
                 Calendar selected = Calendar.getInstance();
                 selected.set(year, month, dayOfMonth);
@@ -127,6 +128,9 @@ public class FavoriteFragment extends Fragment {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         );
+        
+        // Chỉ cho phép chọn từ hôm nay trở đi
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         
         datePickerDialog.show();
     }
