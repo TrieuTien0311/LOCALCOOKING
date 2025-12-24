@@ -101,15 +101,26 @@ public class Payment extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Intent data = result.getData();
-                        selectedMaUuDai = data.getIntExtra(Vouchers.RESULT_MA_UU_DAI, -1);
-                        selectedMaCode = data.getStringExtra(Vouchers.RESULT_MA_CODE);
-                        String tenUuDai = data.getStringExtra(Vouchers.RESULT_TEN_UU_DAI);
+                        
+                        // Kiểm tra xem user có xóa voucher không
+                        boolean voucherRemoved = data.getBooleanExtra(Vouchers.RESULT_VOUCHER_REMOVED, false);
+                        
+                        if (voucherRemoved) {
+                            // User đã untick và nhấn "Áp dụng" -> reset về giá gốc
+                            Log.d(TAG, "Voucher removed by user");
+                            resetUuDai();
+                        } else {
+                            // User chọn voucher mới
+                            selectedMaUuDai = data.getIntExtra(Vouchers.RESULT_MA_UU_DAI, -1);
+                            selectedMaCode = data.getStringExtra(Vouchers.RESULT_MA_CODE);
+                            String tenUuDai = data.getStringExtra(Vouchers.RESULT_TEN_UU_DAI);
 
-                        if (selectedMaCode != null) {
-                            // Gọi API để tính toán giảm giá
-                            apDungMaUuDai(selectedMaCode);
-                            if (txtVoucherName != null && tenUuDai != null) {
-                                txtVoucherName.setText(tenUuDai);
+                            if (selectedMaCode != null) {
+                                // Gọi API để tính toán giảm giá
+                                apDungMaUuDai(selectedMaCode);
+                                if (txtVoucherName != null && tenUuDai != null) {
+                                    txtVoucherName.setText(tenUuDai);
+                                }
                             }
                         }
                     }

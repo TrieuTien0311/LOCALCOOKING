@@ -26,9 +26,10 @@ public class DanhGiaMapper {
         dto.setDiemDanhGia(danhGia.getDiemDanhGia());
         dto.setBinhLuan(danhGia.getBinhLuan());
         
-        // Lấy tên học viên
+        // Lấy tên học viên và tên đăng nhập
         if (danhGia.getHocVien() != null) {
             dto.setTenHocVien(danhGia.getHocVien().getHoTen());
+            dto.setTenDangNhap(danhGia.getHocVien().getTenDangNhap());
         }
         
         // Lấy tên khóa học

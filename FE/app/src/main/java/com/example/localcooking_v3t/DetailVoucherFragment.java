@@ -27,16 +27,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * DetailVoucherFragment - Hiển thị danh sách voucher trong trang chi tiết
- * 
- * Logic hiển thị voucher (dùng API /display):
- * - Khách hàng MỚI (chưa có đơn nào): Hiển thị NEWUSER (30%) + GROUP (20%)
- * - Khách hàng CŨ (đã có đơn): Hiển thị GROUP (20%)
- * 
- * Hiển thị TẤT CẢ voucher để khách biết có ưu đãi (dù chưa đủ điều kiện)
- * API sử dụng: GET /api/uudai/display?maHocVien={id}
- */
 public class DetailVoucherFragment extends Fragment {
 
     private static final String TAG = "DetailVoucherFragment";

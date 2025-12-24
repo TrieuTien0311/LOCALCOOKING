@@ -37,6 +37,7 @@ public class Vouchers extends AppCompatActivity {
     public static final String RESULT_GIA_TRI_GIAM = "giaTriGiam";
     public static final String RESULT_LOAI_GIAM = "loaiGiam";
     public static final String RESULT_SO_TIEN_GIAM = "soTienGiam";
+    public static final String RESULT_VOUCHER_REMOVED = "voucherRemoved"; // Flag để xóa voucher
 
     private VouchersFragment vouchersFragment;
     private UuDaiDTO selectedUuDai;
@@ -102,6 +103,7 @@ public class Vouchers extends AppCompatActivity {
         // Xử lý nút áp dụng (bottom)
         btnApDung.setOnClickListener(v -> {
             if (selectedUuDai != null) {
+                // Có voucher được chọn -> trả về thông tin voucher
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(RESULT_MA_UU_DAI, selectedUuDai.getMaUuDai());
                 resultIntent.putExtra(RESULT_MA_CODE, selectedUuDai.getMaCode());
@@ -109,10 +111,21 @@ public class Vouchers extends AppCompatActivity {
                 resultIntent.putExtra(RESULT_GIA_TRI_GIAM, selectedUuDai.getGiaTriGiam());
                 resultIntent.putExtra(RESULT_LOAI_GIAM, selectedUuDai.getLoaiGiam());
                 resultIntent.putExtra(RESULT_SO_TIEN_GIAM, soTienGiam);
+                resultIntent.putExtra(RESULT_VOUCHER_REMOVED, false);
                 setResult(RESULT_OK, resultIntent);
                 finish();
+            } else if (preSelectedMaUuDai != null || (preSelectedMaCode != null && !preSelectedMaCode.isEmpty())) {
+                // Đã có voucher trước đó nhưng user untick -> xóa ưu đãi
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(RESULT_VOUCHER_REMOVED, true);
+                resultIntent.putExtra(RESULT_MA_UU_DAI, -1);
+                resultIntent.putExtra(RESULT_SO_TIEN_GIAM, 0.0);
+                setResult(RESULT_OK, resultIntent);
+                Toast.makeText(this, "Đã xóa ưu đãi", Toast.LENGTH_SHORT).show();
+                finish();
             } else {
-                Toast.makeText(this, "Vui lòng chọn một mã ưu đãi", Toast.LENGTH_SHORT).show();
+                // Chưa có voucher nào trước đó và cũng chưa chọn -> hiện thông báo
+                Toast.makeText(this, "Vui lòng chọn 1 ưu đãi để có thể áp dụng", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -209,20 +222,13 @@ public class Vouchers extends AppCompatActivity {
             txtGiamLabel.setVisibility(View.VISIBLE);
             txtSoTienGiam.setVisibility(View.VISIBLE);
             txtSoTienGiam.setText("-" + formatCurrency(soTienGiam));
-            
-            // Enable nút áp dụng
-            btnApDung.setEnabled(true);
-            btnApDung.setAlpha(1.0f);
         } else {
             // Chưa chọn voucher
             txtVoucherCount.setText("Chưa chọn voucher");
             txtGiamLabel.setVisibility(View.GONE);
             txtSoTienGiam.setVisibility(View.GONE);
-            
-            // Disable nút áp dụng
-            btnApDung.setEnabled(false);
-            btnApDung.setAlpha(0.5f);
         }
+        // Nút áp dụng luôn enable, khi nhấn mà chưa chọn sẽ hiện thông báo
     }
     
     /**
