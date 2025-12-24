@@ -47,7 +47,7 @@ public class DatLich {
     private LocalDateTime ngayDat = LocalDateTime.now();
     
     @Column(name = "trangThai", length = 30)
-    private String trangThai = "Chờ Duyệt";
+    private String trangThai = "Đặt trước";
     
     @Column(name = "ghiChu", columnDefinition = "NVARCHAR(MAX)")
     private String ghiChu;
@@ -68,4 +68,7 @@ public class DatLich {
     
     @Column(name = "thoiGianHetHan")
     private LocalDateTime thoiGianHetHan;
+    
+    @Column(name = "thoiGianHuy")
+    private LocalDateTime thoiGianHuy;
 }
