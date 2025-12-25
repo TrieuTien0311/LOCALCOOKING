@@ -20,30 +20,66 @@
   overflow-y: auto;
 }
 
-.detail-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #f0f0f0;
+#dishDetailModal .modal-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-.detail-title-section h2 {
-  color: #ff9800;
-  margin: 0 0 8px 0;
+#dishDetailModal .modal-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #e67e22 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+  padding: 20px 24px;
+}
+
+#dishDetailModal .modal-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#dishDetailModal .modal-header h2 i {
+  color: white !important;
+}
+
+#dishDetailModal .modal-header .close {
+  color: white;
+  opacity: 0.9;
   font-size: 28px;
-  font-weight: 600;
+}
+
+#dishDetailModal .modal-header .close:hover {
+  opacity: 1;
+  color: white;
+}
+
+#dishDetailModal .modal-body {
+  padding: 24px;
+}
+
+/* Header info with ID and badges */
+.detail-header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  flex-wrap: wrap;
 }
 
 .detail-dish-id {
   display: inline-block;
-  background: #f5f5f5;
-  color: #666;
-  padding: 4px 12px;
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, #e67e22 100%);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .detail-status-badges {
@@ -64,35 +100,39 @@
 }
 
 .status-badge.badge-success {
-  background: #e8f5e9;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
   color: #2e7d32;
+  border: 1px solid #a5d6a7;
 }
 
 .status-badge.badge-secondary {
   background: #f5f5f5;
   color: #757575;
+  border: 1px solid #e0e0e0;
 }
 
 .status-badge.badge-primary {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  color: #e65100;
+  border: 1px solid #ffcc80;
 }
 
 .status-badge.badge-info {
-  background: #e0f7fa;
-  color: #00838f;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #1565c0;
+  border: 1px solid #90caf9;
 }
 
 .detail-section {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
 .detail-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -100,52 +140,58 @@
 }
 
 .detail-section-title i {
-  color: #ff9800;
+  color: var(--primary);
+  font-size: 16px;
 }
 
 .detail-content {
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
-  line-height: 1.6;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  padding: 16px 20px;
+  border-radius: 12px;
+  line-height: 1.7;
   color: #333;
+  border-left: 4px solid var(--primary);
+  font-size: 15px;
 }
 
 .detail-ingredients {
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 4px solid #ff9800;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  padding: 16px 20px;
+  border-radius: 12px;
+  border-left: 4px solid var(--primary);
   white-space: pre-wrap;
   line-height: 1.8;
   color: #333;
   font-family: inherit;
+  font-size: 15px;
 }
 
 /* Image Gallery */
 .image-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+  border-radius: 12px;
 }
 
 .gallery-item {
   position: relative;
   width: 100%;
   padding-bottom: 75%;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  border: 3px solid transparent;
 }
 
 .gallery-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.25);
+  border-color: var(--primary);
 }
 
 .gallery-item img {
@@ -155,18 +201,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
 }
 
 .no-images {
+  grid-column: 1 / -1;
   text-align: center;
-  padding: 40px;
+  padding: 50px 20px;
   color: #bbb;
 }
 
 .no-images i {
   font-size: 64px;
   margin-bottom: 15px;
-  opacity: 0.3;
+  opacity: 0.4;
+  color: var(--primary);
 }
 
 .no-images p {
@@ -188,7 +241,7 @@
 .full-image-backdrop {
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,16 +258,16 @@
   max-width: 100%;
   max-height: 90vh;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 }
 
 .close-full-image {
   position: absolute;
   top: -15px;
   right: -15px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background: white;
   border: none;
   border-radius: 50%;
@@ -222,14 +275,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   color: #333;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
 }
 
 .close-full-image:hover {
-  background: #ff9800;
+  background: var(--primary);
   color: white;
   transform: scale(1.1);
 }
@@ -241,9 +294,10 @@
     margin: 0;
   }
 
-  .detail-header {
+  .detail-header-info {
     flex-direction: column;
-    gap: 15px;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .detail-status-badges {
@@ -254,7 +308,7 @@
     grid-template-columns: 1fr;
   }
 
-  .detail-title-section h2 {
-    font-size: 22px;
+  #dishDetailModal .modal-header h2 {
+    font-size: 18px;
   }
 }

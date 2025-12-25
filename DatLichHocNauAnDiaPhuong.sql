@@ -1761,28 +1761,28 @@ GO
 ---------------------------------------------------------------------
 
 -- Đơn 1: Ẩm thực phố cổ Hà Nội
-INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, thoiGianHuy, tongTien)
-VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, NULL, 1300000);
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, thoiGianHuy, tongTien, tenNguoiDat, emailNguoiDat, sdtNguoiDat)
+VALUES (5, 1, 2, '2024-11-15', N'Đã hoàn thành', '2024-11-10 10:00:00', NULL, NULL, 1300000,N'Nguyễn Triều Tiên','nguyentrieutien2005py@gmail.com', 0395434184);
 
 INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
 VALUES (SCOPE_IDENTITY(), 1300000, N'Momo', 1, 'ORDER_TEST_001', 'TRANS_TEST_001', '2024-11-10 10:05:00', '2024-11-10 10:00:00');
 
 -- Đơn 2: Tinh Hoa Cung Đình Huế
-INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
-VALUES (5, 5, 1, '2024-10-20', N'Đã hoàn thành', '2024-10-15 14:00:00', NULL, 715000);
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien,tenNguoiDat, emailNguoiDat, sdtNguoiDat)
+VALUES (5, 5, 1, '2024-10-20', N'Đã hoàn thành', '2024-10-15 14:00:00', NULL, 715000,N'Nguyễn Triều Tiên','nguyentrieutien2005py@gmail.com', 0395434184);
 
 INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
 VALUES (SCOPE_IDENTITY(), 715000, N'Momo', 1, 'ORDER_TEST_002', 'TRANS_TEST_002', '2024-10-15 14:05:00', '2024-10-15 14:00:00');
 
 -- Đơn 3: Bánh Xèo và Nem Lụi Đà Nẵng
-INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien)
-VALUES (5, 10, 3, '2024-09-10', N'Đã hoàn thành', '2024-09-05 09:00:00', NULL, 1770000);
+INSERT INTO DatLich (maHocVien, maLichTrinh, soLuongNguoi, ngayThamGia, trangThai, ngayDat, thoiGianHetHan, tongTien, tenNguoiDat, emailNguoiDat, sdtNguoiDat)
+VALUES (5, 10, 3, '2024-09-10', N'Đã hoàn thành', '2024-09-05 09:00:00', NULL, 1770000,N'Nguyễn Triều Tiên','nguyentrieutien2005py@gmail.com', 0395434184);
 
 INSERT INTO ThanhToan (maDatLich, soTien, phuongThuc, trangThai, orderId, transId, ngayThanhToan, thoiGianTao)
 VALUES (SCOPE_IDENTITY(), 1770000, N'Momo', 1, 'ORDER_TEST_003', 'TRANS_TEST_003', '2024-09-05 09:05:00', '2024-09-05 09:00:00');
 
 PRINT N'✅ Đã thực thi thành công !';
-
+select * from DatLich
 INSERT INTO MonAn (maKhoaHoc, maDanhMuc, tenMon, gioiThieu, nguyenLieu) VALUES
 -- Món 1: Khai vị
 (null, null, N'Nộm hoa chuối tai heo', 
@@ -1876,3 +1876,5 @@ select * from MonAn
 select * from KhoaHoc
 select * from LichTrinhLopHoc
 select * from DanhGia
+select * from HinhAnhMonAn
+select * from HinhAnhKhoaHoc

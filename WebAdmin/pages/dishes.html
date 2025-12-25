@@ -203,38 +203,45 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h2 id="detailDishName"><i class="fas fa-info-circle" style="color: var(--primary);"></i> Tên Món Ăn</h2>
+            <h2><i class="fas fa-utensils" style="color: var(--primary);"></i> <span id="detailDishName">Tên Món Ăn</span></h2>
             <button class="close" onclick="closeDishDetailModal()">&times;</button>
           </div>
           <div class="modal-body">
-            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-              <span class="badge badge-success" id="detailDishCategory">
-                <i class="fas fa-tag"></i> Khai vị
-              </span>
-              <span class="badge badge-info" id="detailDishCourse">
-                <i class="fas fa-circle"></i> Món ăn độc lập
-              </span>
+            <!-- Mã món và badges -->
+            <div class="detail-header-info">
+              <span class="detail-dish-id" id="detailDishId">#1</span>
+              <div class="detail-status-badges">
+                <span class="status-badge badge-success" id="detailDishCategory">
+                  <i class="fas fa-tag"></i> Khai vị
+                </span>
+                <span class="status-badge badge-info" id="detailDishCourse">
+                  <i class="fas fa-circle"></i> Món ăn độc lập
+                </span>
+              </div>
             </div>
 
-            <div style="margin-bottom: 20px;">
-              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
-                <i class="fas fa-info-circle" style="color: var(--primary);"></i> Giới Thiệu
-              </label>
-              <p id="detailDishIntro" style="margin: 8px 0 0 0;">Mô tả về món ăn...</p>
+            <!-- Giới thiệu -->
+            <div class="detail-section">
+              <div class="detail-section-title">
+                <i class="fas fa-info-circle"></i> Giới Thiệu
+              </div>
+              <div class="detail-content" id="detailDishIntro">Mô tả về món ăn...</div>
             </div>
 
-            <div style="margin-bottom: 20px;">
-              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
-                <i class="fas fa-list-ul" style="color: var(--primary);"></i> Nguyên Liệu
-              </label>
-              <div id="detailDishIngredients" style="margin: 8px 0 0 0; white-space: pre-line;">Danh sách nguyên liệu...</div>
+            <!-- Nguyên liệu -->
+            <div class="detail-section">
+              <div class="detail-section-title">
+                <i class="fas fa-list-ul"></i> Nguyên Liệu
+              </div>
+              <div class="detail-ingredients" id="detailDishIngredients">Danh sách nguyên liệu...</div>
             </div>
 
-            <div>
-              <label style="font-weight: 600; color: var(--text-gray); font-size: 12px; text-transform: uppercase;">
-                <i class="fas fa-images" style="color: var(--primary);"></i> Hình Ảnh
-              </label>
-              <div class="image-gallery" id="detailDishImages" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px;">
+            <!-- Hình ảnh -->
+            <div class="detail-section">
+              <div class="detail-section-title">
+                <i class="fas fa-images"></i> Hình Ảnh
+              </div>
+              <div class="image-gallery" id="detailDishImages">
                 <!-- Images populated via JS -->
               </div>
             </div>

@@ -1,4 +1,10 @@
 // Dish Detail Modal Component
+
+// Lấy base URL không có /api
+function getBaseUrl() {
+  return API_CONFIG.BASE_URL.replace('/api', '');
+}
+
 function openDishDetailModal(dish, images = []) {
   const modal = document.getElementById('dishDetailModal');
   if (!modal) return;
@@ -28,18 +34,27 @@ function openDishDetailModal(dish, images = []) {
     courseBadge.className = 'status-badge badge-info';
   }
 
-  // Update images
+  // Update images - sử dụng đường dẫn đúng cho dishes
   const imageGallery = document.getElementById('detailDishImages');
+  const baseUrl = getBaseUrl();
+  
   if (images && images.length > 0) {
     imageGallery.innerHTML = images
       .map(
-        (img, index) => `
-        <div class="gallery-item">
-          <img src="${API_CONFIG.BASE_URL}/uploads/${img.duongDan}" 
-               alt="${dish.tenMon} - Ảnh ${index + 1}" 
-               onclick="viewFullImage('${API_CONFIG.BASE_URL}/uploads/${img.duongDan}')" />
-        </div>
-      `
+        (img, index) => {
+          // Ảnh món ăn nằm trong uploads/dishes/
+          // duongDan chỉ chứa tên file (vd: monan_1_abc12345.jpg)
+          const imageUrl = `${baseUrl}/uploads/dishes/${img.duongDan}`;
+          
+          return `
+            <div class="gallery-item">
+              <img src="${imageUrl}" 
+                   alt="${dish.tenMon} - Ảnh ${index + 1}" 
+                   onclick="viewFullImage('${imageUrl}')"
+                   onerror="this.onerror=null; this.src='${baseUrl}/uploads/${img.duongDan}'" />
+            </div>
+          `;
+        }
       )
       .join('');
   } else {
