@@ -593,9 +593,8 @@
                 android:layout_marginTop="20dp">
 
                 <View
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@drawable/shadow_top_only" />
+                    android:layout_width="909dp"
+                    android:layout_height="40dp" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_ChiTiet_DL"
@@ -604,6 +603,7 @@
                     android:layout_marginTop="4dp"
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="30dp"
+
                     app:cardElevation="0dp">
 
                     <LinearLayout

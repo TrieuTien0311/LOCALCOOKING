@@ -146,13 +146,13 @@ class CourseFormModal {
           </div>
 
           <div class="form-group">
-            <label>Giới thiệu</label>
-            <textarea name="gioiThieu" class="form-control" rows="3" placeholder="Giới thiệu ngắn về khóa học">${course?.gioiThieu || ''}</textarea>
+            <label>Mô tả ngắn</label>
+            <textarea name="moTa" class="form-control" rows="3" placeholder="Mô tả ngắn hiển thị ở danh sách">${course?.moTa || ''}</textarea>
           </div>
 
           <div class="form-group">
-            <label>Mô tả chi tiết</label>
-            <textarea name="moTa" class="form-control" rows="4" placeholder="Mô tả chi tiết về khóa học">${course?.moTa || ''}</textarea>
+            <label>Giới thiệu chi tiết</label>
+            <textarea name="gioiThieu" class="form-control" rows="4" placeholder="Giới thiệu chi tiết khi xem detail">${course?.gioiThieu || ''}</textarea>
           </div>
 
           <div class="form-group">

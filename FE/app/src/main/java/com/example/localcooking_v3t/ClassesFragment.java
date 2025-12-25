@@ -74,6 +74,15 @@ public class ClassesFragment extends Fragment {
 
         return view;
     }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh trạng thái yêu thích khi quay lại từ Booking hoặc các màn hình khác
+        if (danhSachLopHoc != null && !danhSachLopHoc.isEmpty()) {
+            loadFavoriteStatus();
+        }
+    }
 
     private void setupRecyclerView() {
         recyclerViewLopHoc.setLayoutManager(new LinearLayoutManager(requireContext()));

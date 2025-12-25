@@ -50,6 +50,12 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         MonAn monAn = danhSachMon.get(position);
         Integer maMonAn = monAn.getMaMonAn();
 
+        // DEBUG: Log thông tin món ăn
+        Log.d(TAG, "=== onBindViewHolder position=" + position + " ===");
+        Log.d(TAG, "maMonAn: " + maMonAn);
+        Log.d(TAG, "tenMon: " + monAn.getTenMon());
+        Log.d(TAG, "hinhAnh: " + monAn.getHinhAnh());
+
         holder.txtFood.setText(monAn.getTenMon());
         holder.txtGioiThieu.setText(monAn.getGioiThieu() != null ? monAn.getGioiThieu() : "");
         holder.txtNguyenLieu.setText(monAn.getNguyenLieu() != null ? monAn.getNguyenLieu() : "");
@@ -95,33 +101,103 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     private void loadHinhAnhMonAn(FoodViewHolder holder, MonAn monAn) {
         Integer maMonAn = monAn.getMaMonAn();
         
+        Log.d(TAG, "=== loadHinhAnhMonAn maMonAn=" + maMonAn + " ===");
+        Log.d(TAG, "API URL: " + RetrofitClient.BASE_URL + "api/hinhanh-monan/monan/" + maMonAn);
+        
         apiService.getHinhAnhMonAn(maMonAn).enqueue(new Callback<List<HinhAnhMonAn>>() {
             @Override
             public void onResponse(Call<List<HinhAnhMonAn>> call, Response<List<HinhAnhMonAn>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                Log.d(TAG, "API Response code: " + response.code());
+                Log.d(TAG, "API Response body: " + (response.body() != null ? response.body().size() + " items" : "null"));
+                
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     List<HinhAnhMonAn> danhSachHinh = response.body();
+                    
+                    // Log chi tiết từng hình ảnh
+                    for (int i = 0; i < danhSachHinh.size(); i++) {
+                        HinhAnhMonAn img = danhSachHinh.get(i);
+                        Log.d(TAG, "  Image[" + i + "]: maHinhAnh=" + img.getMaHinhAnh() + ", duongDan=" + img.getDuongDan());
+                    }
+                    
                     hinhAnhMap.put(maMonAn, danhSachHinh);
                     currentImageIndexMap.put(maMonAn, 0);
                     displayCurrentImage(holder, monAn);
                 } else {
-                    Log.e(TAG, "Lỗi load hình ảnh món ăn: " + response.code());
-                    holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
-                    updateCircleIndicators(holder, 0, 0);
+                    Log.d(TAG, "Không có hình ảnh từ API (empty or null), fallback về hinhAnh của món ăn");
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e(TAG, "Error body: " + response.errorBody().string());
+                        } catch (Exception e) {
+                            Log.e(TAG, "Cannot read error body");
+                        }
+                    }
+                    // Fallback: sử dụng hinhAnh của món ăn
+                    displayFallbackImage(holder, monAn);
                 }
             }
 
             @Override
             public void onFailure(Call<List<HinhAnhMonAn>> call, Throwable t) {
-                Log.e(TAG, "Lỗi kết nối API hình ảnh món ăn: " + t.getMessage());
-                holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
-                updateCircleIndicators(holder, 0, 0);
+                Log.e(TAG, "=== API FAILURE ===");
+                Log.e(TAG, "Error type: " + t.getClass().getSimpleName());
+                Log.e(TAG, "Error message: " + t.getMessage());
+                t.printStackTrace();
+                // Fallback: sử dụng hinhAnh của món ăn
+                displayFallbackImage(holder, monAn);
             }
         });
+    }
+    
+    /**
+     * Hiển thị ảnh fallback từ MonAn.hinhAnh (server)
+     */
+    private void displayFallbackImage(FoodViewHolder holder, MonAn monAn) {
+        String hinhAnh = monAn.getHinhAnh();
+        
+        Log.d(TAG, "=== displayFallbackImage ===");
+        Log.d(TAG, "monAn.hinhAnh: " + hinhAnh);
+        
+        if (hinhAnh != null && !hinhAnh.isEmpty()) {
+            // Load ảnh từ server
+            String imageUrl = RetrofitClient.BASE_URL + "uploads/dishes/" + hinhAnh;
+            Log.d(TAG, "Loading fallback image from SERVER: " + imageUrl);
+            
+            Glide.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_main_dish_tt)
+                .error(R.drawable.ic_main_dish_tt)
+                .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
+                        Log.e(TAG, "Glide FAILED to load: " + imageUrl);
+                        if (e != null) {
+                            Log.e(TAG, "Glide error: " + e.getMessage());
+                            e.logRootCauses(TAG);
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                        Log.d(TAG, "Glide SUCCESS loaded: " + imageUrl);
+                        return false;
+                    }
+                })
+                .into(holder.imgMonAn);
+        } else {
+            Log.d(TAG, "hinhAnh is null or empty, using default image");
+            holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
+        }
+        
+        // Ẩn circle indicators vì chỉ có 1 ảnh
+        updateCircleIndicators(holder, 0, 1);
     }
 
     private void displayCurrentImage(FoodViewHolder holder, MonAn monAn) {
         Integer maMonAn = monAn.getMaMonAn();
         List<HinhAnhMonAn> danhSachHinh = hinhAnhMap.get(maMonAn);
+        
+        Log.d(TAG, "=== displayCurrentImage maMonAn=" + maMonAn + " ===");
         
         if (danhSachHinh != null && !danhSachHinh.isEmpty()) {
             int currentIndex = currentImageIndexMap.get(maMonAn);
@@ -131,18 +207,36 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             String fileName = hinhAnh.getDuongDan();
             String imageUrl = RetrofitClient.BASE_URL + "uploads/dishes/" + fileName;
             
-            Log.d(TAG, "Loading image from URL: " + imageUrl);
+            Log.d(TAG, "Loading image[" + currentIndex + "] from URL: " + imageUrl);
             
             // Sử dụng Glide để load ảnh từ URL
             Glide.with(holder.itemView.getContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_main_dish_tt)
                 .error(R.drawable.ic_main_dish_tt)
+                .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
+                        Log.e(TAG, "Glide FAILED to load: " + imageUrl);
+                        if (e != null) {
+                            Log.e(TAG, "Glide error: " + e.getMessage());
+                            e.logRootCauses(TAG);
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                        Log.d(TAG, "Glide SUCCESS loaded: " + imageUrl);
+                        return false;
+                    }
+                })
                 .into(holder.imgMonAn);
             
             // Cập nhật circle indicators
             updateCircleIndicators(holder, currentIndex, danhSachHinh.size());
         } else {
+            Log.d(TAG, "danhSachHinh is null or empty, using default");
             holder.imgMonAn.setImageResource(R.drawable.ic_main_dish_tt);
             updateCircleIndicators(holder, 0, 0);
         }

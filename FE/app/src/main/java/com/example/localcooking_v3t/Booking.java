@@ -35,7 +35,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.localcooking_v3t.model.HinhAnhKhoaHoc;
 
@@ -74,6 +76,10 @@ public class Booking extends AppCompatActivity {
     private ImageView imMonAn;
     private ImageView btnPre, btnNext;
     private ImageView[] circles;
+    
+    // Nút yêu thích
+    private ImageView icFavDL;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +120,12 @@ public class Booking extends AppCompatActivity {
         circles[0] = findViewById(R.id.circle1);
         circles[1] = findViewById(R.id.circle2);
         circles[2] = findViewById(R.id.circle3);
+        
+        // Ánh xạ nút yêu thích
+        icFavDL = findViewById(R.id.ic_fav_DL);
+        if (icFavDL != null) {
+            icFavDL.setOnClickListener(v -> toggleFavorite());
+        }
         
         // Xử lý nút Previous với animation
         btnPre.setOnClickListener(v -> {
@@ -233,6 +245,9 @@ public class Booking extends AppCompatActivity {
         // Load dữ liệu từ API
         loadLichTrinhData();
         
+        // Load trạng thái yêu thích
+        loadFavoriteStatus();
+        
         // Xử lý nút Chi tiết (header) - mở bottom sheet
         TextView btnChiTiet = findViewById(R.id.btnChiTiet);
         if (btnChiTiet != null) {
@@ -270,8 +285,18 @@ public class Booking extends AppCompatActivity {
      */
     private void showDetailBottomSheet(int tabIndex) {
         if (khoaHoc != null) {
+            // Cập nhật trạng thái yêu thích vào khoaHoc
+            khoaHoc.setIsFavorite(isFavorite);
+            
             // Tạo bottom sheet với dữ liệu khóa học
             DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(khoaHoc, formatDateForDisplay(ngayThamGia));
+            
+            // Set listener để đồng bộ trạng thái yêu thích
+            bottomSheet.setOnFavoriteChangedListener((changedKhoaHoc, newFavoriteStatus) -> {
+                isFavorite = newFavoriteStatus;
+                updateFavoriteIcon();
+            });
+            
             bottomSheet.show(getSupportFragmentManager(), "DetailBottomSheet");
             
             // Chuyển đến tab được chọn sau khi bottom sheet hiển thị
@@ -287,6 +312,7 @@ public class Booking extends AppCompatActivity {
             tempKhoaHoc.setMaKhoaHoc(maKhoaHoc);
             tempKhoaHoc.setTenKhoaHoc(tenKhoaHoc);
             tempKhoaHoc.setGiaTien(giaTien != null ? giaTien.doubleValue() : 0.0);
+            tempKhoaHoc.setIsFavorite(isFavorite);
             
             // Tạo lịch trình tạm với địa điểm
             if (lichTrinhLopHoc != null) {
@@ -305,6 +331,13 @@ public class Booking extends AppCompatActivity {
             }
             
             DetailBottomSheet bottomSheet = DetailBottomSheet.newInstance(tempKhoaHoc, formatDateForDisplay(ngayThamGia));
+            
+            // Set listener để đồng bộ trạng thái yêu thích
+            bottomSheet.setOnFavoriteChangedListener((changedKhoaHoc, newFavoriteStatus) -> {
+                isFavorite = newFavoriteStatus;
+                updateFavoriteIcon();
+            });
+            
             bottomSheet.show(getSupportFragmentManager(), "DetailBottomSheet");
         }
     }
@@ -795,33 +828,43 @@ public class Booking extends AppCompatActivity {
         Log.d("BOOKING_UI", "hinhAnh (banner): " + khoaHoc.getHinhAnh());
         Log.d("BOOKING_UI", "hinhAnhList: " + (khoaHoc.getHinhAnhList() != null ? khoaHoc.getHinhAnhList().size() + " images" : "NULL"));
         
-        // Tạo danh sách ảnh: ảnh đại diện trước, sau đó là ảnh từ HinhAnhKhoaHoc
+        // Tạo danh sách ảnh: 1 ảnh đại diện + 2 ảnh từ HinhAnhKhoaHoc (không trùng) = 3 ảnh
         List<HinhAnhKhoaHoc> combinedImageList = new ArrayList<>();
         
+        // Lấy tên ảnh đại diện để so sánh
+        String bannerImageName = khoaHoc.getHinhAnh();
+        
         // 1. Thêm ảnh đại diện (KhoaHoc.hinhAnh) làm ảnh đầu tiên
-        if (khoaHoc.getHinhAnh() != null && !khoaHoc.getHinhAnh().isEmpty()) {
+        if (bannerImageName != null && !bannerImageName.isEmpty()) {
             HinhAnhKhoaHoc bannerImage = new HinhAnhKhoaHoc();
-            bannerImage.setDuongDan(khoaHoc.getHinhAnh());
+            bannerImage.setDuongDan(bannerImageName);
             bannerImage.setMaKhoaHoc(khoaHoc.getMaKhoaHoc());
             combinedImageList.add(bannerImage);
-            Log.d("BOOKING_UI", "Added banner image first: " + khoaHoc.getHinhAnh());
+            Log.d("BOOKING_UI", "Added banner image first: " + bannerImageName);
         }
         
-        // 2. Thêm các ảnh từ HinhAnhKhoaHoc (ảnh bổ sung) - KHÔNG loại bỏ trùng
-        // WebAdmin đã validate chỉ cho upload đúng 2 ảnh gallery
+        // 2. Thêm 2 ảnh từ HinhAnhKhoaHoc (bỏ qua ảnh trùng với ảnh đại diện)
         if (khoaHoc.getHinhAnhList() != null && !khoaHoc.getHinhAnhList().isEmpty()) {
             Log.d("BOOKING_UI", "Gallery images from API: " + khoaHoc.getHinhAnhList().size());
+            int count = 0;
             for (HinhAnhKhoaHoc img : khoaHoc.getHinhAnhList()) {
                 if (img.getDuongDan() != null && !img.getDuongDan().isEmpty()) {
+                    // Bỏ qua ảnh trùng với ảnh đại diện
+                    if (bannerImageName != null && img.getDuongDan().equals(bannerImageName)) {
+                        Log.d("BOOKING_UI", "Skipped duplicate image: " + img.getDuongDan());
+                        continue;
+                    }
                     combinedImageList.add(img);
                     Log.d("BOOKING_UI", "Added gallery image: " + img.getDuongDan());
+                    count++;
+                    if (count >= 2) break; // Chỉ lấy tối đa 2 ảnh từ gallery (không trùng)
                 }
             }
         } else {
             Log.w("BOOKING_UI", "No gallery images from API (hinhAnhList is null or empty)");
         }
         
-        Log.d("BOOKING_UI", "Total combined images: " + combinedImageList.size());
+        Log.d("BOOKING_UI", "Total combined images: " + combinedImageList.size() + " (max 3)");
         
         // Hiển thị slide ảnh
         if (!combinedImageList.isEmpty()) {
@@ -1075,6 +1118,106 @@ public class Booking extends AppCompatActivity {
         }
         
         Log.d("BOOKING_UI", "Updated indicators: " + (currentImageIndex + 1) + "/" + imageCount);
+    }
+    
+    /**
+     * Load trạng thái yêu thích từ API
+     */
+    private void loadFavoriteStatus() {
+        Integer maHocVien = sessionManager.getMaNguoiDung();
+        
+        if (maHocVien == null || maHocVien == -1 || maKhoaHoc == null || maKhoaHoc == 0) {
+            Log.d("BOOKING", "Skip loading favorite status: not logged in or no course");
+            return;
+        }
+        
+        apiService.checkFavorite(maHocVien, maKhoaHoc)
+                .enqueue(new Callback<Map<String, Boolean>>() {
+                    @Override
+                    public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Boolean result = response.body().get("isFavorite");
+                            isFavorite = result != null && result;
+                            updateFavoriteIcon();
+                            
+                            // Cập nhật vào khoaHoc nếu có
+                            if (khoaHoc != null) {
+                                khoaHoc.setIsFavorite(isFavorite);
+                            }
+                            
+                            Log.d("BOOKING", "Favorite status loaded: " + isFavorite);
+                        }
+                    }
+                    
+                    @Override
+                    public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
+                        Log.e("BOOKING", "Error loading favorite status", t);
+                    }
+                });
+    }
+    
+    /**
+     * Toggle trạng thái yêu thích
+     */
+    private void toggleFavorite() {
+        Integer maHocVien = sessionManager.getMaNguoiDung();
+        
+        if (maHocVien == null || maHocVien == -1) {
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng chức năng này", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        if (maKhoaHoc == null || maKhoaHoc == 0) {
+            Toast.makeText(this, "Không có thông tin khóa học", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Map<String, Integer> request = new HashMap<>();
+        request.put("maHocVien", maHocVien);
+        request.put("maKhoaHoc", maKhoaHoc);
+        
+        apiService.toggleFavorite(request)
+                .enqueue(new Callback<Map<String, Object>>() {
+                    @Override
+                    public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Boolean result = (Boolean) response.body().get("isFavorite");
+                            String message = (String) response.body().get("message");
+                            
+                            isFavorite = result != null && result;
+                            updateFavoriteIcon();
+                            
+                            // Cập nhật vào khoaHoc nếu có
+                            if (khoaHoc != null) {
+                                khoaHoc.setIsFavorite(isFavorite);
+                            }
+                            
+                            Toast.makeText(Booking.this, message, Toast.LENGTH_SHORT).show();
+                            Log.d("BOOKING", "Favorite toggled: " + isFavorite);
+                        } else {
+                            Toast.makeText(Booking.this, "Không thể cập nhật yêu thích", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    
+                    @Override
+                    public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                        Log.e("BOOKING", "Error toggling favorite", t);
+                        Toast.makeText(Booking.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+    
+    /**
+     * Cập nhật icon yêu thích
+     */
+    private void updateFavoriteIcon() {
+        if (icFavDL != null) {
+            if (isFavorite) {
+                icFavDL.setImageResource(R.drawable.ic_heartredfilled);
+            } else {
+                icFavDL.setImageResource(R.drawable.ic_heart);
+            }
+        }
     }
 
 }

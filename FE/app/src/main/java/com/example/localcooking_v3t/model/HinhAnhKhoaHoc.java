@@ -1,8 +1,5 @@
 package com.example.localcooking_v3t.model;
 
-import android.content.Context;
-import com.example.localcooking_v3t.R;
-
 public class HinhAnhKhoaHoc {
     private Integer maHinhAnh;
     private Integer maKhoaHoc;
@@ -52,24 +49,4 @@ public class HinhAnhKhoaHoc {
         this.thuTu = thuTu; 
     }
     
-    /**
-     * Lấy resource ID từ tên file ảnh
-     * VD: "am_thuc_pho_co_ha_noi_2.jpg" -> R.drawable.am_thuc_pho_co_ha_noi_2
-     */
-    public int getHinhAnhResId(Context context) {
-        if (duongDan == null || duongDan.isEmpty()) {
-            return R.drawable.hue; // Ảnh mặc định
-        }
-        
-        // Loại bỏ extension .jpg, .png
-        String imageName = duongDan.replace(".jpg", "").replace(".png", "");
-        
-        int resId = context.getResources().getIdentifier(
-            imageName, 
-            "drawable", 
-            context.getPackageName()
-        );
-        
-        return resId != 0 ? resId : R.drawable.hue;
-    }
 }
