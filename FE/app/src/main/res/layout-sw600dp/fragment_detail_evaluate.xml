@@ -224,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_filter_orange"
+                android:background="@drawable/bg_filter_gray"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
@@ -254,7 +254,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="8dp"
-                android:background="@drawable/bg_filter_orange"
+                android:background="@drawable/bg_filter_gray"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">

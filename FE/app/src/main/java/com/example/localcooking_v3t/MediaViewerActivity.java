@@ -39,6 +39,7 @@ public class MediaViewerActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private ImageView btnClose;
     private TextView txtCounter;
+    private View headerLayout;
     
     private List<HinhAnhDanhGiaDTO> mediaList;
     private int currentPosition;
@@ -72,6 +73,7 @@ public class MediaViewerActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         btnClose = findViewById(R.id.btnClose);
         txtCounter = findViewById(R.id.txtCounter);
+        headerLayout = findViewById(R.id.headerLayout);
         btnClose.setOnClickListener(v -> finish());
     }
 
@@ -257,21 +259,43 @@ public class MediaViewerActivity extends AppCompatActivity {
         isInPipMode = isInPictureInPictureMode;
         
         if (isInPictureInPictureMode) {
-            // Hide controls in PiP
-            btnClose.setVisibility(View.GONE);
-            txtCounter.setVisibility(View.GONE);
+            // Hide all UI controls in PiP mode
+            if (headerLayout != null) {
+                headerLayout.setVisibility(View.GONE);
+            }
             if (playerView != null) {
                 playerView.setUseController(false);
             }
         } else {
-            // Show controls when exiting PiP
-            btnClose.setVisibility(View.VISIBLE);
-            if (!isSingleMode) {
-                txtCounter.setVisibility(View.VISIBLE);
+            // Exiting PiP mode
+            if (headerLayout != null) {
+                headerLayout.setVisibility(View.VISIBLE);
             }
             if (playerView != null) {
                 playerView.setUseController(true);
             }
+            
+            // Khi thoát PiP bằng nút X (activity đang bị destroy), dừng video ngay
+            if (isFinishing()) {
+                stopAndReleasePlayer();
+            }
+        }
+    }
+    
+    private void stopAndReleasePlayer() {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Khi activity bị stop (bao gồm khi đóng PiP), dừng video
+        if (isInPipMode && isFinishing()) {
+            stopAndReleasePlayer();
         }
     }
 
@@ -294,10 +318,7 @@ public class MediaViewerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (exoPlayer != null) {
-            exoPlayer.release();
-            exoPlayer = null;
-        }
+        stopAndReleasePlayer();
     }
 
     // ========== Adapter ==========
