@@ -653,8 +653,7 @@
 
                     <View
                         android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:background="@drawable/shadow_top_only" />
+                        android:layout_height="30dp" />
 
                     <!-- 2. CardView thật (không elevation) -->
                     <androidx.cardview.widget.CardView
