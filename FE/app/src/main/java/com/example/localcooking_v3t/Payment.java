@@ -321,20 +321,24 @@ public class Payment extends AppCompatActivity {
             }
         }
         
-        // Hình ảnh
+        // Hình ảnh - Load từ server
         if (imgMonAn != null) {
             String hinhAnh = getIntent().getStringExtra("hinhAnh");
             if (hinhAnh != null && !hinhAnh.isEmpty()) {
-                // Loại bỏ extension
-                String name = hinhAnh.replace(".png", "").replace(".jpg", "");
-                // Lấy resource ID
-                int resId = getResources().getIdentifier(name, "drawable", getPackageName());
-                if (resId != 0) {
-                    imgMonAn.setImageResource(resId);
-                } else {
-                    // Hình mặc định
-                    imgMonAn.setImageResource(getResources().getIdentifier("phobo", "drawable", getPackageName()));
-                }
+                // Tạo URL ảnh từ server sử dụng helper method
+                String imageUrl = RetrofitClient.getFullImageUrl(hinhAnh);
+                Log.d(TAG, "Loading course image: " + imageUrl);
+                
+                // Sử dụng Glide để load ảnh từ server
+                com.bumptech.glide.Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.phobo)
+                    .error(R.drawable.phobo)
+                    .centerCrop()
+                    .into(imgMonAn);
+            } else {
+                // Hình mặc định nếu không có hinhAnh
+                imgMonAn.setImageResource(R.drawable.phobo);
             }
         }
         
