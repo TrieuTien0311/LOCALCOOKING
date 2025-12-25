@@ -89,6 +89,7 @@ public class OrderHistory {
         this.thoiGian = dto.getThoiGian();
         this.moTa = dto.getMoTa();
         this.hinhAnhPath = dto.getHinhAnh();
+        this.hinhAnhUrl = dto.getHinhAnh(); // Set URL hình ảnh từ server
         this.tongTienGoc = dto.getTongTien();
         
         // Thông tin người đặt

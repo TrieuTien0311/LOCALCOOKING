@@ -156,17 +156,70 @@ public class Review extends AppCompatActivity {
             hinhAnhUrl = intent.getStringExtra("hinhAnhUrl");
             maDatLich = intent.getIntExtra("maDatLich", -1);
             maKhoaHoc = intent.getIntExtra("maKhoaHoc", -1);
-            lich = intent.getStringExtra("lich");
-            diaDiem = intent.getStringExtra("diaDiem");
             isViewMode = intent.getBooleanExtra("isViewMode", false);
+            
+            // Debug log để kiểm tra dữ liệu nhận được
+            Log.d(TAG, "=== INTENT DATA ===");
+            Log.d(TAG, "orderTitle: " + orderTitle);
+            Log.d(TAG, "hinhAnhUrl: " + hinhAnhUrl);
+            Log.d(TAG, "maDatLich: " + maDatLich);
+            
+            // Nhận thời gian và địa điểm từ các key khác nhau
+            String orderTime = intent.getStringExtra("orderTime");
+            String orderDate = intent.getStringExtra("orderDate");
+            String orderLocation = intent.getStringExtra("orderLocation");
+            
+            Log.d(TAG, "orderTime: " + orderTime);
+            Log.d(TAG, "orderDate: " + orderDate);
+            Log.d(TAG, "orderLocation: " + orderLocation);
+            
+            // Ghép thời gian và ngày nếu có
+            if (orderTime != null && orderDate != null) {
+                lich = orderTime + ", " + orderDate;
+            } else if (intent.getStringExtra("lich") != null) {
+                lich = intent.getStringExtra("lich");
+            }
+            
+            // Lấy địa điểm
+            if (orderLocation != null) {
+                diaDiem = orderLocation;
+            } else if (intent.getStringExtra("diaDiem") != null) {
+                diaDiem = intent.getStringExtra("diaDiem");
+            }
         }
     }
     
     private void displayData() {
+        Log.d(TAG, "=== DISPLAY DATA ===");
+        Log.d(TAG, "hinhAnhUrl value: " + hinhAnhUrl);
+        
         if (hinhAnhUrl != null && !hinhAnhUrl.isEmpty()) {
-            Glide.with(this).load(RetrofitClient.getFullImageUrl(hinhAnhUrl))
-                 .placeholder(R.drawable.hue).error(R.drawable.hue).into(imgFood);
+            String fullUrl = RetrofitClient.getFullImageUrl(hinhAnhUrl);
+            Log.d(TAG, "Full image URL: " + fullUrl);
+            
+            Glide.with(this)
+                 .load(fullUrl)
+                 .placeholder(R.drawable.hue)
+                 .error(R.drawable.hue)
+                 .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                     @Override
+                     public boolean onLoadFailed(com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
+                         Log.e(TAG, "Glide load FAILED: " + (e != null ? e.getMessage() : "unknown error"));
+                         if (e != null) e.logRootCauses(TAG);
+                         return false;
+                     }
+
+                     @Override
+                     public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                         Log.d(TAG, "Glide load SUCCESS from: " + dataSource);
+                         return false;
+                     }
+                 })
+                 .into(imgFood);
+        } else {
+            Log.w(TAG, "hinhAnhUrl is NULL or EMPTY - using default image");
         }
+        
         if (orderTitle != null) txtTenKhoaHoc.setText(orderTitle);
         if (lich != null) txtThoiGian.setText(lich);
         if (diaDiem != null) txtDiaDiem.setText("Địa điểm: " + diaDiem);
