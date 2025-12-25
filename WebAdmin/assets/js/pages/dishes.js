@@ -259,6 +259,9 @@ async function editDish(id) {
   const previewContainer = document.getElementById('imagePreviewContainer');
   previewContainer.innerHTML = '';
 
+  // Lấy base URL không có /api
+  const baseUrl = API_CONFIG.BASE_URL.replace('/api', '');
+
   try {
     showLoading();
     const images = await apiService.get(`/hinhanh-monan/monan/${id}`);
@@ -266,14 +269,18 @@ async function editDish(id) {
 
     if (images && images.length > 0) {
       previewContainer.innerHTML = images
-        .map((img) => `
-          <div class="image-preview-item" data-existing="${img.maHinhAnh}">
-            <img src="${API_CONFIG.BASE_URL}/uploads/${img.duongDan}" alt="Preview" />
-            <button type="button" class="remove-image" onclick="removeExistingImage(${img.maHinhAnh})">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        `)
+        .map((img) => {
+          // Ảnh món ăn nằm trong uploads/dishes/
+          const imageUrl = `${baseUrl}/uploads/dishes/${img.duongDan}`;
+          return `
+            <div class="image-preview-item" data-existing="${img.maHinhAnh}">
+              <img src="${imageUrl}" alt="Preview" onerror="this.onerror=null; this.src='${baseUrl}/uploads/${img.duongDan}'" />
+              <button type="button" class="remove-image" onclick="removeExistingImage(${img.maHinhAnh})">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          `;
+        })
         .join('');
     }
   } catch (error) {
