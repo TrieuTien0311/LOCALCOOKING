@@ -1,12 +1,28 @@
 ﻿---------------------------------------------------------------------
 -- PHẦN 1: KHỞI TẠO DATABASE
+-- Đóng tất cả ứng dụng kết nối database trước khi chạy (Backend, SSMS tabs khác)
 ---------------------------------------------------------------------
-IF EXISTS (SELECT * FROM sys.databases WHERE name = 'DatLichHocNauAn')
+USE master;
+GO
+
+-- Xóa database nếu tồn tại
+DECLARE @dbname NVARCHAR(128) = N'DatLichHocNauAn';
+
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = @dbname)
 BEGIN
-    USE master;
-    ALTER DATABASE DatLichHocNauAn SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE DatLichHocNauAn;
-END;
+    -- Ngắt tất cả kết nối
+    DECLARE @sql NVARCHAR(MAX) = N'';
+    SELECT @sql = @sql + N'KILL ' + CAST(session_id AS NVARCHAR(10)) + N'; '
+    FROM sys.dm_exec_sessions
+    WHERE database_id = DB_ID(@dbname) AND session_id <> @@SPID;
+    
+    IF @sql <> N''
+        EXEC sp_executesql @sql;
+    
+    -- Xóa database
+    EXEC(N'ALTER DATABASE [' + @dbname + N'] SET SINGLE_USER WITH ROLLBACK IMMEDIATE');
+    EXEC(N'DROP DATABASE [' + @dbname + N']');
+END
 GO
 
 CREATE DATABASE DatLichHocNauAn;
@@ -311,21 +327,39 @@ CREATE TABLE HoaDon (
 ---------------------------------------------------------------------
 GO
 
--- Trigger: Thông báo đặt lịch
-CREATE TRIGGER trg_ThongBaoDatLich
+-- Trigger: Thông báo khi đặt lịch
+-- Nếu trạng thái "Đặt trước" -> Thông báo "Giữ chỗ tạm thời"
+-- Nếu trạng thái "Đã hoàn thành" -> Thông báo "Đặt lịch thành công"
+CREATE TRIGGER trg_ThongBaoGiuCho
 ON DatLich
 AFTER INSERT
 AS
 BEGIN
-    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao)
+    -- Thông báo "Giữ chỗ tạm thời" cho đơn chưa thanh toán (Đặt trước)
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
+    SELECT 
+        i.maHocVien,
+        N'Giữ chỗ tạm thời',
+        N'Bạn đã giữ chỗ cho lớp "' + kh.tenKhoaHoc + N'" vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103) + N'. Vui lòng thanh toán trong vòng 10 phút để hoàn tất đặt lịch.',
+        N'GiuCho',
+        kh.hinhAnh
+    FROM inserted i
+    JOIN LichTrinhLopHoc lt ON i.maLichTrinh = lt.maLichTrinh
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE i.trangThai = N'Đặt trước';
+    
+    -- Thông báo "Đặt lịch thành công" cho đơn đã hoàn thành (dữ liệu mẫu)
+    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
     SELECT 
         i.maHocVien,
         N'Đặt lịch thành công',
-        N'Bạn đã đặt lịch học lớp ' + kh.tenKhoaHoc + N' vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103),
-        N'DatLich'
+        N'Chúc mừng! Bạn đã đặt lịch học lớp "' + kh.tenKhoaHoc + N'" vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103) + N' lúc ' + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + N' tại ' + lt.diaDiem + N' thành công. Hẹn gặp bạn!',
+        N'DatLich',
+        kh.hinhAnh
     FROM inserted i
     JOIN LichTrinhLopHoc lt ON i.maLichTrinh = lt.maLichTrinh
-    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc;
+    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc
+    WHERE i.trangThai = N'Đã hoàn thành';
 END;
 GO
 
@@ -1110,26 +1144,8 @@ GO
 
 ---------------------------- Trigger đặt lịch---------------------------
 ---------------------------------------------------------------------
--- TRIGGER 1: Tự động thêm thông báo khi bấm nút thanh toán
+-- TRIGGER 1: Thông báo giữ chỗ đã được định nghĩa ở PHẦN 3 (trg_ThongBaoGiuCho)
 ---------------------------------------------------------------------
-CREATE TRIGGER trg_ThongBaoGiuChoTamThoi
-ON DatLich
-AFTER INSERT
-AS
-BEGIN
-    INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao)
-    SELECT
-        i.maHocVien,
-        N'⏳ Đang giữ chỗ cho bạn',
-        N'Chúng tôi đang giữ chỗ cho lớp "' + kh.tenKhoaHoc + 
-        N'" vào ngày ' + CONVERT(NVARCHAR, i.ngayThamGia, 103) +
-        N'. Vui lòng hoàn tất thanh toán trong vòng 10 phút để xác nhận tham gia.',
-        N'GiuCho'
-    FROM inserted i
-    JOIN LichTrinhLopHoc lt ON i.maLichTrinh = lt.maLichTrinh
-    JOIN KhoaHoc kh ON lt.maKhoaHoc = kh.maKhoaHoc;
-END;
-GO
 
 ---------------------------------------------------------------------
 -- TRIGGER 2: Thông báo khi thanh toán thành công
@@ -1139,19 +1155,19 @@ ON ThanhToan
 AFTER UPDATE
 AS
 BEGIN
-    -- Chỉ thông báo khi chuyển từ chưa thanh toán (0) sang đã thanh toán (1)
+    -- Chỉ xử lý khi chuyển từ chưa thanh toán (0) sang đã thanh toán (1)
     IF UPDATE(trangThai)
     BEGIN
+        -- Tạo thông báo "Đặt lịch thành công"
         INSERT INTO ThongBao (maNguoiNhan, tieuDe, noiDung, loaiThongBao, hinhAnh)
         SELECT 
             d.maHocVien,
-            N'💳 Thanh toán thành công',
-            N'Bạn đã thanh toán thành công cho lớp "' + kh.tenKhoaHoc + 
-            N'" với số tiền ' + FORMAT(i.soTien, 'N0') + N'đ. ' +
-            N'Lớp học sẽ diễn ra vào ngày ' + CONVERT(NVARCHAR, d.ngayThamGia, 103) +
+            N'Đặt lịch thành công',
+            N'Chúc mừng! Bạn đã đặt lịch học lớp "' + kh.tenKhoaHoc + 
+            N'" vào ngày ' + CONVERT(NVARCHAR, d.ngayThamGia, 103) +
             N' lúc ' + CONVERT(NVARCHAR(5), lt.gioBatDau, 108) + 
-            N' tại ' + lt.diaDiem + N'. Hẹn gặp bạn!',
-            N'ThanhToan',
+            N' tại ' + lt.diaDiem + N' thành công. Hẹn gặp bạn!',
+            N'DatLich',
             kh.hinhAnh
         FROM inserted i
         JOIN deleted del ON i.maThanhToan = del.maThanhToan

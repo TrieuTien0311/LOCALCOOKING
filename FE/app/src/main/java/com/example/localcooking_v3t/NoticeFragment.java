@@ -86,6 +86,9 @@ public class NoticeFragment extends Fragment {
 
         // Xử lý sự kiện click item
         adapter.setOnItemClickListener((notice, position) -> {
+            // Kiểm tra Fragment còn attached không
+            if (!isAdded() || getContext() == null) return;
+            
             // Đánh dấu đã đọc trên server
             if (notice.getMaThongBao() != null && !notice.isTrangThai()) {
                 markAsRead(notice.getMaThongBao(), position);
@@ -129,6 +132,9 @@ public class NoticeFragment extends Fragment {
         call.enqueue(new Callback<List<ThongBaoDTO>>() {
             @Override
             public void onResponse(Call<List<ThongBaoDTO>> call, Response<List<ThongBaoDTO>> response) {
+                // Kiểm tra Fragment còn attached không
+                if (!isAdded() || getContext() == null) return;
+                
                 Log.d(TAG, "Response code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -167,6 +173,9 @@ public class NoticeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<ThongBaoDTO>> call, Throwable t) {
+                // Kiểm tra Fragment còn attached không
+                if (!isAdded() || getContext() == null) return;
+                
                 Log.e(TAG, "API call failed: " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 // Fallback về dữ liệu mẫu
@@ -210,6 +219,8 @@ public class NoticeFragment extends Fragment {
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (!isAdded() || getContext() == null) return;
+                
                 if (response.isSuccessful()) {
                     // Cập nhật UI
                     for (Notice notice : noticeList) {
@@ -222,6 +233,7 @@ public class NoticeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                if (!isAdded() || getContext() == null) return;
                 Toast.makeText(getContext(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -248,6 +260,8 @@ public class NoticeFragment extends Fragment {
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (!isAdded() || getContext() == null) return;
+                
                 if (response.isSuccessful()) {
                     // Reload dữ liệu
                     loadThongBaoFromAPI();
@@ -257,6 +271,7 @@ public class NoticeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                if (!isAdded() || getContext() == null) return;
                 Toast.makeText(getContext(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
