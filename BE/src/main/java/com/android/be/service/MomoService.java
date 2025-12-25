@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -247,6 +246,7 @@ public class MomoService {
                 thanhToan.setTrangThai(true);
                 thanhToan.setNgayThanhToan(LocalDateTime.now());
                 thanhToan.setGhiChu("✅ Thanh toán thành công qua Momo. TransID: " + transId);
+                // Thông báo "Đặt lịch thành công" được tạo tự động bởi trigger SQL trg_ThongBaoThanhToan
             } else {
                 thanhToan.setTrangThai(false);
                 thanhToan.setGhiChu("❌ Thanh toán thất bại. Mã lỗi: " + resultCode);
