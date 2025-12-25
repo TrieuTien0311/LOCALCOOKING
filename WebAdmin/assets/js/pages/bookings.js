@@ -133,85 +133,89 @@ function filterBookings() {
 async function viewDetail(id) {
   try {
     showLoading();
-    const booking = await apiService.get(`/datlich/${id}`);
+    
+    // Tìm booking từ danh sách đã load (có đầy đủ thông tin từ dashboard endpoint)
+    let booking = bookings.find(b => b.maDatLich === id);
+    
+    // Nếu không tìm thấy trong danh sách, gọi API
+    if (!booking) {
+      booking = await apiService.get(`/datlich/${id}`);
+    }
     
     const content = `
       <div class="booking-detail-modal">
-        <!-- Header Card -->
-        <div class="detail-card header-card">
-          <div class="card-icon">
-            <i class="fas fa-receipt"></i>
-          </div>
-          <div class="card-content">
-            <h2>Đơn Đặt Lịch #${booking.maDatLich}</h2>
-            <div class="status-badges">
-              <span class="badge badge-${getStatusColor(booking.trangThai)}">
-                <i class="fas fa-circle"></i> ${booking.trangThai}
-              </span>
-              <span class="badge badge-${booking.daThanhToan ? 'success' : 'warning'}">
-                <i class="fas ${booking.daThanhToan ? 'fa-check-circle' : 'fa-clock'}"></i>
-                ${booking.daThanhToan ? 'Đã thanh toán' : 'Chưa thanh toán'}
-              </span>
-            </div>
-            <p class="booking-date">
-              <i class="far fa-calendar"></i> Đặt lúc: ${formatDateTime(booking.ngayDat)}
-            </p>
+        <!-- Header info with ID and badges -->
+        <div class="detail-header-info">
+          <span class="detail-booking-id">#${booking.maDatLich}</span>
+          <div class="detail-status-badges">
+            <span class="status-badge badge-${getStatusColor(booking.trangThai)}">
+              <i class="fas fa-circle"></i> ${getStatusText(booking.trangThai)}
+            </span>
+            <span class="status-badge badge-${booking.daThanhToan ? 'success' : 'warning'}">
+              <i class="fas ${booking.daThanhToan ? 'fa-check-circle' : 'fa-clock'}"></i>
+              ${booking.daThanhToan ? 'Đã thanh toán' : 'Chưa thanh toán'}
+            </span>
           </div>
         </div>
 
-        <!-- Customer Info -->
-        <div class="detail-card">
-          <div class="card-header">
-            <i class="fas fa-user"></i>
-            <h3>Thông Tin Người Đặt</h3>
+        <!-- Thông tin người đặt -->
+        <div class="detail-section">
+          <div class="detail-section-title">
+            <i class="fas fa-user"></i> Thông Tin Người Đặt
           </div>
-          <div class="info-grid">
-            <div class="info-item">
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
               <i class="fas fa-user-circle"></i>
               <div>
                 <label>Họ và tên</label>
-                <span>${booking.tenNguoiDat || 'N/A'}</span>
+                <span>${booking.tenNguoiDat || booking.hoTenHocVien || 'N/A'}</span>
               </div>
             </div>
-            <div class="info-item">
+            <div class="detail-info-item">
               <i class="fas fa-envelope"></i>
               <div>
                 <label>Email</label>
-                <span>${booking.emailNguoiDat || 'N/A'}</span>
+                <span>${booking.emailNguoiDat || booking.emailHocVien || 'N/A'}</span>
               </div>
             </div>
-            <div class="info-item">
+            <div class="detail-info-item">
               <i class="fas fa-phone"></i>
               <div>
                 <label>Số điện thoại</label>
                 <span>${booking.sdtNguoiDat || 'N/A'}</span>
               </div>
             </div>
+            <div class="detail-info-item">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <label>Ngày đặt</label>
+                <span>${formatDateTime(booking.ngayDat)}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Course Info -->
-        <div class="detail-card">
-          <div class="card-header">
-            <i class="fas fa-book"></i>
-            <h3>Thông Tin Khóa Học</h3>
+        <!-- Thông tin khóa học -->
+        <div class="detail-section">
+          <div class="detail-section-title">
+            <i class="fas fa-book"></i> Thông Tin Khóa Học
           </div>
-          <div class="info-grid">
-            <div class="info-item full-width">
+          <div class="detail-info-grid">
+            <div class="detail-info-item full-width">
               <i class="fas fa-graduation-cap"></i>
               <div>
                 <label>Tên khóa học</label>
                 <span class="course-name">${booking.tenKhoaHoc || 'N/A'}</span>
               </div>
             </div>
-            <div class="info-item">
+            <div class="detail-info-item">
               <i class="fas fa-calendar-day"></i>
               <div>
                 <label>Ngày tham gia</label>
                 <span>${formatDate(booking.ngayThamGia)}</span>
               </div>
             </div>
-            <div class="info-item">
+            <div class="detail-info-item">
               <i class="fas fa-users"></i>
               <div>
                 <label>Số lượng người</label>
@@ -221,11 +225,10 @@ async function viewDetail(id) {
           </div>
         </div>
 
-        <!-- Payment Info -->
-        <div class="detail-card payment-card">
-          <div class="card-header">
-            <i class="fas fa-money-bill-wave"></i>
-            <h3>Thông Tin Thanh Toán</h3>
+        <!-- Thông tin thanh toán -->
+        <div class="detail-section payment-section">
+          <div class="detail-section-title">
+            <i class="fas fa-money-bill-wave"></i> Thông Tin Thanh Toán
           </div>
           <div class="payment-summary">
             <div class="payment-row">
@@ -244,19 +247,17 @@ async function viewDetail(id) {
         </div>
 
         ${booking.ghiChu ? `
-          <div class="detail-card">
-            <div class="card-header">
-              <i class="fas fa-sticky-note"></i>
-              <h3>Ghi Chú</h3>
+          <!-- Ghi chú -->
+          <div class="detail-section">
+            <div class="detail-section-title">
+              <i class="fas fa-sticky-note"></i> Ghi Chú
             </div>
-            <div class="note-content">
-              <p>${booking.ghiChu}</p>
-            </div>
+            <div class="note-section">${booking.ghiChu}</div>
           </div>
         ` : ''}
 
         <!-- Actions -->
-        ${booking.trangThai === 'DatTruoc' ? `
+        ${booking.trangThai === 'DatTruoc' || booking.trangThai === 'Đặt trước' ? `
           <div class="modal-actions-bottom">
             <button class="btn btn-success" onclick="confirmComplete(${booking.maDatLich}); closeModal('detailModal');">
               <i class="fas fa-check"></i> Xác Nhận Hoàn Thành

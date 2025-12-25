@@ -46,7 +46,7 @@ public interface DatLichRepository extends JpaRepository<DatLich, Integer> {
     @Query(value = "SELECT d.maDatLich, d.maHocVien, d.maLichTrinh, d.ngayThamGia, d.soLuongNguoi, " +
                    "d.tongTien, d.tenNguoiDat, d.emailNguoiDat, d.sdtNguoiDat, d.ngayDat, " +
                    "d.trangThai, d.ghiChu, " +
-                   "CASE WHEN tt.maDatLich IS NOT NULL THEN 1 ELSE 0 END as daThanhToan, " +
+                   "CASE WHEN tt.maDatLich IS NOT NULL AND tt.trangThai = 1 THEN 1 ELSE 0 END as daThanhToan, " +
                    "kh.tenKhoaHoc, n.hoTen as hoTenHocVien, n.email as emailHocVien " +
                    "FROM DatLich d " +
                    "LEFT JOIN LichTrinhLopHoc lt ON d.maLichTrinh = lt.maLichTrinh " +
