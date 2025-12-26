@@ -60,15 +60,7 @@ public class DanhGiaAdapter extends RecyclerView.Adapter<DanhGiaAdapter.DanhGiaV
         holder.txtTenDangNhap.setText(danhGia.getTenDangNhap() != null ? danhGia.getTenDangNhap() : "Ẩn danh");
 
         // Avatar
-        if (danhGia.getAvatar() != null && !danhGia.getAvatar().isEmpty()) {
-            Glide.with(context)
-                    .load(danhGia.getAvatar())
-                    .placeholder(R.drawable.avatar_evaluate)
-                    .error(R.drawable.avatar_evaluate)
-                    .into(holder.imgAvatar);
-        } else {
-            holder.imgAvatar.setImageResource(R.drawable.avatar_evaluate);
-        }
+        holder.imgAvatar.setImageResource(R.drawable.avatar_evaluate);
 
         // Hiển thị sao đánh giá
         displayStars(holder.layoutSaoDanhGia, danhGia.getDiemDanhGia());

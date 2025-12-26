@@ -261,8 +261,6 @@ public class Payment extends AppCompatActivity {
         if (txtVAT != null) {
             txtVAT.setText("Tiết kiệm 0đ");
         }
-        
-        // Không set txtSoLuongDat ở đây nữa vì đã set trong hienThiThongTinLopHoc()
     }
     
     /**
@@ -560,7 +558,7 @@ public class Payment extends AppCompatActivity {
                         Log.d(TAG, "PayUrl: " + payUrl);
                         Log.d(TAG, "Deeplink: " + deeplink);
                         
-                        // Mở Momo app hoặc web
+                        // Mở Momo web
                         openMomoPayment(deeplink, payUrl);
                         
                         // Bắt đầu kiểm tra trạng thái thanh toán
@@ -590,9 +588,7 @@ public class Payment extends AppCompatActivity {
      * Mở Momo web để thanh toán (Sandbox chỉ hỗ trợ web, không hỗ trợ app thật)
      */
     private void openMomoPayment(String deeplink, String payUrl) {
-        // QUAN TRỌNG: Momo Sandbox chỉ hoạt động qua WEB
-        // Deeplink sẽ mở app Momo thật nhưng giao dịch sandbox không tồn tại trên app thật
-        // Nên luôn mở payUrl (web) để test sandbox
+        // Luôn mở payUrl (web) để test sandbox
         
         try {
             if (payUrl != null && !payUrl.isEmpty()) {

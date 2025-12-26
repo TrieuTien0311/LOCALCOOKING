@@ -6,22 +6,23 @@
     android:background="#000000">
 
     <!-- ImageView cho ảnh -->
+
+    <!-- ExoPlayer PlayerView cho video -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
 
-    <!-- ExoPlayer PlayerView cho video -->
     <androidx.media3.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:visibility="gone"
+        app:controller_layout_id="@layout/exo_player_control_view"
         app:show_buffering="when_playing"
-        app:use_controller="true"
-        app:controller_layout_id="@layout/exo_player_control_view" />
+        app:use_controller="true" />
 
     <!-- VideoView fallback -->
     <VideoView
@@ -37,9 +38,9 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_gravity="center"
+        android:contentDescription="Play"
         android:src="@drawable/ic_play_circle"
-        android:visibility="gone"
-        android:contentDescription="Play" />
+        android:visibility="gone" />
 
     <!-- Loading indicator -->
     <ProgressBar
@@ -47,7 +48,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:indeterminateTint="#FFFFFF" />
+        android:indeterminateTint="#FFFFFF"
+        android:visibility="invisible" />
 
 </FrameLayout>

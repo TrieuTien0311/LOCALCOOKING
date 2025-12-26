@@ -361,70 +361,21 @@ public class HomeFragment extends Fragment {
     }
     
     /**
-     * Chọn 4 lớp học từ 4 địa phương khác nhau (2 có ưu đãi, 2 không có)
+     * Chọn 4 lớp học có lượt đánh giá nhiều nhất (đại diện cho lượt đặt nhiều)
      */
     private List<KhoaHoc> selectPopularClasses(List<KhoaHoc> allClasses) {
-        Map<String, List<KhoaHoc>> classByLocation = new HashMap<>();
-        String[] locations = {"Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"};
+        // Sắp xếp theo số lượng đánh giá giảm dần
+        List<KhoaHoc> sortedClasses = new ArrayList<>(allClasses);
+        sortedClasses.sort((k1, k2) -> {
+            Integer count1 = k1.getSoLuongDanhGia() != null ? k1.getSoLuongDanhGia() : 0;
+            Integer count2 = k2.getSoLuongDanhGia() != null ? k2.getSoLuongDanhGia() : 0;
+            return count2.compareTo(count1); // Giảm dần
+        });
         
-        // Nhóm lớp học theo địa phương (từ lịch trình)
-        for (KhoaHoc khoaHoc : allClasses) {
-            if (khoaHoc.getLichTrinhList() != null && !khoaHoc.getLichTrinhList().isEmpty()) {
-                // Lấy địa phương từ lịch trình đầu tiên
-                String diaDiem = khoaHoc.getLichTrinhList().get(0).getDiaDiem();
-                if (diaDiem != null) {
-                    String diaPhuong = "";
-                    if (diaDiem.contains("Hà Nội")) diaPhuong = "Hà Nội";
-                    else if (diaDiem.contains("Huế")) diaPhuong = "Huế";
-                    else if (diaDiem.contains("Đà Nẵng")) diaPhuong = "Đà Nẵng";
-                    else if (diaDiem.contains("Cần Thơ")) diaPhuong = "Cần Thơ";
-                    
-                    if (!diaPhuong.isEmpty()) {
-                        if (!classByLocation.containsKey(diaPhuong)) {
-                            classByLocation.put(diaPhuong, new ArrayList<>());
-                        }
-                        classByLocation.get(diaPhuong).add(khoaHoc);
-                    }
-                }
-            }
-        }
-        
+        // Lấy 4 lớp đầu tiên
         List<KhoaHoc> result = new ArrayList<>();
-        List<KhoaHoc> withDiscount = new ArrayList<>();
-        List<KhoaHoc> withoutDiscount = new ArrayList<>();
-        
-        // Chọn lớp từ mỗi địa phương
-        for (String location : locations) {
-            if (classByLocation.containsKey(location)) {
-                List<KhoaHoc> classes = classByLocation.get(location);
-                for (KhoaHoc khoaHoc : classes) {
-                    if (khoaHoc.getCoUuDai() != null && khoaHoc.getCoUuDai()) {
-                        withDiscount.add(khoaHoc);
-                    } else {
-                        withoutDiscount.add(khoaHoc);
-                    }
-                }
-            }
-        }
-        
-        // Chọn 2 lớp có ưu đãi
-        for (int i = 0; i < Math.min(2, withDiscount.size()); i++) {
-            result.add(withDiscount.get(i));
-        }
-        
-        // Chọn 2 lớp không có ưu đãi
-        for (int i = 0; i < Math.min(2, withoutDiscount.size()); i++) {
-            result.add(withoutDiscount.get(i));
-        }
-        
-        // Nếu không đủ, bổ sung từ danh sách còn lại
-        if (result.size() < 4) {
-            for (KhoaHoc khoaHoc : allClasses) {
-                if (!result.contains(khoaHoc)) {
-                    result.add(khoaHoc);
-                    if (result.size() >= 4) break;
-                }
-            }
+        for (int i = 0; i < Math.min(4, sortedClasses.size()); i++) {
+            result.add(sortedClasses.get(i));
         }
         
         return result;

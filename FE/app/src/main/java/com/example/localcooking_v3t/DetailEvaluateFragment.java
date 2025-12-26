@@ -40,6 +40,7 @@ public class DetailEvaluateFragment extends Fragment {
     // Views thống kê
     private TextView txtSao1;
     private ProgressBar prb1sao, prb2sao, prb3sao, prb4sao, prb5sao;
+    private TextView txt1sao, txt2sao, txt3sao, txt4sao, txt5sao;
     private TextView txtSLNhanXet, txtSLHinhAnh, txtFilterSaoValue;
     private TextView txtEmpty;
 
@@ -103,6 +104,12 @@ public class DetailEvaluateFragment extends Fragment {
         prb3sao = view.findViewById(R.id.prb3sao);
         prb4sao = view.findViewById(R.id.prb4sao);
         prb5sao = view.findViewById(R.id.prb5sao);
+
+        txt1sao = view.findViewById(R.id.txt1sao);
+        txt2sao = view.findViewById(R.id.txt2sao);
+        txt3sao = view.findViewById(R.id.txt3sao);
+        txt4sao = view.findViewById(R.id.txt4sao);
+        txt5sao = view.findViewById(R.id.txt5sao);
 
         txtSLNhanXet = view.findViewById(R.id.txtSLNhanXet);
         txtSLHinhAnh = view.findViewById(R.id.txtSLHinhAnh);
@@ -209,14 +216,20 @@ public class DetailEvaluateFragment extends Fragment {
             txtSao1.setText(String.format("%.1f", diem != null ? diem : 0.0));
         }
 
-        // Progress bars
-        if (prb1sao != null) prb1sao.setProgress(thongKe.getPercent1Sao());
-        if (prb2sao != null) prb2sao.setProgress(thongKe.getPercent2Sao());
-        if (prb3sao != null) prb3sao.setProgress(thongKe.getPercent3Sao());
-        if (prb4sao != null) prb4sao.setProgress(thongKe.getPercent4Sao());
+        // Progress bars và số lượng từng sao
         if (prb5sao != null) prb5sao.setProgress(thongKe.getPercent5Sao());
+        if (prb4sao != null) prb4sao.setProgress(thongKe.getPercent4Sao());
+        if (prb3sao != null) prb3sao.setProgress(thongKe.getPercent3Sao());
+        if (prb2sao != null) prb2sao.setProgress(thongKe.getPercent2Sao());
+        if (prb1sao != null) prb1sao.setProgress(thongKe.getPercent1Sao());
 
-        // Số lượng
+        if (txt5sao != null) txt5sao.setText("5 sao (" + thongKe.getSoLuong5Sao() + ")");
+        if (txt4sao != null) txt4sao.setText("4 sao (" + thongKe.getSoLuong4Sao() + ")");
+        if (txt3sao != null) txt3sao.setText("3 sao (" + thongKe.getSoLuong3Sao() + ")");
+        if (txt2sao != null) txt2sao.setText("2 sao (" + thongKe.getSoLuong2Sao() + ")");
+        if (txt1sao != null) txt1sao.setText("1 sao (" + thongKe.getSoLuong1Sao() + ")");
+
+        // Số lượng filter
         if (txtSLNhanXet != null) {
             Integer sl = thongKe.getSoLuongCoNhanXet();
             txtSLNhanXet.setText("(" + (sl != null ? sl : 0) + ")");

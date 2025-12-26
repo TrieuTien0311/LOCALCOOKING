@@ -55,8 +55,6 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
                 .inflate(R.layout.item_class, parent, false);
         return new ClassViewHolder(view);
     }
-    // Điều chỉnh marginTop của cardView dựa vào có ưu đãi hay không
-
 
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
@@ -78,7 +76,6 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         boolean isToday = isSelectedDateToday();
         
         // Hiển thị banner ưu đãi và điều chỉnh marginTop của cardView
-        // CHÚ Ý: 
         // - Chỉ hiển thị banner nếu có ưu đãi VÀ chưa diễn ra VÀ là hôm nay
         // - Nếu không phải hôm nay thì ẩn banner ưu đãi
         if (lopHoc.getCoUuDai() != null && lopHoc.getCoUuDai() && !daDienRa && isToday) {
@@ -97,7 +94,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
             holder.cardView.setLayoutParams(params);
         }
         
-        // THÊM MỚI: Hiển thị ảnh banner khóa học từ URL server
+        // Hiển thị ảnh banner khóa học từ URL server
         String imageUrl = null;
         if (lopHoc.getHinhAnh() != null && !lopHoc.getHinhAnh().isEmpty()) {
             imageUrl = RetrofitClient.BASE_URL + "uploads/courses/" + lopHoc.getHinhAnh();
@@ -120,8 +117,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         holder.txtTenLop.setText(lopHoc.getTenLop());
         holder.txtMoTa.setText(lopHoc.getMoTa());
         holder.txtThoiGian.setText("Thời gian: " + lopHoc.getThoiGian());
-        
-        // Hiển thị ngày được chọn từ calendar (nếu có), nếu không thì hiển thị ngày bắt đầu
+
+        // Hiển thị ngày được chọn từ calendar
         String ngayHienThi;
         if (selectedDate != null && !selectedDate.isEmpty()) {
             // Kiểm tra format: "T4, 19/12/2024" hoặc "19/12/2024"
@@ -141,7 +138,6 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         holder.txtDiaDiem.setText("Địa điểm: " + lopHoc.getDiaDiem());
         
         // Xử lý hiển thị giá với ưu đãi
-        // Logic:
         // 1. CÓ ƯU ĐÃI + HÔM NAY (dù đã diễn ra hay chưa): giá gốc gạch + giá giảm
         // 2. Các trường hợp khác: chỉ giá gốc
         

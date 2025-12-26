@@ -48,11 +48,11 @@ public class MediaViewerActivity extends AppCompatActivity {
     private boolean isSingleVideo;
     private boolean isSingleMode = false;
     
-    // ExoPlayer for single mode
+
     private ExoPlayer exoPlayer;
     private PlayerView playerView;
     private boolean isInPipMode = false;
-
+    private boolean shouldKeepPlaying = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,6 +136,7 @@ public class MediaViewerActivity extends AppCompatActivity {
             }
             
             MediaPagerAdapter adapter = new MediaPagerAdapter(mediaList);
+            pagerAdapter = adapter; // Lưu reference
             viewPager.setAdapter(adapter);
             viewPager.setCurrentItem(currentPosition, false);
             updateCounter(currentPosition);
@@ -144,6 +145,10 @@ public class MediaViewerActivity extends AppCompatActivity {
                 @Override
                 public void onPageSelected(int position) {
                     updateCounter(position);
+                    // Pause tất cả video khi swipe
+                    if (pagerAdapter != null) {
+                        pagerAdapter.pauseAllPlayers();
+                    }
                 }
             });
         }
@@ -239,13 +244,26 @@ public class MediaViewerActivity extends AppCompatActivity {
     private void updatePipParams() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
-                boolean isVideoPlaying = (isSingleVideo && exoPlayer != null && exoPlayer.isPlaying());
-                
+                boolean isVideoPlaying = false;
+
+                // Check Single Mode
+                if (isSingleVideo && exoPlayer != null && exoPlayer.isPlaying()) {
+                    isVideoPlaying = true;
+                }
+
+                // Check List Mode
+                if (!isSingleMode && !mediaList.isEmpty()) {
+                    int currentPos = viewPager.getCurrentItem();
+                    if (currentPos < mediaList.size() && mediaList.get(currentPos).isVideo()) {
+                        isVideoPlaying = true;
+                    }
+                }
+
                 PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder()
                         .setAspectRatio(new Rational(16, 9))
                         .setAutoEnterEnabled(isVideoPlaying)
                         .setSeamlessResizeEnabled(true);
-                
+
                 setPictureInPictureParams(builder.build());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -253,13 +271,15 @@ public class MediaViewerActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, @NonNull Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        isInPipMode = isInPictureInPictureMode;
         
         if (isInPictureInPictureMode) {
-            // Hide all UI controls in PiP mode
+            // Entering PiP mode
+            isInPipMode = true;
+            shouldKeepPlaying = false;
             if (headerLayout != null) {
                 headerLayout.setVisibility(View.GONE);
             }
@@ -268,35 +288,44 @@ public class MediaViewerActivity extends AppCompatActivity {
             }
         } else {
             // Exiting PiP mode
+            isInPipMode = false;
+            
+            // Đánh dấu là đang expand (không phải đóng bằng nút X)
+            // Nếu activity vẫn còn visible thì là expand
+            shouldKeepPlaying = !isFinishing();
+            
+            // Hiện lại controls
             if (headerLayout != null) {
                 headerLayout.setVisibility(View.VISIBLE);
             }
             if (playerView != null) {
                 playerView.setUseController(true);
             }
-            
-            // Khi thoát PiP bằng nút X (activity đang bị destroy), dừng video ngay
-            if (isFinishing()) {
-                stopAndReleasePlayer();
-            }
         }
     }
     
     private void stopAndReleasePlayer() {
+        // Release single mode player
         if (exoPlayer != null) {
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;
+        }
+        // Release all players in list mode
+        if (pagerAdapter != null) {
+            pagerAdapter.releaseAllPlayers();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        // Khi activity bị stop (bao gồm khi đóng PiP), dừng video
-        if (isInPipMode && isFinishing()) {
+        // Chỉ dừng video nếu KHÔNG phải đang expand từ PiP
+        if (!shouldKeepPlaying) {
             stopAndReleasePlayer();
         }
+        // Reset flag
+        shouldKeepPlaying = false;
     }
 
     @Override
@@ -323,12 +352,34 @@ public class MediaViewerActivity extends AppCompatActivity {
 
     // ========== Adapter ==========
     
+    private MediaPagerAdapter pagerAdapter; // Lưu reference để release players
+    
     private class MediaPagerAdapter extends androidx.recyclerview.widget.RecyclerView.Adapter<MediaPagerAdapter.MediaViewHolder> {
         private List<HinhAnhDanhGiaDTO> items;
-        private ExoPlayer currentPlayer;
+        private List<ExoPlayer> activePlayers = new ArrayList<>(); // Track all active players
 
         MediaPagerAdapter(List<HinhAnhDanhGiaDTO> items) {
             this.items = items;
+        }
+        
+        // Release tất cả players
+        void releaseAllPlayers() {
+            for (ExoPlayer player : activePlayers) {
+                if (player != null) {
+                    player.stop();
+                    player.release();
+                }
+            }
+            activePlayers.clear();
+        }
+        
+        // Pause tất cả players
+        void pauseAllPlayers() {
+            for (ExoPlayer player : activePlayers) {
+                if (player != null && player.isPlaying()) {
+                    player.pause();
+                }
+            }
         }
 
         @Override
@@ -367,6 +418,7 @@ public class MediaViewerActivity extends AppCompatActivity {
                 
                 player.prepare();
                 holder.player = player;
+                activePlayers.add(player); // Track this player
             } else {
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.playerView.setVisibility(View.GONE);
@@ -384,6 +436,8 @@ public class MediaViewerActivity extends AppCompatActivity {
         public void onViewRecycled(@NonNull MediaViewHolder holder) {
             super.onViewRecycled(holder);
             if (holder.player != null) {
+                activePlayers.remove(holder.player); // Remove from tracking
+                holder.player.stop();
                 holder.player.release();
                 holder.player = null;
             }
